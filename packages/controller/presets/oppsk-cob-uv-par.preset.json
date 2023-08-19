@@ -1,0 +1,3 @@
+{
+  "channels": ["dimmer", "strobe", "program-speed", "sound-activity"]
+}

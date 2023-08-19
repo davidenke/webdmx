@@ -1,16 +1,7 @@
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
+import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-globalThis.__dirname = __dirname;
-global.__dirname = __dirname;
 
 // https://vitejs.dev/config/
-
-// Library build
 export default defineConfig({
   resolve: {
     alias: {
@@ -18,7 +9,6 @@ export default defineConfig({
       '~': resolve(__dirname, './node_modules'),
     },
   },
-  plugins: [nodePolyfills()],
   build: {
     lib: {
       entry: 'src/index.ts',
@@ -36,6 +26,3 @@ export default defineConfig({
     },
   },
 });
-
-// Application build
-// export default defineConfig({});

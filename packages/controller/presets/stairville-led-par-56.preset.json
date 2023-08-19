@@ -1,0 +1,14 @@
+{
+  "channels": ["control", "red", "green", "blue", "speed"],
+  "ranges": {
+    "control": {
+      "type": "option",
+      "options": [
+        { "value": 0, "label": "RGB Control" },
+        { "value": 64, "label": "7 color fade" },
+        { "value": 128, "label": "7 color change" },
+        { "value": 192, "label": "3 color change" }
+      ]
+    }
+  }
+}

@@ -1,8 +1,2 @@
-/.ssl/*
-!.ssl/.gitkeep
-/.npmrc
-/dist
 /node_modules
-/reports
-/src/config.schema.json
 /*.tgz

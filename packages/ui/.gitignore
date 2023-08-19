@@ -1,0 +1,6 @@
+/.ssl/*
+!.ssl/.gitkeep
+/dist
+/node_modules
+/reports
+/*.tgz

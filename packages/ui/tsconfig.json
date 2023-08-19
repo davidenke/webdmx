@@ -13,8 +13,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "paths": {
-      "~/*": ["./node_modules/*"],
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "~/*": ["./node_modules/*"]
     },
     "skipLibCheck": true,
     "strict": true,
@@ -23,14 +23,14 @@
   },
   "exclude": ["node_modules", "dist"],
   "ts-node": {
+    "compilerOptions": {
+      "module": "esnext",
+      "target": "esnext"
+    },
     "esm": true,
     "experimentalSpecifierResolution": "node",
     "files": true,
     "logError": true,
-    "transpileOnly": true,
-    "compilerOptions": {
-      "module": "esnext",
-      "target": "esnext"
-    }
+    "transpileOnly": true
   }
 }
