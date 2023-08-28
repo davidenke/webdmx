@@ -3,9 +3,10 @@
  */
 
 export * from './dmx.js';
+export * from './drivers/enttec-open-dmx-usb.driver.js';
 export * from './drivers/null.driver.js';
 export * from './drivers/serial.driver.js';
 export * from './fx/animation.js';
 export * from './fx/easing.utils.js';
 export * from './types/device.types.js';
-export * from './types/driver.types.js';
+export * from './types/universe.types.js';

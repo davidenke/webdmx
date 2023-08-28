@@ -1,8 +1,9 @@
 import type { Device } from './types/device.types.js';
-import type { Channels, Driver } from './types/driver.types.js';
+import type { SerialDriver } from './drivers/serial.driver.js';
 
 import generic from '../presets/generic.preset.json' assert { type: 'json' };
 import genericRGB from '../presets/generic-rgb.preset.json' assert { type: 'json' };
+import { Channels } from './types/universe.types.js';
 
 const PREDEFINED_DEVICES = {
   generic,
@@ -15,7 +16,7 @@ export interface DmxOptions {
 
 export class DMX {
   readonly #devices = new Map<string, Device>();
-  readonly #universes = new Map<string, Driver>();
+  readonly #universes = new Map<string, SerialDriver>();
 
   constructor({ devices = {} }: Partial<DmxOptions> = {}) {
     this.#devices = new Map([
@@ -26,36 +27,45 @@ export class DMX {
     ]);
   }
 
-  async addUniverse(name: string, driver: Driver): Promise<Driver> {
-    await driver.init();
-
-    // driver.on(Events.update, (channels, extraData) => {
-    //   this.emit(Events.update, name, channels, extraData);
-    // });
+  async addUniverse(name: string, driver: SerialDriver): Promise<void> {
+    await driver.connect();
+    await driver.open();
 
     this.#universes.set(name, driver);
-
-    return driver;
   }
 
-  update(name: string, channels: Channels, extraData?: any) {
-    this.#universes.get(name)?.update(channels, extraData || {});
+  /**
+   * Updates the given channels in the universe.
+   */
+  update(name: string, channels: Channels) {
+    this.#universes.get(name)?.update(channels);
   }
 
+  /**
+   * Sets given values from a specific channel in the universe.
+   * This is helpful when setting a whole devices values at once.
+   */
+  updateFrom(name: string, from: number, values: ArrayLike<number>) {
+    this.#universes.get(name)?.updateFrom(from, values);
+  }
+
+  /**
+   * Update the whole available universe with the given value.
+   * This will most likely be used to blank the whole universe with zeroes.
+   */
   updateAll(name: string, value: number): void {
     this.#universes.get(name)?.updateAll(value);
     // this.emit(Events.updateAll, universe, value);
   }
 
-  universeToObject(name: string): { [key: number]: number } {
-    if (!this.#universes.has(name)) return {};
-
-    const { channels } = this.#universes.get(name)!;
-    return Object.fromEntries(channels.entries());
+  getUniverse(name: string): Channels | undefined {
+    return this.#universes.get(name)?.channels;
   }
 
+  /**
+   * Closes all universes.
+   */
   async close(): Promise<void> {
-    await Promise.allSettled([...this.#universes.values()].map((universe) => universe.close()));
-    // this.removeAllListeners();
+    await Promise.all([...this.#universes.values()].map((universe) => universe.close()));
   }
 }

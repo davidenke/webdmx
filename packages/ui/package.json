@@ -14,18 +14,22 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build:index:barrel": "barrelsby --config .barrelsby.json",
+    "build:index:fixup": "shx sed -i \"s/';/\\.js';/g\" src/index.ts",
+    "build:index": "run-s -lns build:index:*",
+    "build:compile": "vite build",
+    "build": "run-s -lns build:*",
     "preview": "vite preview"
   },
   "dependencies": {
     "@webdmx/controller": "workspace:*",
-    "lit": "2.8.0",
-    "stream-browserify": "3.0.0"
+    "lit": "2.8.0"
   },
   "devDependencies": {
     "@types/node": "18.16.15",
     "@types/w3c-web-serial": "1.0.3",
     "@types/w3c-web-usb": "1.0.6",
+    "barrelsby": "2.8.0",
     "eslint": "8.47.0",
     "eslint-plugin-import": "2.28.0",
     "eslint-plugin-tsdoc": "0.2.17",

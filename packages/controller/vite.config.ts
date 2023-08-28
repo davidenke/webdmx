@@ -8,6 +8,8 @@ export default defineConfig({
     dts({
       entryRoot: 'src',
       include: 'src/**/*.ts',
+      copyDtsFiles: true,
+      strictOutput: true,
     }),
   ],
   build: {

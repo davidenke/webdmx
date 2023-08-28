@@ -3,4 +3,3 @@
  */
 
 export * from './components/root/root.component.js';
-export * from './utils/usb.utils.js';

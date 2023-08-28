@@ -1,4 +1,4 @@
-import type { Channels, Driver } from '../types/driver.types.js';
+import type { Channels, SerialDriver } from '../types/driver.types.js';
 import { EASING } from './easing.utils.js';
 
 // mutates the channels array in place
@@ -69,7 +69,7 @@ export class Animation {
     this.lastAnimation = 0;
   }
 
-  runNextLoop(driver: Driver, onFinish?: () => void): this {
+  runNextLoop(driver: SerialDriver, onFinish?: () => void): this {
     const runAnimationStep = () => {
       const now = +new Date();
       const elapsedTime = now - (this.startTime ?? 0);
@@ -160,7 +160,7 @@ export class Animation {
     return this;
   }
 
-  run(driver: Driver, onFinish?: () => void) {
+  run(driver: SerialDriver, onFinish?: () => void) {
     // Optimization to run transition updates at double the rate of driver updates using Nyquist's theorem
     this.frameDelay = driver.sendInterval / 2;
 
@@ -169,7 +169,7 @@ export class Animation {
     this.runNextLoop(driver, onFinish);
   }
 
-  runLoop(driver: Driver, onFinish?: () => void, loops = Infinity): this {
+  runLoop(driver: SerialDriver, onFinish?: () => void, loops = Infinity): this {
     this.loops = loops;
     this.run(driver, onFinish);
     return this;

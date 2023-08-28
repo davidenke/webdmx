@@ -20,7 +20,8 @@
     "build:index:fixup": "shx sed -i \"s/';/\\.js';/g\" src/index.ts",
     "build:index": "run-s -lns build:index:*",
     "build:compile": "vite build",
-    "build": "run-s -lns build:*"
+    "build": "run-s -lns build:*",
+    "dev": "vite build --watch"
   },
   "devDependencies": {
     "@types/node": "18.16.15",
