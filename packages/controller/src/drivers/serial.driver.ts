@@ -15,8 +15,8 @@ export type SerialDriverBaseOptions = SerialOptions & { sendInterval: number };
 export abstract class SerialDriver<SerialDriverOptions extends SerialDriverBaseOptions = SerialDriverBaseOptions> {
   static readonly CHANNELS = 512;
 
-  // add an extra bit - for a reason not known to mankind; however,
-  // expose only the first 512 bytes to be used as DMX channels
+  // add an extra bit, as we will prefix the universe with
+  // an extra 0x00 byte to make all channels 1-based
   #universe: Universe = new Uint8Array(SerialDriver.CHANNELS + 1);
 
   #serialPort?: SerialPort;

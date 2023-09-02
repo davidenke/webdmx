@@ -3,20 +3,12 @@ import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // https://github.com/vitejs/vite/discussions/5081
+  base: './',
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
       '~': resolve(__dirname, './node_modules'),
-    },
-  },
-  build: {
-    lib: {
-      entry: 'src/index.ts',
-      formats: ['es'],
-    },
-    minify: false,
-    rollupOptions: {
-      external: /^lit/,
     },
   },
   server: {

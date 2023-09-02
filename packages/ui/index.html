@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <head lang="en">
   <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <link rel="stylesheet" href="/src/styles/global.scss" />
+  <link rel="stylesheet" href="./src/styles/global.scss" />
 </head>
 
 <body>
   <webdmxui-root></webdmxui-root>
-  <script type="module" src="/src/index.ts"></script>
+  <script type="module" src="./src/index.ts"></script>
   <style>
     html {
       background: #e4e4e4;

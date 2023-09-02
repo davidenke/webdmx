@@ -55,7 +55,6 @@ export class DMX {
    */
   updateAll(name: string, value: number): void {
     this.#universes.get(name)?.updateAll(value);
-    // this.emit(Events.updateAll, universe, value);
   }
 
   getUniverse(name: string): Channels | undefined {

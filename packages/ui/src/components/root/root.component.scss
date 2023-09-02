@@ -26,8 +26,10 @@ menu {
     font: 0.95em/1 monospace;
     white-space: pre;
 
-    background-color: rgb(var(--r) var(--g) var(--b) / calc(var(--a) / 255));
-    color: rgb(var(--accessible-color), var(--accessible-color), var(--accessible-color));
+    --bg: rgb(var(--r) var(--g) var(--b) / calc(var(--a) / 255));
+    --fg: rgb(var(--accessible-color), var(--accessible-color), var(--accessible-color));
+    background-image: linear-gradient(to right, var(--bg), var(--bg)),  linear-gradient(to right, #fff, #fff);
+    color: var(--fg);
     border-radius: 50%;
   }
 }
