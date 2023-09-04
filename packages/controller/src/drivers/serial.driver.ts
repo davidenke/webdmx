@@ -2,6 +2,12 @@ import type { Channels, Universe } from '../types/universe.types.js';
 
 export type SerialDriverBaseOptions = SerialOptions & { sendInterval: number };
 
+declare global {
+  interface SerialDriverEventMap {
+    staging: CustomEvent<boolean>;
+  }
+}
+
 /**
  * Manages a serial port. The following lifecycle is expected:
  * 1. connect()
@@ -12,7 +18,9 @@ export type SerialDriverBaseOptions = SerialOptions & { sendInterval: number };
  * 6. close()
  * 7. disconnect()
  */
-export abstract class SerialDriver<SerialDriverOptions extends SerialDriverBaseOptions = SerialDriverBaseOptions> {
+export abstract class SerialDriver<
+  SerialDriverOptions extends SerialDriverBaseOptions = SerialDriverBaseOptions
+> extends EventTarget {
   static readonly CHANNELS = 512;
 
   // add an extra bit, as we will prefix the universe with
@@ -22,10 +30,42 @@ export abstract class SerialDriver<SerialDriverOptions extends SerialDriverBaseO
   #serialPort?: SerialPort;
   #interval?: number;
 
+  // every time the universe is changed, we set this flag
+  // until the changes have been submitted to the device
+  #_staging = false;
+
+  set #staging(staging: boolean) {
+    this.#_staging = staging;
+    this.dispatchEvent(new CustomEvent('staging', { detail: staging }));
+  }
+  get #staging(): boolean {
+    return this.#_staging;
+  }
+
   // must be implemented by driver implementations
   abstract readonly filers?: SerialPortFilter[];
   abstract readonly options: SerialDriverOptions;
   abstract send(serialPort: SerialPort, universe: Uint8Array): Promise<void>;
+
+  // type the extended event listeners to use the correct event map
+  override addEventListener<K extends keyof SerialDriverEventMap | string>(
+    type: K,
+    listener: K extends keyof SerialDriverEventMap
+      ? (this: SerialDriver, ev: SerialDriverEventMap[K]) => any
+      : EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions
+  ) {
+    super.addEventListener(type, listener, options);
+  }
+  override removeEventListener<K extends keyof SerialDriverEventMap | string>(
+    type: K,
+    listener: K extends keyof SerialDriverEventMap
+      ? (this: SerialDriver, ev: SerialDriverEventMap[K]) => any
+      : EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions
+  ) {
+    super.removeEventListener(type, listener, options);
+  }
 
   async connect(): Promise<void> {
     const filters = this.filers ?? [];
@@ -48,10 +88,12 @@ export abstract class SerialDriver<SerialDriverOptions extends SerialDriverBaseO
   }
 
   start(): void {
-    this.#interval = window.setInterval(
-      async () => await this.send(this.#serialPort!, this.#universe),
-      this.options.sendInterval
-    );
+    this.#interval = window.setInterval(async () => {
+      // call the drivers send method
+      await this.send(this.#serialPort!, this.#universe);
+      // reset the staging flag as all changes have been sent
+      this.#staging = false;
+    }, this.options.sendInterval);
   }
 
   stop(): void {
@@ -68,6 +110,7 @@ export abstract class SerialDriver<SerialDriverOptions extends SerialDriverBaseO
   }
 
   update(channels: Channels): void {
+    this.#staging = true;
     for (const channel in channels) {
       const value = channels[channel];
       this.#universe[channel] = value;
@@ -75,10 +118,12 @@ export abstract class SerialDriver<SerialDriverOptions extends SerialDriverBaseO
   }
 
   updateFrom(from: number, values: ArrayLike<number>): void {
+    this.#staging = true;
     this.#universe.set(values, from);
   }
 
   updateAll(value: number): void {
+    this.#staging = true;
     this.#universe = this.#universe.fill(value, 0, SerialDriver.CHANNELS);
   }
 }
