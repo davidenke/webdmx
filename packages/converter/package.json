@@ -1,0 +1,41 @@
+{
+  "name": "@webdmx/converter",
+  "version": "0.0.1",
+  "description": "",
+  "author": {
+    "name": "David Enke",
+    "email": "david@enke.dev"
+  },
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "convert-fixture": "dist/bin.js",
+    "xfix": "dist/bin.js"
+  },
+  "module": "dist/bin.js",
+  "types": "dist/bin.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "lint": "npx eslint . -c .eslintrc --ext .ts",
+    "clean": "shx rm -rf dist encoded/*",
+    "build": "tsc",
+    "dev": "ts-node src/bin.ts --source ./fixtures --target ./encoded"
+  },
+  "dependencies": {
+    "cli-progress": "3.12.0",
+    "plist": "3.1.0",
+    "xml-js": "1.6.11"
+  },
+  "devDependencies": {
+    "@types/cli-progress": "3.11.0",
+    "@types/node": "18.16.15",
+    "@types/plist": "3.0.2",
+    "eslint": "8.48.0",
+    "eslint-plugin-import": "2.28.1",
+    "shx": "0.3.4",
+    "ts-node": "10.9.1",
+    "typescript": "5.2.2"
+  }
+}
