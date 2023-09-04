@@ -1,44 +1,5 @@
-:host {
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-}
-
-menu {
-  // https://css-tricks.com/css-variables-calc-rgb-enforcing-high-contrast-colors/
-  --accessible-color: calc(((((var(--r) * 299) + (var(--g) * 587) + (var(--b) * 114)) / 1000) - 128) * -1000);
-
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding-left: 100px;
-
-  &::before {
-    position: absolute;
-    inset: 0 auto 0 0;
-
-    aspect-ratio: 1 / 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: right;
-
-    counter-reset: r var(--r) g var(--g) b var(--b);
-    content: counter(r) '\a'counter(g) '\a'counter(b);
-    font: 0.95em/1 monospace;
-    white-space: pre;
-
-    --bg: rgb(var(--r) var(--g) var(--b) / calc(var(--a) / 255));
-    --fg: rgb(var(--accessible-color), var(--accessible-color), var(--accessible-color));
-    background-image: linear-gradient(to right, var(--bg), var(--bg)),  linear-gradient(to right, #fff, #fff);
-    color: var(--fg);
-    border-radius: 50%;
-  }
-}
-
 label {
-  display: grid;
-  grid-template: 'label input value' auto / 20px 300px 30px;
-  grid-gap: 5px;
-  justify-items: end;
+  display: block;
 }
 
 input {

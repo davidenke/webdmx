@@ -1,8 +1,9 @@
 import { LitElement, type TemplateResult, html, unsafeCSS } from 'lit';
 import { customElement, eventOptions, state } from 'lit/decorators.js';
+import { choose } from 'lit/directives/choose.js';
 import { styleMap } from 'lit/directives/style-map.js';
 
-import { DMX, EnttecOpenUSBDMXDriver } from '@webdmx/controller';
+import { DMX, EnttecOpenUSBDMXDriver, type Preset, type Slider } from '@webdmx/controller';
 
 import styles from './root.component.scss?inline';
 
@@ -21,11 +22,11 @@ export class Root extends LitElement {
 
   @state() idle = true;
   @state() connected = false;
-
-  @state() r = 0;
-  @state() g = 0;
-  @state() b = 0;
-  @state() a = 0;
+  @state() presets: Record<string, Preset | undefined> = Object.fromEntries(
+    this.#dmx.presetNames.map((name) => [name, undefined])
+  );
+  @state() selectedPreset: string = this.#dmx.presetNames[0];
+  @state() selectedProfile?: string;
 
   @eventOptions({ passive: true })
   private handleStaging({ detail }: CustomEvent<boolean>) {
@@ -41,15 +42,14 @@ export class Root extends LitElement {
   }
 
   @eventOptions({ passive: true })
-  private async connect() {
+  private async handleConnectClick() {
     await this.#dmx.addUniverse('default', this.#driver);
     this.#driver.addEventListener('staging', this.#handleStaging);
     this.connected = true;
   }
 
   @eventOptions({ passive: true })
-  private async disconnect() {
-    this.r = this.g = this.b = this.a = 0;
+  private async handleDisconnectClick() {
     this.#dmx.updateAll('default', 0);
 
     await new Promise((resolve) => setTimeout(resolve, 500));
@@ -58,49 +58,100 @@ export class Root extends LitElement {
     this.connected = false;
   }
 
+  @eventOptions({ passive: true })
+  private updateRangeInput(event: InputEvent) {
+    const { dataset, valueAsNumber } = event.target as HTMLInputElement;
+    const { channel } = dataset;
+    this.#dmx.update('default', { [parseInt(channel!)]: valueAsNumber });
+  }
+
+  @eventOptions({ passive: true })
+  private async handlePresetChange(event: InputEvent) {
+    // read the selected preset name
+    const { value: name } = event.target as HTMLInputElement;
+    this.selectedPreset = name;
+    this.selectedProfile = undefined;
+    // load preset if missing
+    this.#loadPreset(this.selectedPreset);
+  }
+
+  @eventOptions({ passive: true })
+  private async handleProfileChange(event: InputEvent) {
+    // read the selected profile name
+    const { value: name } = event.target as HTMLInputElement;
+    this.selectedProfile = name;
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.#loadPreset(this.selectedPreset);
+  }
+
   override async disconnectedCallback() {
     await this.#dmx.close();
     super.disconnectedCallback();
   }
 
-  @eventOptions({ passive: true })
-  private updateRange(event: InputEvent) {
-    const { dataset, valueAsNumber } = event.target as HTMLInputElement;
-    const { channel, prop } = dataset;
-    this[prop as keyof this] = valueAsNumber as any;
-    this.#dmx.update('default', { [parseInt(channel!)]: valueAsNumber });
+  async #loadPreset(name: string) {
+    // load preset if missing
+    if (this.presets[name] === undefined) {
+      this.presets[name] = await this.#dmx.loadPreset(name);
+    }
+    if (this.selectedProfile === undefined) {
+      this.selectedProfile = Object.keys(this.presets[name]?.profiles ?? {})[0];
+    }
   }
 
-  #renderRange(label: string, prop: 'r' | 'g' | 'b' | 'a', channel: number): TemplateResult {
+  #renderRange(control: Slider, channel: number): TemplateResult {
     return html`
       <label>
-        ${label}
+        ${control.label}
         <input
           type="range"
-          min="0"
-          max="255"
-          step="1"
+          min="${control.from}"
+          max="${control.to}"
+          step="${control.step}"
           data-channel="${`${channel}`}"
-          data-prop="${prop}"
           ?disabled="${!this.connected}"
-          .valueAsNumber="${this[prop]}"
-          @input="${this.updateRange}"
+          .valueAsNumber="${0}"
+          @input="${this.updateRangeInput}"
         />
-        ${this[prop]}
       </label>
     `;
   }
 
   protected override render(): TemplateResult {
     return html`
-      <pre>${this.idle ? 'idle' : 'sending'}</pre>
-      <button ?disabled="${!this.idle || this.connected}" @click="${this.connect}">Connect</button>
-      <button ?disabled="${!this.idle || !this.connected}" @click="${this.disconnect}">Disconnect</button>
+      <button ?disabled="${!this.idle || this.connected}" @click="${this.handleConnectClick}">Connect</button>
+      <button ?disabled="${!this.idle || !this.connected}" @click="${this.handleDisconnectClick}">Disconnect</button>
 
-      <menu style="${styleMap({ '--r': `${this.r}`, '--g': `${this.g}`, '--b': `${this.b}`, '--a': `${this.a}` })}">
-        ${this.#renderRange('R', 'r', 2)} ${this.#renderRange('G', 'g', 3)} ${this.#renderRange('B', 'b', 4)}
-        ${this.#renderRange('A', 'a', 0)}
-      </menu>
+      <section>
+        <nav>
+          <select ?disabled="${!this.connected}" @change="${this.handlePresetChange}">
+            ${Object.keys(this.presets).map(
+              (name) => html`<option ?selected="${this.selectedPreset === name}" .value="${name}">${name}</option>`
+            )}
+          </select>
+
+          <select ?disabled="${!this.connected}" @change="${this.handleProfileChange}">
+            ${Object.keys(this.presets[this.selectedPreset]?.profiles ?? {}).map(
+              (name) => html`<option ?selected="${this.selectedProfile === name}" .value="${name}">${name}</option>`
+            )}
+          </select>
+        </nav>
+
+        <menu>
+          ${this.presets[this.selectedPreset]?.profiles?.[this.selectedProfile!]?.channels?.map(
+            (channel, index) =>
+              html` ${choose(this.presets[this.selectedPreset]?.controls?.[channel]?.type, [
+                [
+                  'slider',
+                  () => this.#renderRange(this.presets[this.selectedPreset]?.controls?.[channel] as Slider, index),
+                ],
+              ])}`
+          )}
+        </menu>
+      </section>
     `;
   }
 }
