@@ -1,32 +1,35 @@
-import type { Device } from './types/device.types.js';
+import type { Preset } from './types/preset.types.js';
 import type { SerialDriver } from './drivers/serial.driver.js';
+import type { Channels } from './types/universe.types.js';
 
-import generic from '../presets/generic.preset.json' assert { type: 'json' };
-import genericRGB from '../presets/generic-rgb.preset.json' assert { type: 'json' };
-import { Channels } from './types/universe.types.js';
-
-const PREDEFINED_DEVICES = {
-  generic,
-  genericRGB,
-} satisfies Record<string, Device>;
-
-export interface DmxOptions {
-  devices: Record<string, Device>;
-}
+// import the generated index file to retrieve a list of all presets,
+// to be loaded once necessary in the UI
+import PRESETS from '../presets/presets.json' assert { type: 'json' };
 
 export class DMX {
-  readonly #devices = new Map<string, Device>();
+  readonly #presets = PRESETS;
   readonly #universes = new Map<string, SerialDriver>();
 
-  constructor({ devices = {} }: Partial<DmxOptions> = {}) {
-    this.#devices = new Map([
-      // set predefined devices first (may be overwritten)
-      ...Object.entries<Device>(PREDEFINED_DEVICES),
-      // add the custom devices
-      ...Object.entries(devices),
-    ]);
+  /**
+   * Returns a list of all available presets by name.
+   */
+  get presetNames() {
+    return Object.keys(this.#presets) as Array<keyof typeof PRESETS>;
   }
 
+  /**
+   * Load a preset by its name.
+   */
+  async loadPreset(name: keyof typeof PRESETS): Promise<Preset | undefined> {
+    if (!(name in this.#presets)) return;
+    const path = this.#presets[name];
+    const { default: preset } = await import(`../presets/${path}.json`);
+    return preset;
+  }
+
+  /**
+   * Add a universe to the DMX controller.
+   */
   async addUniverse(name: string, driver: SerialDriver): Promise<void> {
     await driver.connect();
     await driver.open();

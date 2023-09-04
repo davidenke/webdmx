@@ -1,0 +1,52 @@
+{
+  "$schema": "./preset.schema.json",
+  "name": "Cameo Root PAR 4",
+  "controls": {
+    "dimmer": {
+      "label": "Dimmer",
+      "type": "slider",
+      "min": 0,
+      "max": 255,
+      "step": 1
+    },
+    "red": {
+      "label": "Red",
+      "type": "slider",
+      "from": 0,
+      "to": 255,
+      "step": 1
+    },
+    "green": {
+      "label": "Green",
+      "type": "slider",
+      "from": 0,
+      "to": 255,
+      "step": 1
+    },
+    "blue": {
+      "label": "Blue",
+      "type": "slider",
+      "from": 0,
+      "to": 255,
+      "step": 1
+    },
+    "white": {
+      "label": "White",
+      "type": "slider",
+      "from": 0,
+      "to": 255,
+      "step": 1
+    },
+    "strobe": {
+      "label": "Strobe",
+      "type": "options",
+      "options": []
+    }
+  },
+  "profiles": {
+    "7CH": {
+      "label": "Default",
+      "channels": ["dimmer", "strobe", "red", "green", "blue", "white"]
+    }
+  }
+}

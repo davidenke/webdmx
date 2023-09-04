@@ -1,0 +1,40 @@
+{
+  "$schema": "./preset.schema.json",
+  "name": "U’King 36 LED PAR Light",
+  "controls": {
+    "dimmer": {
+      "label": "Master Dimmer",
+      "type": "slider",
+      "from": 0,
+      "to": 255,
+      "step": 1
+    },
+    "red": {
+      "label": "Red",
+      "type": "slider",
+      "from": 0,
+      "to": 255,
+      "step": 1
+    },
+    "green": {
+      "label": "Green",
+      "type": "slider",
+      "from": 0,
+      "to": 255,
+      "step": 1
+    },
+    "blue": {
+      "label": "Blue",
+      "type": "slider",
+      "from": 0,
+      "to": 255,
+      "step": 1
+    }
+  },
+  "profiles": {
+    "default": {
+      "label": "Default",
+      "channels": ["dimmer", "red", "green", "blue"]
+    }
+  }
+}

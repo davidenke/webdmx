@@ -98,7 +98,7 @@ export class Root extends LitElement {
       <button ?disabled="${!this.idle || !this.connected}" @click="${this.disconnect}">Disconnect</button>
 
       <menu style="${styleMap({ '--r': `${this.r}`, '--g': `${this.g}`, '--b': `${this.b}`, '--a': `${this.a}` })}">
-        ${this.#renderRange('R', 'r', 1)} ${this.#renderRange('G', 'g', 2)} ${this.#renderRange('B', 'b', 3)}
+        ${this.#renderRange('R', 'r', 2)} ${this.#renderRange('G', 'g', 3)} ${this.#renderRange('B', 'b', 4)}
         ${this.#renderRange('A', 'a', 0)}
       </menu>
     `;

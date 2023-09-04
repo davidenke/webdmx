@@ -27,5 +27,9 @@ node_modules
 .DS_Store
 coverage
 
+# generated files
+src/index.ts
+presets/preset.schema.json
+presets/presets.json
 fixtures/*
 !fixtures/.gitkeep
