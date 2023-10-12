@@ -1,7 +1,7 @@
 import { exec as _exec } from 'node:child_process';
+import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { extname, parse, resolve } from 'node:path';
 import { cwd, exit } from 'node:process';
-import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { parseArgs, promisify } from 'node:util';
 
 import { Presets, SingleBar } from 'cli-progress';

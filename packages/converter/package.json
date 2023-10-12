@@ -21,7 +21,7 @@
     "lint": "npx eslint . -c .eslintrc --ext .ts",
     "clean": "shx rm -rf dist encoded/*",
     "build": "tsc",
-    "dev": "ts-node src/bin.ts --source ./fixtures --target ./encoded"
+    "dev": "node --loader ts-node/esm src/bin.ts --source ./fixtures --target ./encoded"
   },
   "dependencies": {
     "cli-progress": "3.12.0",
@@ -29,11 +29,20 @@
     "xml-js": "1.6.11"
   },
   "devDependencies": {
-    "@types/cli-progress": "3.11.0",
-    "@types/node": "18.16.15",
-    "@types/plist": "3.0.2",
-    "eslint": "8.48.0",
+    "@types/cli-progress": "3.11.3",
+    "@types/node": "20.8.4",
+    "@types/plist": "3.0.3",
+    "@typescript-eslint/eslint-plugin": "6.7.5",
+    "@webdmx/common": "workspace:*",
+    "eslint": "8.51.0",
+    "eslint-config-prettier": "9.0.0",
+    "eslint-import-resolver-typescript": "3.6.1",
+    "eslint-plugin-deprecation": "2.0.0",
     "eslint-plugin-import": "2.28.1",
+    "eslint-plugin-prettier": "5.0.1",
+    "eslint-plugin-simple-import-sort": "10.0.0",
+    "eslint-plugin-unused-imports": "3.0.0",
+    "prettier": "3.0.3",
     "shx": "0.3.4",
     "ts-node": "10.9.1",
     "typescript": "5.2.2"

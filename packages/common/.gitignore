@@ -22,8 +22,10 @@ node_modules
 .idea/*.xml
 .idea/*.iml
 .idea/inspectionProfiles
-.vscode/*
-!.vscode/settings.json
+.vscode
 
 .DS_Store
-*.tar.gz
+coverage
+
+# generated files
+src/index.ts

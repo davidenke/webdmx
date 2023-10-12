@@ -1,4 +1,4 @@
-# DMX
+# WebDMX
 
 A project to control DMX lights in a browser.
 
@@ -19,12 +19,24 @@ pnpm -r --filter @webdmx/controller dev
 
 # run only ui development server
 pnpm -r --filter @webdmx/ui dev
+
+# run complete ui with dependencies
+pnpm -r --parallel --filter @webdmx/common --filter @webdmx/controller --filter @webdmx/ui dev
 ```
+
+## Packages
+
+This monorepo consists of the following packages:
+
+- [`@webdmx/common`](./packages/common/README.md): Common code shared between packages
+- [`@webdmx/controller`](./packages/controller/README.md): DMX controller as high level API
+- [`@webdmx/ui`](./packages/ui/README.md): UI to control DMX lights
+- [`@webdmx/app`](./packages/app/README.md): A standalone desktop app packaging the UI
 
 ## Update dependencies
 
 Bump dependencies to latest version in all packages:
-  
+
 ```bash
 pnpm -r exec pnpx npm-check-updates -u
 ```

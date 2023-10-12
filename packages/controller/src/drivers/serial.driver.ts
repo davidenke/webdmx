@@ -1,4 +1,4 @@
-import type { Channels, Universe } from '../types/universe.types.js';
+import type { Channels, Universe } from '@webdmx/common';
 
 export type SerialDriverBaseOptions = SerialOptions & { sendInterval: number };
 
@@ -51,7 +51,7 @@ export abstract class SerialDriver<
   override addEventListener<K extends keyof SerialDriverEventMap | string>(
     type: K,
     listener: K extends keyof SerialDriverEventMap
-      ? (this: SerialDriver, ev: SerialDriverEventMap[K]) => any
+      ? (this: SerialDriver, ev: SerialDriverEventMap[K]) => void
       : EventListenerOrEventListenerObject,
     options?: boolean | AddEventListenerOptions
   ) {
@@ -60,7 +60,7 @@ export abstract class SerialDriver<
   override removeEventListener<K extends keyof SerialDriverEventMap | string>(
     type: K,
     listener: K extends keyof SerialDriverEventMap
-      ? (this: SerialDriver, ev: SerialDriverEventMap[K]) => any
+      ? (this: SerialDriver, ev: SerialDriverEventMap[K]) => void
       : EventListenerOrEventListenerObject,
     options?: boolean | AddEventListenerOptions
   ) {

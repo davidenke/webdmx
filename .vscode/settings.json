@@ -1,0 +1,9 @@
+{
+  "eslint.workingDirectories": [
+    "./packages/app",
+    "./packages/common",
+    "./packages/controller",
+    "./packages/converter",
+    "./packages/ui"
+  ]
+}

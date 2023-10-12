@@ -1,4 +1,4 @@
-# DMX UI
+# WebDMX UI
 
 A simple UI for controlling DMX lights in the browser via USB.
 

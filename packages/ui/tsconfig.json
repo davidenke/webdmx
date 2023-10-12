@@ -19,7 +19,8 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "verbatimModuleSyntax": true
   },
   "exclude": ["node_modules", "dist"],
   "ts-node": {

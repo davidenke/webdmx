@@ -1,7 +1,6 @@
 import { LitElement, type TemplateResult, html, unsafeCSS } from 'lit';
 import { customElement, eventOptions, state } from 'lit/decorators.js';
 import { choose } from 'lit/directives/choose.js';
-import { styleMap } from 'lit/directives/style-map.js';
 
 import { DMX, EnttecOpenUSBDMXDriver, type Preset, type Slider } from '@webdmx/controller';
 

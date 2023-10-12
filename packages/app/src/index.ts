@@ -1,5 +1,5 @@
 import { platform } from 'node:process';
-// @ts-expect-error as we're using a nightly release of Electron
+// eslint-disable-next-line import/no-unresolved
 import { app, BrowserWindow } from 'electron';
 import { createWindow } from './create-window.js';
 

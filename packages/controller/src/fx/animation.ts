@@ -1,4 +1,5 @@
-import type { Channels, SerialDriver } from '../types/driver.types.js';
+import type { Channels } from '@webdmx/common';
+import type { SerialDriver } from '../drivers/serial.driver.js';
 import { EASING } from './easing.utils.js';
 
 // mutates the channels array in place
@@ -98,7 +99,8 @@ export class Animation {
           this.filters.forEach((filter) => filter(completedAnimationStatesToSet));
         }
 
-        driver.update(completedAnimationStatesToSet, { origin: 'transition' });
+        // driver.update(completedAnimationStatesToSet, { origin: 'transition' });
+        driver.update(completedAnimationStatesToSet);
       }
 
       this.lastAnimation = currentAnimation;
@@ -128,7 +130,7 @@ export class Animation {
           const length = Object.keys(transition.to).length;
           transition.from = new Uint8Array(length);
           for (const k in transition.to) {
-            transition.from[k] = driver?.get(Number(k));
+            transition.from[k] = driver.get(Number(k)) ?? 0;
           }
           if (transition.options.from) {
             transition.from = Object.assign(transition.from, transition.options.from);
@@ -150,7 +152,8 @@ export class Animation {
             this.filters.forEach((filter) => filter(intermediateValues));
           }
 
-          driver.update(intermediateValues, { origin: 'transition' });
+          // driver.update(intermediateValues, { origin: 'transition' });
+          driver.update(intermediateValues);
         }
       }
     };
