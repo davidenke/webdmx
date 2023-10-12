@@ -1,8 +1,7 @@
-import { LitElement, type TemplateResult, html, unsafeCSS } from 'lit';
+import { DMX, EnttecOpenUSBDMXDriver, type Preset, type Slider } from '@webdmx/controller';
+import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
 import { customElement, eventOptions, state } from 'lit/decorators.js';
 import { choose } from 'lit/directives/choose.js';
-
-import { DMX, EnttecOpenUSBDMXDriver, type Preset, type Slider } from '@webdmx/controller';
 
 import styles from './root.component.scss?inline';
 
@@ -22,7 +21,7 @@ export class Root extends LitElement {
   @state() idle = true;
   @state() connected = false;
   @state() presets: Record<string, Preset | undefined> = Object.fromEntries(
-    this.#dmx.presetNames.map((name) => [name, undefined])
+    this.#dmx.presetNames.map((name) => [name, undefined]),
   );
   @state() selectedPreset: string = this.#dmx.presetNames[0];
   @state() selectedProfile?: string;
@@ -128,13 +127,13 @@ export class Root extends LitElement {
         <nav>
           <select ?disabled="${!this.connected}" @change="${this.handlePresetChange}">
             ${Object.keys(this.presets).map(
-              (name) => html`<option ?selected="${this.selectedPreset === name}" .value="${name}">${name}</option>`
+              (name) => html`<option ?selected="${this.selectedPreset === name}" .value="${name}">${name}</option>`,
             )}
           </select>
 
           <select ?disabled="${!this.connected}" @change="${this.handleProfileChange}">
             ${Object.keys(this.presets[this.selectedPreset]?.profiles ?? {}).map(
-              (name) => html`<option ?selected="${this.selectedProfile === name}" .value="${name}">${name}</option>`
+              (name) => html`<option ?selected="${this.selectedProfile === name}" .value="${name}">${name}</option>`,
             )}
           </select>
         </nav>
@@ -147,7 +146,7 @@ export class Root extends LitElement {
                   'slider',
                   () => this.#renderRange(this.presets[this.selectedPreset]?.controls?.[channel] as Slider, index),
                 ],
-              ])}`
+              ])}`,
           )}
         </menu>
       </section>

@@ -1,4 +1,5 @@
 import type { Channels } from '@webdmx/common';
+
 import type { SerialDriver } from '../drivers/serial.driver.js';
 import { EASING } from './easing.utils.js';
 

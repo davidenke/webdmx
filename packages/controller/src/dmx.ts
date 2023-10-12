@@ -1,10 +1,9 @@
-import type { Preset } from './types/preset.types.js';
-import type { SerialDriver } from './drivers/serial.driver.js';
-import type { Channels } from './types/universe.types.js';
-
 // import the generated index file to retrieve a list of all presets,
 // to be loaded once necessary in the UI
 import PRESETS from '../presets/presets.json' assert { type: 'json' };
+import type { SerialDriver } from './drivers/serial.driver.js';
+import type { Preset } from './types/preset.types.js';
+import type { Channels } from './types/universe.types.js';
 
 export class DMX {
   readonly #presets = PRESETS;

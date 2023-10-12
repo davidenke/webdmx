@@ -19,7 +19,7 @@ declare global {
  * 7. disconnect()
  */
 export abstract class SerialDriver<
-  SerialDriverOptions extends SerialDriverBaseOptions = SerialDriverBaseOptions
+  SerialDriverOptions extends SerialDriverBaseOptions = SerialDriverBaseOptions,
 > extends EventTarget {
   static readonly CHANNELS = 512;
 
@@ -53,7 +53,7 @@ export abstract class SerialDriver<
     listener: K extends keyof SerialDriverEventMap
       ? (this: SerialDriver, ev: SerialDriverEventMap[K]) => void
       : EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ) {
     super.addEventListener(type, listener, options);
   }
@@ -62,7 +62,7 @@ export abstract class SerialDriver<
     listener: K extends keyof SerialDriverEventMap
       ? (this: SerialDriver, ev: SerialDriverEventMap[K]) => void
       : EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ) {
     super.removeEventListener(type, listener, options);
   }

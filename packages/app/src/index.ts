@@ -1,6 +1,8 @@
 import { platform } from 'node:process';
+
 // eslint-disable-next-line import/no-unresolved
 import { app, BrowserWindow } from 'electron';
+
 import { createWindow } from './create-window.js';
 
 // This method will be called when Electron has finished

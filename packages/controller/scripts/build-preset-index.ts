@@ -2,7 +2,7 @@
 
 /// <reference types="node" />
 
-import { readFile, readdir, writeFile } from 'node:fs/promises';
+import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { parse, resolve } from 'node:path';
 import { cwd } from 'node:process';
 import { parseArgs } from 'node:util';
