@@ -7,7 +7,7 @@
     "forceConsistentCasingInFileNames": true,
     "lib": ["es2020", "dom", "dom.iterable"],
     "module": "esnext",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "node",
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,

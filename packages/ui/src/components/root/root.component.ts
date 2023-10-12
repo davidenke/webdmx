@@ -1,4 +1,5 @@
-import { DMX, EnttecOpenUSBDMXDriver, type Preset, type Slider } from '@webdmx/controller';
+import type { Preset, Slider } from '@webdmx/common';
+import { DMX, EnttecOpenUSBDMXDriver } from '@webdmx/controller';
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
 import { customElement, eventOptions, state } from 'lit/decorators.js';
 import { choose } from 'lit/directives/choose.js';
@@ -6,9 +7,9 @@ import { choose } from 'lit/directives/choose.js';
 import styles from './root.component.scss?inline';
 
 /**
- * @element webdmxui-root
+ * @element webdmx-root
  */
-@customElement('webdmxui-root')
+@customElement('webdmx-root')
 export class Root extends LitElement {
   static override readonly styles = unsafeCSS(styles);
 
@@ -120,11 +121,13 @@ export class Root extends LitElement {
 
   protected override render(): TemplateResult {
     return html`
-      <button ?disabled="${!this.idle || this.connected}" @click="${this.handleConnectClick}">Connect</button>
-      <button ?disabled="${!this.idle || !this.connected}" @click="${this.handleDisconnectClick}">Disconnect</button>
+      <webdmx-layout>
+        <nav slot="header">
+          <button ?disabled="${!this.idle || this.connected}" @click="${this.handleConnectClick}">Connect</button>
+          <button ?disabled="${!this.idle || !this.connected}" @click="${this.handleDisconnectClick}">
+            Disconnect
+          </button>
 
-      <section>
-        <nav>
           <select ?disabled="${!this.connected}" @change="${this.handlePresetChange}">
             ${Object.keys(this.presets).map(
               (name) => html`<option ?selected="${this.selectedPreset === name}" .value="${name}">${name}</option>`,
@@ -138,7 +141,9 @@ export class Root extends LitElement {
           </select>
         </nav>
 
-        <menu>
+        <section></section>
+
+        <menu slot="footer">
           ${this.presets[this.selectedPreset]?.profiles?.[this.selectedProfile!]?.channels?.map(
             (channel, index) =>
               html` ${choose(this.presets[this.selectedPreset]?.controls?.[channel]?.type, [
@@ -149,13 +154,13 @@ export class Root extends LitElement {
               ])}`,
           )}
         </menu>
-      </section>
+      </webdmx-layout>
     `;
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'wcp-root': Root;
+    'webdmx-root': Root;
   }
 }

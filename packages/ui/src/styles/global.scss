@@ -1,3 +1,24 @@
 :root {
-  --webdmxui-base-size: 10px;
+  --webdmx-base-size: 10px;
+
+  --webdmx-color-grey-100: hsl(0, 0%, 100%);
+  --webdmx-color-grey-90: hsl(0, 0%, 90%);
+  --webdmx-color-grey-80: hsl(0, 0%, 80%);
+  --webdmx-color-grey-70: hsl(0, 0%, 70%);
+  --webdmx-color-grey-60: hsl(0, 0%, 60%);
+  --webdmx-color-grey-50: hsl(0, 0%, 50%);
+  --webdmx-color-grey-35: hsl(0, 0%, 35%);
+}
+
+html {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  background: var(--webdmx-color-grey-90);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+
+  margin: 0;
+  height: 100svh;
 }
