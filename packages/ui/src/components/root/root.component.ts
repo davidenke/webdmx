@@ -19,6 +19,7 @@ export class Root extends LitElement {
   #stagingTimeout?: number;
   #handleStaging = this.handleStaging.bind(this);
 
+  @state() editable = false;
   @state() idle = true;
   @state() connected = false;
   @state() presets: Record<string, Preset | undefined> = Object.fromEntries(
@@ -26,6 +27,12 @@ export class Root extends LitElement {
   );
   @state() selectedPreset: string = this.#dmx.presetNames[0];
   @state() selectedProfile?: string;
+
+  @eventOptions({ passive: true })
+  private handleModeChange() {
+    console.log('handleModeChange');
+    this.editable = !this.editable;
+  }
 
   @eventOptions({ passive: true })
   private handleStaging({ detail }: CustomEvent<boolean>) {
@@ -121,7 +128,7 @@ export class Root extends LitElement {
 
   protected override render(): TemplateResult {
     return html`
-      <webdmx-layout>
+      <webdmx-layout mode="${this.editable ? 'edit' : 'preview'}">
         <nav slot="header">
           <button ?disabled="${!this.idle || this.connected}" @click="${this.handleConnectClick}">Connect</button>
           <button ?disabled="${!this.idle || !this.connected}" @click="${this.handleDisconnectClick}">
@@ -139,6 +146,13 @@ export class Root extends LitElement {
               (name) => html`<option ?selected="${this.selectedProfile === name}" .value="${name}">${name}</option>`,
             )}
           </select>
+        </nav>
+
+        <nav slot="header">
+          <webdmx-switch ?active="${this.editable}" @webdmx-switch:toggle="${this.handleModeChange}">
+            <span slot="off">Preview</span>
+            <span slot="on">Edit</span>
+          </webdmx-switch>
         </nav>
 
         <section></section>

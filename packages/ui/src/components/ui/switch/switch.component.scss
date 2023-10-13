@@ -1,0 +1,125 @@
+:host {
+  // public api
+  ---webdmx-switch-knob-size: var(--webdmx-switch-knob-size, 20px);
+  ---webdmx-switch-label-gap: var(--webdmx-switch-label-gap, 0.75em);
+
+  // deferred properties based on public api
+  ---webdmx-switch-border-width: calc(var(---webdmx-switch-knob-size) / 10);
+  ---webdmx-switch-font-size: calc(var(---webdmx-switch-knob-size) / 2);
+  ---webdmx-switch-knob-from: 0%;
+  ---webdmx-switch-knob-to: calc(100% - var(---webdmx-switch-knob-size));
+  ---webdmx-switch-padding: calc(var(---webdmx-switch-label-gap) + var(---webdmx-switch-knob-size));
+}
+
+// compensate the outline
+:host {
+  display: inline-block;
+  padding: var(---webdmx-switch-border-width);
+}
+
+// the wrapper around everything -
+// usually this should be the host itself, but for convenience a label element is used
+// and the associated input element is used as knob
+label {
+  display: grid;
+  grid-template: 'off on' auto;
+
+  position: relative;
+  user-select: none;
+
+  outline: var(---webdmx-switch-border-width) solid var(--webdmx-color-grey-70);
+  border-radius: var(---webdmx-switch-knob-size);
+
+  overflow: hidden;
+  transition: grid-template-columns 0.2s ease-in-out;
+
+  :host([disabled]) & {
+    opacity: 0.5;
+  }
+
+  :host(:not([disabled])) {
+    cursor: pointer;
+  }
+
+  :host([active]) & {
+    grid-template-columns: 0fr 1fr;
+  }
+
+  :host(:not([active])) & {
+    grid-template-columns: 1fr 0fr;
+  }
+}
+
+// the knob
+input {
+  all: unset;
+
+  position: absolute;
+  inset: 0 auto;
+
+  display: block;
+  width: var(---webdmx-switch-knob-size);
+
+  aspect-ratio: 1 / 1;
+  content: '';
+
+  background-color: var(--webdmx-color-grey-90);
+  outline: var(---webdmx-switch-border-width) solid var(--webdmx-color-grey-70);
+  border-radius: 50%;
+
+  transition: left 0.2s ease-in-out;
+
+  :host([active]) & {
+    left: var(---webdmx-switch-knob-from);
+  }
+
+  :host(:not([active])) & {
+    left: var(---webdmx-switch-knob-to);
+  }
+}
+
+// the labels (on and off)
+slot {
+  display: block;
+
+  font-size: var(---webdmx-switch-font-size);
+  letter-spacing: 0.1em;
+  line-height: var(---webdmx-switch-knob-size);
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  overflow: hidden;
+  transition: 0.2s ease-in-out;
+  transition-property: padding-left, padding-right;
+
+  &[name='off'] {
+    grid-area: off;
+
+    background-color: var(--webdmx-color-grey-20);
+    color: var(--webdmx-color-grey-90);
+
+    :host([active]) & {
+      visibility: hidden;
+    }
+
+    :host(:not([active])) & {
+      padding: 0 var(---webdmx-switch-padding) 0 var(---webdmx-switch-label-gap);
+    }
+  }
+
+  &[name='on'] {
+    grid-area: on;
+
+    background-color: var(--webdmx-color-grey-100);
+    color: var(--webdmx-color-grey-35);
+
+    :host([active]) & {
+      padding: 0 var(---webdmx-switch-label-gap) 0 var(---webdmx-switch-padding);
+    }
+
+    :host(:not([active])) & {
+      visibility: hidden;
+    }
+  }
+}
