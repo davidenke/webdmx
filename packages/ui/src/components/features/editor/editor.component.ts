@@ -1,26 +1,22 @@
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-import styles from './layout.component.scss?inline';
+import styles from './editor.component.scss?inline';
 
 /**
- * @element webdmx-layout
+ * @element webdmx-editor
  */
-@customElement('webdmx-layout')
-export class Layout extends LitElement {
+@customElement('webdmx-editor')
+export class Editor extends LitElement {
   static override readonly styles = unsafeCSS(styles);
 
   override render(): TemplateResult {
-    return html`
-      <slot name="header"></slot>
-      <slot></slot>
-      <slot name="footer"></slot>
-    `;
+    return html`<span>Editor</span>`;
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'webdmx-layout': Layout;
+    'webdmx-editor': Editor;
   }
 }

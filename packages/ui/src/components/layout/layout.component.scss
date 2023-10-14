@@ -12,34 +12,7 @@ slot {
 
   // the default slot
   &:not([name]) {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-
-    :host([mode='edit']) & {
-      background-color: var(--webdmx-color-grey-90);
-      background-image:
-        // grid lines
-        linear-gradient(var(--webdmx-color-grey-80) 2px, transparent 2px),
-        linear-gradient(90deg, var(--webdmx-color-grey-80) 2px, transparent 2px),
-        // subgrid lines
-        linear-gradient(var(--webdmx-color-grey-80) 1px, transparent 1px),
-        linear-gradient(90deg, var(--webdmx-color-grey-80) 1px, var(--webdmx-color-grey-90) 1px);
-      background-size:
-        // grid line spacing
-        50px 50px,
-        50px 50px,
-        // subgrid line spacing
-        10px 10px,
-        10px 10px;
-      background-position:
-        // grid line offset
-        -2px -2px,
-        -2px -2px,
-        // subgrid line offset
-        -1px -1px,
-        -1px -1px;
-    }
+    flex: 1 0 auto;
   }
 
   // all named slots

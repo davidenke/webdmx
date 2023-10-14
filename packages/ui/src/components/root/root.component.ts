@@ -127,7 +127,7 @@ export class Root extends LitElement {
 
   protected override render(): TemplateResult {
     return html`
-      <webdmx-layout mode="${this.editable ? 'edit' : 'preview'}">
+      <webdmx-layout>
         <nav slot="header">
           <button ?disabled="${!this.idle || this.connected}" @click="${this.handleConnectClick}">Connect</button>
           <button ?disabled="${!this.idle || !this.connected}" @click="${this.handleDisconnectClick}">
@@ -154,7 +154,7 @@ export class Root extends LitElement {
           </webdmx-switch>
         </nav>
 
-        <section></section>
+        ${this.editing ? html`<webdmx-editor></webdmx-editor>` : html`<webdmx-preview></webdmx-preview>`}
 
         <menu slot="footer">
           ${this.presets[this.selectedPreset]?.profiles?.[this.selectedProfile!]?.channels?.map(
