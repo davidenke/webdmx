@@ -16,10 +16,10 @@ export class Root extends LitElement {
   #dmx = new DMX();
   #driver = new EnttecOpenUSBDMXDriver();
 
-  #stagingTimeout?: number;
-  #handleStaging = this.handleStaging.bind(this);
+  #transferringTimeout?: number;
+  #handleTransferring = this.handleTransferring.bind(this);
 
-  @state() editable = false;
+  @state() editing = false;
   @state() idle = true;
   @state() connected = false;
   @state() presets: Record<string, Preset | undefined> = Object.fromEntries(
@@ -30,19 +30,18 @@ export class Root extends LitElement {
 
   @eventOptions({ passive: true })
   private handleModeChange() {
-    console.log('handleModeChange');
-    this.editable = !this.editable;
+    this.editing = !this.editing;
   }
 
   @eventOptions({ passive: true })
-  private handleStaging({ detail }: CustomEvent<boolean>) {
-    // positive staging events are set immediately, but
-    // negative staging events are delayed to prevent flickering
+  private handleTransferring({ detail }: CustomEvent<boolean>) {
+    // positive transferring events are set immediately, but
+    // negative transferring events are delayed to prevent flickering
     if (detail) {
-      window.clearTimeout(this.#stagingTimeout);
+      window.clearTimeout(this.#transferringTimeout);
       this.idle = false;
-      this.#stagingTimeout = window.setTimeout(() => (this.idle = true), 200);
-    } else if (!this.#stagingTimeout) {
+      this.#transferringTimeout = window.setTimeout(() => (this.idle = true), 200);
+    } else if (!this.#transferringTimeout) {
       this.idle = true;
     }
   }
@@ -50,7 +49,7 @@ export class Root extends LitElement {
   @eventOptions({ passive: true })
   private async handleConnectClick() {
     await this.#dmx.addUniverse('default', this.#driver);
-    this.#driver.addEventListener('staging', this.#handleStaging);
+    this.#driver.addEventListener('transferring', this.#handleTransferring);
     this.connected = true;
   }
 
@@ -59,7 +58,7 @@ export class Root extends LitElement {
     this.#dmx.updateAll('default', 0);
 
     await new Promise((resolve) => setTimeout(resolve, 500));
-    this.#driver.removeEventListener('staging', this.#handleStaging);
+    this.#driver.removeEventListener('transferring', this.#handleTransferring);
     await this.#dmx.close();
     this.connected = false;
   }
@@ -149,7 +148,7 @@ export class Root extends LitElement {
         </nav>
 
         <nav slot="header">
-          <webdmx-switch ?active="${this.editable}" @webdmx-switch:toggle="${this.handleModeChange}">
+          <webdmx-switch ?active="${this.editing}" @webdmx-switch:toggle="${this.handleModeChange}">
             <span slot="off">Preview</span>
             <span slot="on">Edit</span>
           </webdmx-switch>

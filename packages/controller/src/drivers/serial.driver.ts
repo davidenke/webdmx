@@ -4,7 +4,7 @@ export type SerialDriverBaseOptions = SerialOptions & { sendInterval: number };
 
 declare global {
   interface SerialDriverEventMap {
-    staging: CustomEvent<boolean>;
+    transferring: CustomEvent<boolean>;
   }
 }
 
@@ -32,14 +32,14 @@ export abstract class SerialDriver<
 
   // every time the universe is changed, we set this flag
   // until the changes have been submitted to the device
-  #_staging = false;
+  #_transferring = false;
 
-  set #staging(staging: boolean) {
-    this.#_staging = staging;
-    this.dispatchEvent(new CustomEvent('staging', { detail: staging }));
+  set #transferring(transferring: boolean) {
+    this.#_transferring = transferring;
+    this.dispatchEvent(new CustomEvent('transferring', { detail: transferring }));
   }
-  get #staging(): boolean {
-    return this.#_staging;
+  get #transferring(): boolean {
+    return this.#_transferring;
   }
 
   // must be implemented by driver implementations
@@ -91,8 +91,8 @@ export abstract class SerialDriver<
     this.#interval = window.setInterval(async () => {
       // call the drivers send method
       await this.send(this.#serialPort!, this.#universe);
-      // reset the staging flag as all changes have been sent
-      this.#staging = false;
+      // reset the transferring flag as all changes have been sent
+      this.#transferring = false;
     }, this.options.sendInterval);
   }
 
@@ -110,7 +110,7 @@ export abstract class SerialDriver<
   }
 
   update(channels: Channels): void {
-    this.#staging = true;
+    this.#transferring = true;
     for (const channel in channels) {
       const value = channels[channel];
       this.#universe[channel] = value;
@@ -118,12 +118,12 @@ export abstract class SerialDriver<
   }
 
   updateFrom(from: number, values: ArrayLike<number>): void {
-    this.#staging = true;
+    this.#transferring = true;
     this.#universe.set(values, from);
   }
 
   updateAll(value: number): void {
-    this.#staging = true;
+    this.#transferring = true;
     this.#universe = this.#universe.fill(value, 0, SerialDriver.CHANNELS);
   }
 }
