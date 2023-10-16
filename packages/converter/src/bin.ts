@@ -4,9 +4,10 @@ import { extname, parse, resolve } from 'node:path';
 import { cwd, exit } from 'node:process';
 import { parseArgs, promisify } from 'node:util';
 
+import type { Preset } from '@webdmx/common';
 import { Presets, SingleBar } from 'cli-progress';
-import plist from 'plist';
-import { xml2json } from 'xml-js';
+
+import { convertPlistToPreset } from './convert-plist.js';
 
 // prepare promise based exec
 const exec = promisify(_exec);
@@ -29,16 +30,13 @@ if (!source || !target) {
 /**
  * Converts a given file from binary to xml and then to json.
  */
-async function convert(path: string): Promise<{ plist: string; raw: string }> {
+async function convert(path: string): Promise<Preset> {
   // convert file from binary to xml
   await exec(`plutil -convert xml1 '${path}'`);
   const xml = await readFile(path, 'utf-8');
   await exec(`plutil -convert binary1 '${path}'`);
-  // convert xml to json
-  const plistJson = plist.parse(xml);
-  const rawJson = xml2json(xml, { compact: true, spaces: 2 });
-  // return result
-  return { plist: JSON.stringify(plistJson, null, 2), raw: rawJson };
+  // convert xml to preset json
+  return convertPlistToPreset(xml);
 }
 
 // handles the tool
@@ -60,10 +58,10 @@ async function main() {
   // handle all given files
   for (const [i, fixture] of fixtures.entries()) {
     const { name } = parse(fixture);
-    const { plist, raw } = await convert(resolve(temp, fixture));
+    const plist = await convert(resolve(temp, fixture));
+    const content = JSON.stringify(plist, null, 2);
 
-    await writeFile(resolve(cwd(), target!, `${name}.plist.json`), plist);
-    await writeFile(resolve(cwd(), target!, `${name}.raw.json`), raw);
+    await writeFile(resolve(cwd(), target!, `${name}.json`), content);
 
     progress.update(i + 1);
   }

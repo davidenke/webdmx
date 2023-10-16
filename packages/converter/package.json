@@ -25,8 +25,7 @@
   },
   "dependencies": {
     "cli-progress": "3.12.0",
-    "plist": "3.1.0",
-    "xml-js": "1.6.11"
+    "plist": "3.1.0"
   },
   "devDependencies": {
     "@types/cli-progress": "3.11.3",
