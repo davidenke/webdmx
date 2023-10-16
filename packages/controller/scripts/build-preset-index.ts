@@ -7,6 +7,8 @@ import { parse, resolve } from 'node:path';
 import { cwd } from 'node:process';
 import { parseArgs } from 'node:util';
 
+import type { Preset } from '@webdmx/common';
+
 const { values } = parseArgs({
   options: {
     source: { type: 'string' },
@@ -27,7 +29,9 @@ const presets = files.filter((file) => file.endsWith('.preset.json'));
 const index: Record<string, string> = {};
 for await (const preset of presets) {
   const data = await readFile(resolve(from, preset), { encoding: 'utf-8' });
-  const { name } = JSON.parse(data) as { name: string };
-  index[name] = parse(preset).name;
+  const { label } = JSON.parse(data) satisfies Preset;
+  index[label] = parse(preset).name;
 }
-await writeFile(resolve(cwd(), target!), JSON.stringify(index, null, 2));
+
+const contents = `${JSON.stringify(index, null, 2)}\n`;
+await writeFile(resolve(cwd(), target!), contents);

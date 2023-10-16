@@ -1,5 +1,5 @@
 import type { Preset, Slider } from '@webdmx/common';
-import { DMX, EnttecOpenUSBDMXDriver } from '@webdmx/controller';
+import { DMX, type DriverName, type SerialDriver } from '@webdmx/controller';
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
 import { customElement, eventOptions, state } from 'lit/decorators.js';
 import { choose } from 'lit/directives/choose.js';
@@ -14,7 +14,7 @@ export class Root extends LitElement {
   static override readonly styles = unsafeCSS(styles);
 
   #dmx = new DMX();
-  #driver = new EnttecOpenUSBDMXDriver();
+  #driver!: SerialDriver;
 
   #transferringTimeout?: number;
   #handleTransferring = this.handleTransferring.bind(this);
@@ -23,9 +23,9 @@ export class Root extends LitElement {
   @state() idle = true;
   @state() connected = false;
   @state() presets: Record<string, Preset | undefined> = Object.fromEntries(
-    this.#dmx.presetNames.map((name) => [name, undefined]),
+    DMX.presetNames.map((name) => [name, undefined]),
   );
-  @state() selectedPreset: string = this.#dmx.presetNames[0];
+  @state() selectedPreset: string = DMX.presetNames[0];
   @state() selectedProfile?: string;
 
   @eventOptions({ passive: true })
@@ -87,9 +87,15 @@ export class Root extends LitElement {
     this.selectedProfile = name;
   }
 
-  override connectedCallback() {
+  override async connectedCallback() {
     super.connectedCallback();
     this.#loadPreset(this.selectedPreset);
+
+    const driverName: DriverName = 'enttec-open-dmx-usb';
+    const driver = await DMX.loadDriver(driverName);
+
+    if (!driver) throw new Error(`Driver "${driverName}" not found`);
+    this.#driver = new driver();
   }
 
   override async disconnectedCallback() {
@@ -100,7 +106,7 @@ export class Root extends LitElement {
   async #loadPreset(name: string) {
     // load preset if missing
     if (this.presets[name] === undefined) {
-      this.presets[name] = await this.#dmx.loadPreset(name);
+      this.presets[name] = await DMX.loadPreset(name);
     }
     if (this.selectedProfile === undefined) {
       this.selectedProfile = Object.keys(this.presets[name]?.profiles ?? {})[0];

@@ -1,6 +1,6 @@
 {
   "$schema": "./preset.schema.json",
-  "name": "Cameo Root PAR 4",
+  "label": "Cameo Root PAR 4",
   "controls": {
     "dimmer": {
       "label": "Dimmer",

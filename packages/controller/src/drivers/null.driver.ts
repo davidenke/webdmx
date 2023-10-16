@@ -1,6 +1,6 @@
 import { SerialDriver } from './serial.driver.js';
 
-export class NullDriver extends SerialDriver {
+export default class NullDriver extends SerialDriver {
   override readonly filers = [];
   override readonly options = {
     baudRate: 0,

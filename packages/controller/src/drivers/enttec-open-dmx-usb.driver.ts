@@ -1,6 +1,6 @@
 import { SerialDriver } from './serial.driver.js';
 
-export class EnttecOpenUSBDMXDriver extends SerialDriver {
+export default class EnttecOpenUSBDMXDriver extends SerialDriver {
   override readonly filers = [];
   override readonly options = {
     baudRate: 250000,

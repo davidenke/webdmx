@@ -5,21 +5,37 @@ import type { Channels, Preset } from '@webdmx/common';
 import PRESETS from '../presets/presets.json' assert { type: 'json' };
 import type { SerialDriver } from './drivers/serial.driver.js';
 
+export const DRIVERS = ['enttec-open-dmx-usb', 'null'] as const;
+export type DriverName = (typeof DRIVERS)[number];
+
 export class DMX {
-  readonly #presets = PRESETS;
+  static readonly #presets = PRESETS;
   readonly #universes = new Map<string, SerialDriver>();
+
+  /**
+   * Returns a list of all available drivers by name.
+   */
+  static get driverNames() {
+    return DRIVERS;
+  }
 
   /**
    * Returns a list of all available presets by name.
    */
-  get presetNames() {
+  static get presetNames() {
     return Object.keys(this.#presets) as Array<keyof typeof PRESETS>;
+  }
+
+  static async loadDriver(name: DriverName): Promise<{ new (): SerialDriver } | undefined> {
+    if (!DRIVERS.includes(name)) return;
+    const { default: driver } = await import(`./drivers/${name}.driver.ts`);
+    return driver;
   }
 
   /**
    * Load a preset by its name.
    */
-  async loadPreset(name: keyof typeof PRESETS): Promise<Preset | undefined> {
+  static async loadPreset(name: keyof typeof PRESETS): Promise<Preset | undefined> {
     if (!(name in this.#presets)) return;
     const path = this.#presets[name];
     const { default: preset } = await import(`../presets/${path}.json`);

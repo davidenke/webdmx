@@ -1,6 +1,6 @@
 {
   "$schema": "./preset.schema.json",
-  "name": "U’King 36 LED PAR Light",
+  "label": "U’King 36 LED PAR Light",
   "controls": {
     "dimmer": {
       "label": "Master Dimmer",
