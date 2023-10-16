@@ -1,4 +1,4 @@
-name: Deploy
+name: Checks and Deploy
 
 on:
   push:
@@ -17,16 +17,19 @@ concurrency:
 
 jobs:
   build:
-    name: Build
+    name: Checks
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup node from .nvmrc
+        uses: actions/setup-node@v3
         with:
-          node-version: 18.16.0
-      - uses: pnpm/action-setup@v2
+          node-version-file: ".nvmrc"
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 8.9.0
           run_install: false
       - name: Get pnpm store directory
         shell: bash
@@ -41,6 +44,13 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
         run: pnpm install
+
+      - name: Lint
+        run: pnpm -r --parallel --filter "@webdmx/*" lint
+
+      - name: Test
+        run: pnpm -r --parallel --filter "@webdmx/*" --if-present test
+
       - name: Build
         run: pnpm -r --filter @webdmx/ui... build
       - uses: actions/upload-artifact@v3
