@@ -14,6 +14,7 @@
     "dist"
   ],
   "scripts": {
+    "postinstall": "run-s -lns build",
     "lint": "npx eslint . -c .eslintrc --ext .ts",
     "build:index:barrel": "barrelsby --config .barrelsby.json",
     "build:index:fixup": "shx sed -i \"s/';/\\.js';/g\" src/index.ts",

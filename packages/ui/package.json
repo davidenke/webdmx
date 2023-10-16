@@ -13,6 +13,7 @@
     "dist"
   ],
   "scripts": {
+    "postinstall": "run-s -lns build:index",
     "lint": "npx eslint . -c .eslintrc --ext .ts",
     "predev": "run-s build",
     "dev": "vite",

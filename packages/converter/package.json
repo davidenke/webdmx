@@ -18,6 +18,7 @@
     "dist"
   ],
   "scripts": {
+    "postinstall": "tsc",
     "lint": "npx eslint . -c .eslintrc --ext .ts",
     "clean": "shx rm -rf dist encoded/*",
     "build": "tsc",

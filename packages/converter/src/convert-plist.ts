@@ -1,4 +1,4 @@
-import type { Control, Option, Preset, Slider } from '@webdmx/common';
+import type { Preset } from '@webdmx/common';
 import plist, { type PlistObject } from 'plist';
 
 type PlistData = PlistObject & {
@@ -25,7 +25,7 @@ export function convertPlistToPreset(plistData: string): Preset {
   // eslint-disable-next-line import/no-named-as-default-member
   const parsedData = plist.parse(plistData) as PlistData;
   const preset: Preset = {
-    name: `${parsedData.$name}`,
+    label: `${parsedData.$name}`,
     profiles: {},
     controls: {},
   };
@@ -42,39 +42,39 @@ export function convertPlistToPreset(plistData: string): Preset {
   });
 
   // Parse controls
-  const controls = parsedData.$objects.filter((obj) => obj.$class && obj.$class === 'LXControl');
-  controls.forEach((control) => {
-    const controlType = control.$class.split('.').pop();
-    if (controlType === 'LXOptionControl') {
-      const options = control.options.$objects.map((option) => {
-        if (option.$class.split('.').pop() === 'LXSlider') {
-          return {
-            label: option.$label,
-            from: option.$from,
-            to: option.$to,
-            step: option.$step,
-          } as Slider;
-        } else {
-          return {
-            label: option.$label,
-            value: option.$value,
-          } as Option;
-        }
-      });
-      preset.controls[control.$label] = {
-        type: 'options',
-        options,
-      } as Control;
-    } else if (controlType === 'LXSliderControl') {
-      preset.controls[control.$label] = {
-        type: 'slider',
-        label: control.$label,
-        from: control.$from,
-        to: control.$to,
-        step: control.$step,
-      } as Control;
-    }
-  });
+  // const controls = parsedData.$objects.filter((obj) => obj.$class && obj.$class === 'LXControl');
+  // controls.forEach((control) => {
+  // const controlType = control.$class.split('.').pop();
+  // if (controlType === 'LXOptionControl') {
+  //   const options = control.options.$objects.map((option) => {
+  //     if (option.$class.split('.').pop() === 'LXSlider') {
+  //       return {
+  //         label: option.$label,
+  //         from: option.$from,
+  //         to: option.$to,
+  //         step: option.$step,
+  //       } as Slider;
+  //     } else {
+  //       return {
+  //         label: option.$label,
+  //         value: option.$value,
+  //       } as Option;
+  //     }
+  //   });
+  //   preset.controls[control.$label] = {
+  //     type: 'options',
+  //     options,
+  //   } as Control;
+  // } else if (controlType === 'LXSliderControl') {
+  //   preset.controls[control.$label] = {
+  //     type: 'slider',
+  //     label: control.$label,
+  //     from: control.$from,
+  //     to: control.$to,
+  //     step: control.$step,
+  //   } as Control;
+  // }
+  // });
 
   return preset;
 }

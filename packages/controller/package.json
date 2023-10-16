@@ -15,6 +15,7 @@
     "dist"
   ],
   "scripts": {
+    "postinstall": "run-s -lns build",
     "convert": "xfix --source '/Applications/Lightkey.app/Contents/Resources/Fixture Profiles' --target ./fixtures",
     "lint": "npx eslint . -c .eslintrc --ext .ts",
     "build:index:barrel": "barrelsby --config .barrelsby.json",
