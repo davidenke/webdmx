@@ -3,7 +3,9 @@ import { DMX, type DriverName, type SerialDriver } from '@webdmx/controller';
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
 import { customElement, eventOptions, state } from 'lit/decorators.js';
 import { choose } from 'lit/directives/choose.js';
+import { when } from 'lit/directives/when.js';
 
+import { type Data, loadData } from '../../utils/data.utils.js';
 import styles from './root.component.scss?inline';
 
 /**
@@ -13,6 +15,8 @@ import styles from './root.component.scss?inline';
 export class Root extends LitElement {
   static override readonly styles = unsafeCSS(styles);
 
+  #data?: Data;
+
   #dmx = new DMX();
   #driver!: SerialDriver;
 
@@ -20,8 +24,10 @@ export class Root extends LitElement {
   #handleTransferring = this.handleTransferring.bind(this);
 
   @state() editing = false;
+  @state() canPreview = true;
   @state() idle = true;
   @state() connected = false;
+  @state() selectedUniverse?: string;
   @state() presets: Record<string, Preset | undefined> = Object.fromEntries(
     DMX.presetNames.map((name) => [name, undefined]),
   );
@@ -44,6 +50,12 @@ export class Root extends LitElement {
     } else if (!this.#transferringTimeout) {
       this.idle = true;
     }
+  }
+
+  @eventOptions({ passive: true })
+  private handleUniverseChange(event: InputEvent) {
+    const { value } = event.target as HTMLInputElement;
+    this.selectedUniverse = value;
   }
 
   @eventOptions({ passive: true })
@@ -89,6 +101,19 @@ export class Root extends LitElement {
 
   override async connectedCallback() {
     super.connectedCallback();
+
+    // load stored data (or initialize with empty data)
+    this.#data = await loadData();
+    // pre-select the first universe if only one is available
+    if (this.#data.universes.length === 1) {
+      this.selectedUniverse = this.#data.universes[0].label;
+    }
+    // prevent preview mode if no universes are configured
+    if (!this.#data.universes.length) {
+      this.canPreview = false;
+      this.editing = true;
+    }
+
     this.#loadPreset(this.selectedPreset);
 
     const driverName: DriverName = 'enttec-open-dmx-usb';
@@ -135,10 +160,19 @@ export class Root extends LitElement {
     return html`
       <webdmx-layout>
         <nav slot="header">
-          <button ?disabled="${!this.idle || this.connected}" @click="${this.handleConnectClick}">Connect</button>
-          <button ?disabled="${!this.idle || !this.connected}" @click="${this.handleDisconnectClick}">
-            Disconnect
-          </button>
+          ${when(
+            this.#data?.universes.length,
+            () => html`
+              <select @change="${this.handleUniverseChange}">
+                ${this.#data!.universes.map(({ label }) => html`<option .value="${label}">${label}</option>`)}
+              </select>
+              <button ?disabled="${!this.idle || this.connected}" @click="${this.handleConnectClick}">Connect</button>
+              <button ?disabled="${!this.idle || !this.connected}" @click="${this.handleDisconnectClick}">
+                Disconnect
+              </button>
+            `,
+            () => html`<span>No universes configured</span>`,
+          )}
 
           <select ?disabled="${!this.connected}" @change="${this.handlePresetChange}">
             ${Object.keys(this.presets).map(
@@ -154,7 +188,11 @@ export class Root extends LitElement {
         </nav>
 
         <nav slot="header">
-          <webdmx-switch ?active="${this.editing}" @webdmx-switch:toggle="${this.handleModeChange}">
+          <webdmx-switch
+            ?active="${this.editing}"
+            ?disabled="${!this.canPreview}"
+            @webdmx-switch:toggle="${this.handleModeChange}"
+          >
             <span slot="off">Preview</span>
             <span slot="on">Edit</span>
           </webdmx-switch>
