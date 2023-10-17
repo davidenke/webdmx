@@ -112,6 +112,10 @@ importers:
         version: 5.2.2
 
   packages/controller:
+    dependencies:
+      '@webdmx/common':
+        specifier: workspace:*
+        version: link:../common
     devDependencies:
       '@types/node':
         specifier: 20.8.4
@@ -122,9 +126,6 @@ importers:
       '@typescript-eslint/eslint-plugin':
         specifier: 6.7.5
         version: 6.7.5(@typescript-eslint/parser@6.7.5)(eslint@8.51.0)(typescript@5.2.2)
-      '@webdmx/common':
-        specifier: workspace:*
-        version: link:../common
       '@webdmx/converter':
         specifier: workspace:*
         version: link:../converter
@@ -179,6 +180,9 @@ importers:
 
   packages/converter:
     dependencies:
+      '@webdmx/common':
+        specifier: workspace:*
+        version: link:../common
       cli-progress:
         specifier: 3.12.0
         version: 3.12.0
@@ -198,9 +202,6 @@ importers:
       '@typescript-eslint/eslint-plugin':
         specifier: 6.7.5
         version: 6.7.5(@typescript-eslint/parser@6.7.5)(eslint@8.51.0)(typescript@5.2.2)
-      '@webdmx/common':
-        specifier: workspace:*
-        version: link:../common
       eslint:
         specifier: 8.51.0
         version: 8.51.0
@@ -240,6 +241,9 @@ importers:
 
   packages/ui:
     dependencies:
+      '@webdmx/common':
+        specifier: workspace:*
+        version: link:../common
       '@webdmx/controller':
         specifier: workspace:*
         version: link:../controller
@@ -256,9 +260,6 @@ importers:
       '@types/w3c-web-usb':
         specifier: 1.0.8
         version: 1.0.8
-      '@webdmx/common':
-        specifier: workspace:*
-        version: link:../common
       barrelsby:
         specifier: 2.8.1
         version: 2.8.1

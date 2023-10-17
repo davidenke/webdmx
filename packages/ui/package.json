@@ -25,6 +25,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@webdmx/common": "workspace:*",
     "@webdmx/controller": "workspace:*",
     "lit": "3.0.0"
   },
@@ -32,7 +33,6 @@
     "@types/node": "20.8.4",
     "@types/w3c-web-serial": "1.0.4",
     "@types/w3c-web-usb": "1.0.8",
-    "@webdmx/common": "workspace:*",
     "barrelsby": "2.8.1",
     "eslint": "8.51.0",
     "eslint-config-prettier": "9.0.0",

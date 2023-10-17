@@ -21,7 +21,7 @@ pnpm -r --filter @webdmx/controller dev
 pnpm -r --filter @webdmx/ui dev
 
 # run complete ui with dependencies
-pnpm -r --parallel --filter @webdmx/common --filter @webdmx/controller --filter @webdmx/ui dev
+pnpm -r --parallel --filter-prod @webdmx/ui... dev
 ```
 
 ## Packages

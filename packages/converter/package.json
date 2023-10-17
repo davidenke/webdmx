@@ -25,6 +25,7 @@
     "dev": "node --loader ts-node/esm src/bin.ts --source ./fixtures --target ./encoded"
   },
   "dependencies": {
+    "@webdmx/common": "workspace:*",
     "cli-progress": "3.12.0",
     "plist": "3.1.0"
   },
@@ -33,7 +34,6 @@
     "@types/node": "20.8.4",
     "@types/plist": "3.0.3",
     "@typescript-eslint/eslint-plugin": "6.7.5",
-    "@webdmx/common": "workspace:*",
     "eslint": "8.51.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-import-resolver-typescript": "3.6.1",
