@@ -5,6 +5,7 @@
     "plugin:deprecation/recommended",
     "plugin:import/recommended",
     "plugin:import/typescript",
+    "plugin:require-extensions/recommended",
     "plugin:prettier/recommended"
   ],
   "parser": "@typescript-eslint/parser",
@@ -13,7 +14,7 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "plugins": ["@typescript-eslint", "simple-import-sort", "unused-imports"],
+  "plugins": ["@typescript-eslint", "require-extensions", "simple-import-sort", "unused-imports"],
   "root": true,
   "rules": {
     "simple-import-sort/exports": "error",

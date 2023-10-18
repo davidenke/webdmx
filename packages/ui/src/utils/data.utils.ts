@@ -1,7 +1,7 @@
 import type { Preset } from '@webdmx/common';
 import type { DriverName } from '@webdmx/controller';
 
-import { readData, writeData } from './storage.utils';
+import { readData, writeData } from './storage.utils.js';
 
 export type DeviceData = {
   /**
