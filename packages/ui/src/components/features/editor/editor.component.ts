@@ -2,12 +2,11 @@ import type { Preset } from '@webdmx/common';
 import { DMX } from '@webdmx/controller';
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
 import { map } from 'lit/directives/map.js';
-import { when } from 'lit/directives/when.js';
 
 import type { DeviceData, UniverseData } from '../../../utils/data.utils.js';
 import { loadPreset } from '../../../utils/preset.utils.js';
+import type { DeviceEditor, DeviceEditorChangeEvent } from '../device-editor/device-editor.component.js';
 import styles from './editor.component.scss?inline';
 
 export type EditorChangeEvent = CustomEvent<{ index: number; device: Partial<DeviceData> }>;
@@ -38,31 +37,13 @@ export class Editor extends LitElement {
   }
 
   @eventOptions({ passive: true })
-  private async handlePresetChange(event: InputEvent) {
-    // read the selected preset name
-    const { dataset, value: preset } = event.target as HTMLInputElement;
-    // pick corresponding device
+  private async handleDeviceChange({ detail, target }: DeviceEditorChangeEvent) {
+    // read the selected index and data
+    const { dataset } = target as DeviceEditor;
     const index = parseInt(dataset.deviceIndex!);
     const device = this.#universe?.devices?.[index];
-    // prevent loading the same preset twice
-    if (device?.preset === preset) return;
-    // select first profile
-    const profile = Object.keys(this.presets[preset!]?.profiles ?? {})[0];
     // emit the change event
-    this.#emitChangeEvent(index, { ...device, preset, profile });
-  }
-
-  @eventOptions({ passive: true })
-  private async handleProfileChange(event: InputEvent) {
-    // read the selected profile name
-    const { dataset, value: profile } = event.target as HTMLInputElement;
-    // emit the change event
-    const index = parseInt(dataset.deviceIndex!);
-    const device = this.#universe?.devices?.[index];
-    // prevent loading the same profile twice
-    if (device?.profile === profile) return;
-    // emit the change event
-    this.#emitChangeEvent(index, { ...device, profile });
+    this.#emitChangeEvent(index, { ...device, ...detail });
   }
 
   #emitChangeEvent(index: number, device: Partial<DeviceData>) {
@@ -76,29 +57,11 @@ export class Editor extends LitElement {
       ${map(
         this.#universe?.devices ?? [],
         (device, index) => html`
-          <form>
-            <input type="number" min="0" max="512" value="${ifDefined(device.address)}" />
-
-            <select data-device-index="${index}" @change="${this.handlePresetChange}">
-              ${map(
-                Object.keys(this.presets),
-                (preset) => html`<option value="${preset}" ?selected="${preset === device.preset}">${preset}</option>`,
-              )}
-            </select>
-
-            ${when(
-              device.preset !== undefined,
-              () => html`
-                <select data-device-index="${index}" @change="${this.handleProfileChange}">
-                  ${map(
-                    Object.keys(this.presets[device.preset!]?.profiles ?? {}),
-                    (profile) =>
-                      html`<option value="${profile}" ?selected="${profile === device.profile}">${profile}</option>`,
-                  )}
-                </select>
-              `,
-            )}
-          </form>
+          <webdmx-device-editor
+            data-device-index="${index}"
+            .device="${device}"
+            @webdmx-device-editor:change="${this.handleDeviceChange}"
+          ></webdmx-device-editor>
         `,
       )}
     `;
