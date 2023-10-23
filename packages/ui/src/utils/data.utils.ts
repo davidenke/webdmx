@@ -25,7 +25,7 @@ export type DeviceData = {
  */
 export type UniverseData = {
   label: string;
-  devices: DeviceData[];
+  devices: Partial<DeviceData>[];
   driver: DriverName;
 };
 
@@ -37,10 +37,18 @@ export type Data = {
    * Multiple configured universes.
    */
   universes: UniverseData[];
+
+  /**
+   * The current active view.
+   */
+  activeView: 'editor' | 'preview';
 };
 
 const DATA_KEY = 'data' as const;
-const EMPTY_DATA: Data = { universes: [] };
+const EMPTY_DATA: Data = {
+  universes: [],
+  activeView: 'editor',
+};
 
 /**
  * Convenience function to retrieve data.
