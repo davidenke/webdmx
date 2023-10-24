@@ -86,6 +86,9 @@ export class Editor extends LitElement {
     const data = [dataset.deviceIndex, clientX - (x + width / 2), clientY - (y + height / 2)];
     event.dataTransfer!.effectAllowed = 'move';
     event.dataTransfer!.setData('text/plain', data.join(DRAG_OFFSET_SPLIT));
+
+    // close the parameter editor popup
+    deviceElement.parameterEditorVisible = false;
   }
 
   @eventOptions({ capture: true })
