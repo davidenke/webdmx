@@ -88,7 +88,11 @@ export class Preview extends LitElement {
                   html` ${choose(this.presets[device.preset!]?.controls?.[channel]?.type, [
                     [
                       'slider',
-                      () => this.#renderRange(this.presets[device.preset!]?.controls?.[channel] as Slider, index),
+                      () =>
+                        this.#renderRange(
+                          this.presets[device.preset!]?.controls?.[channel] as Slider,
+                          (device.address ?? 1) - 1 + index,
+                        ),
                     ],
                   ])}`,
               ),

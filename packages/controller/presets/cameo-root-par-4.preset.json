@@ -5,8 +5,8 @@
     "dimmer": {
       "label": "Dimmer",
       "type": "slider",
-      "min": 0,
-      "max": 255,
+      "from": 0,
+      "to": 255,
       "step": 1
     },
     "red": {
