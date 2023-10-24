@@ -100,16 +100,17 @@ export class Root extends LitElement {
   }
 
   @eventOptions({ passive: true })
-  async handleEditorChange({ detail: { index, device } }: EditorChangeEvent) {
+  async handleEditorChange({ detail: devices }: EditorChangeEvent) {
+    // collect updated data
     this.data = {
       ...this.data,
-      universes: this.data.universes.map((universe, i) => {
-        if (i !== this.selectedUniverseIndex) return universe;
-        const devices = universe.devices.map((d, j) => (j === index ? device : d));
+      universes: this.data.universes.map((universe, index) => {
+        if (index !== this.selectedUniverseIndex) return universe;
         return { ...universe, devices };
       }),
     };
 
+    // store changes
     await saveData(this.data);
   }
 

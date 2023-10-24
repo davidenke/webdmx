@@ -9,7 +9,7 @@ import { loadPreset } from '../../../utils/preset.utils.js';
 import type { DeviceEditor, DeviceEditorChangeEvent } from '../device-editor/device-editor.component.js';
 import styles from './editor.component.scss?inline';
 
-export type EditorChangeEvent = CustomEvent<{ index: number; device: Partial<DeviceData> }>;
+export type EditorChangeEvent = CustomEvent<Partial<DeviceData>[]>;
 
 /**
  * @element webdmx-editor
@@ -41,14 +41,23 @@ export class Editor extends LitElement {
     // read the selected index and data
     const { dataset } = target as DeviceEditor;
     const index = parseInt(dataset.deviceIndex!);
-    const device = this.#universe?.devices?.[index];
+    // update corresponding device
+    const devices = this.#universe?.devices?.slice() ?? [];
+    devices[index] = { ...this.#universe?.devices?.[index], ...detail };
     // emit the change event
-    this.#emitChangeEvent(index, { ...device, ...detail });
+    this.#emitChangeEvent(devices);
   }
 
-  #emitChangeEvent(index: number, device: Partial<DeviceData>) {
-    const detail = { index, device } satisfies EditorChangeEvent['detail'];
-    const event = new CustomEvent('webdmx-editor:change', { detail });
+  @eventOptions({ passive: true })
+  private async handleAddDeviceClick() {
+    // update corresponding device
+    const devices = [...(this.#universe?.devices ?? []), {}];
+    // emit the change event
+    this.#emitChangeEvent(devices);
+  }
+
+  #emitChangeEvent(devices: Partial<DeviceData>[]) {
+    const event = new CustomEvent('webdmx-editor:change', { detail: devices });
     this.dispatchEvent(event);
   }
 
@@ -64,6 +73,8 @@ export class Editor extends LitElement {
           ></webdmx-device-editor>
         `,
       )}
+
+      <button @click="${this.handleAddDeviceClick}">Add device</button>
     `;
   }
 }

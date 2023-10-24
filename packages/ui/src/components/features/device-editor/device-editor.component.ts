@@ -4,7 +4,6 @@ import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { map } from 'lit/directives/map.js';
-import { when } from 'lit/directives/when.js';
 
 import type { DeviceData } from '../../../utils/data.utils.js';
 import { loadPreset } from '../../../utils/preset.utils.js';
@@ -36,26 +35,15 @@ export class DeviceEditor extends LitElement {
     });
   }
 
-  @eventOptions({ passive: true })
-  private async handlePresetChange(event: InputEvent) {
-    // read the selected preset name
-    const { value: preset } = event.target as HTMLInputElement;
-    // prevent loading the same preset twice
-    if (this.#device?.preset === preset) return;
-    // select first profile
-    const profile = Object.keys(this.presets[preset!]?.profiles ?? {})[0];
+  @eventOptions({ capture: true })
+  private async handleSubmit(event: SubmitEvent) {
+    // prevent reload
+    event.preventDefault();
+    // read the form data
+    const form = event.target as HTMLFormElement;
+    const data = Object.fromEntries(new FormData(form)) as Partial<DeviceData>;
     // emit the change event
-    this.#emitChangeEvent({ ...this.#device, preset, profile });
-  }
-
-  @eventOptions({ passive: true })
-  private async handleProfileChange(event: InputEvent) {
-    // read the selected profile name
-    const { value: profile } = event.target as HTMLInputElement;
-    // prevent loading the same profile twice
-    if (this.#device?.profile === profile) return;
-    // emit the change event
-    this.#emitChangeEvent({ ...this.#device, profile });
+    this.#emitChangeEvent({ ...this.#device, ...data });
   }
 
   #emitChangeEvent(device: Readonly<Partial<DeviceData>>) {
@@ -65,10 +53,10 @@ export class DeviceEditor extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <form>
-        <input type="number" min="0" max="512" value="${ifDefined(this.#device?.address)}" />
+      <form @submit="${this.handleSubmit}">
+        <input name="address" type="number" min="1" max="512" value="${ifDefined(this.#device?.address)}" />
 
-        <select @change="${this.handlePresetChange}">
+        <select name="preset">
           ${map(
             Object.keys(this.presets),
             (preset) => html`
@@ -77,18 +65,15 @@ export class DeviceEditor extends LitElement {
           )}
         </select>
 
-        ${when(
-          this.#device?.preset !== undefined,
-          () => html`
-            <select @change="${this.handleProfileChange}">
-              ${map(
-                Object.keys(this.presets[this.#device!.preset!]?.profiles ?? {}),
-                (profile) =>
-                  html`<option value="${profile}" ?selected="${profile === this.#device?.profile}">${profile}</option>`,
-              )}
-            </select>
-          `,
-        )}
+        <select name="profile" ?disabled="${this.#device?.preset === undefined}">
+          ${map(
+            Object.keys(this.presets[this.#device!.preset!]?.profiles ?? {}),
+            (profile) =>
+              html`<option value="${profile}" ?selected="${profile === this.#device?.profile}">${profile}</option>`,
+          )}
+        </select>
+
+        <button type="submit">Save</button>
       </form>
     `;
   }
