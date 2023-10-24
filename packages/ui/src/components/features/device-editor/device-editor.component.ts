@@ -22,22 +22,33 @@ export class DeviceEditor extends LitElement {
   #device?: Readonly<Partial<DeviceData>>;
 
   @state()
-  presets: Record<string, Preset | null> = Object.fromEntries(DMX.presetNames.map((name) => [name, null]));
+  private presets: Record<string, Preset | null> = Object.fromEntries(DMX.presetNames.map((name) => [name, null]));
+
+  @state()
+  private preset?: string;
 
   @property({ type: Object, attribute: false, noAccessor: true })
   set device(device: Readonly<Partial<DeviceData>> | undefined) {
     // update internal state
     this.#device = device;
+    this.preset = device?.preset;
 
     // update presets with detailed information
-    loadPreset(this.presets, this.#device?.preset).then((presets) => {
+    loadPreset(this.presets, this.preset).then((presets) => {
       this.presets = presets;
       this.requestUpdate();
     });
   }
 
+  @eventOptions({ passive: true })
+  private async handlePresetChange({ target }: Event) {
+    const select = target as HTMLSelectElement;
+    this.preset = select.value;
+    this.presets = await loadPreset(this.presets, this.preset);
+  }
+
   @eventOptions({ capture: true })
-  private async handleSubmit(event: SubmitEvent) {
+  private handleSubmit(event: SubmitEvent) {
     // prevent reload
     event.preventDefault();
     // read the form data
@@ -48,7 +59,7 @@ export class DeviceEditor extends LitElement {
   }
 
   @eventOptions({ passive: true })
-  private async handleRemoveClick() {
+  private handleRemoveClick() {
     this.#emitRemoveEvent();
   }
 
@@ -65,9 +76,10 @@ export class DeviceEditor extends LitElement {
   override render(): TemplateResult {
     return html`
       <form @submit="${this.handleSubmit}">
-        <input name="address" type="number" min="1" max="512" value="${ifDefined(this.#device?.address)}" />
+        <input required name="address" type="number" min="1" max="512" value="${ifDefined(this.#device?.address)}" />
 
-        <select name="preset">
+        <select required name="preset" @change="${this.handlePresetChange}">
+          <option disabled value="" ?selected="${this.#device?.preset === undefined}"></option>
           ${map(
             Object.keys(this.presets),
             (preset) => html`
@@ -76,9 +88,10 @@ export class DeviceEditor extends LitElement {
           )}
         </select>
 
-        <select name="profile" ?disabled="${this.#device?.preset === undefined}">
+        <select required name="profile" ?disabled="${this.preset === undefined}">
+          <option disabled value="" ?selected="${this.#device?.profile === undefined}"></option>
           ${map(
-            Object.keys(this.presets[this.#device!.preset!]?.profiles ?? {}),
+            Object.keys(this.presets[this.preset!]?.profiles ?? {}),
             (profile) =>
               html`<option value="${profile}" ?selected="${profile === this.#device?.profile}">${profile}</option>`,
           )}
