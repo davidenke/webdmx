@@ -31,10 +31,8 @@ export class Root extends LitElement {
 
   @eventOptions({ passive: true })
   private async handleModeChange() {
-    this.data = {
-      ...this.data,
-      activeView: this.data.activeView === 'editor' ? 'preview' : 'editor',
-    };
+    const activeView = this.data.activeView === 'editor' ? 'preview' : 'editor';
+    this.data = { ...this.data, activeView };
     await saveData(this.data);
   }
 
@@ -90,11 +88,19 @@ export class Root extends LitElement {
 
   @eventOptions({ passive: true })
   private async handleDisconnect() {
+    // reset universe
     const universe = this.data.universes[this.selectedUniverseIndex!]?.label ?? 'default';
     this.#dmx.updateAll(universe, 0);
 
+    // wait for last transferring event to be fired
     await new Promise((resolve) => setTimeout(resolve, 500));
     this.#driver.removeEventListener('transferring', this.#handleTransferring);
+
+    // show editor when disconnecting
+    this.data = { ...this.data, activeView: 'editor' };
+    await saveData(this.data);
+
+    // disconnect from universe
     await this.#dmx.close();
     this.connected = false;
   }
@@ -131,11 +137,8 @@ export class Root extends LitElement {
     }
 
     // prevent preview mode if no universes are configured
-    if (!this.data.universes.length) {
-      this.data = {
-        ...this.data,
-        activeView: 'editor',
-      };
+    if (!this.connected || !this.data.universes.length) {
+      this.data = { ...this.data, activeView: 'editor' };
       await saveData(this.data);
     }
 
@@ -144,7 +147,9 @@ export class Root extends LitElement {
   }
 
   override async disconnectedCallback() {
+    // disconnect from universe
     await this.#dmx.close();
+    this.connected = false;
     super.disconnectedCallback();
   }
 
@@ -185,8 +190,8 @@ export class Root extends LitElement {
 
         <nav slot="header">
           <webdmx-switch
-            ?disabled="${this.data.universes.length === 0}"
             ?active="${this.data.activeView === 'preview'}"
+            ?disabled="${!this.connected || this.data.universes.length === 0}"
             @webdmx-switch:toggle="${this.handleModeChange}"
           >
             <span slot="off">Preview</span>
