@@ -42,11 +42,11 @@ label {
   }
 
   :host([active]) & {
-    grid-template-columns: 0fr 1fr;
+    grid-template-columns: 1fr 0fr;
   }
 
   :host(:not([active])) & {
-    grid-template-columns: 1fr 0fr;
+    grid-template-columns: 0fr 1fr;
   }
 }
 
@@ -70,11 +70,11 @@ input {
   transition: left 0.2s ease-in-out;
 
   :host([active]) & {
-    left: var(---webdmx-switch-knob-from);
-  }
-
-  :host(:not([active])) & {
     left: var(---webdmx-switch-knob-to);
+  }
+  
+  :host(:not([active])) & {
+    left: var(---webdmx-switch-knob-from);
   }
 }
 
@@ -99,11 +99,11 @@ slot {
     background-color: var(--webdmx-color-grey-20);
     color: var(--webdmx-color-grey-90);
 
-    :host([active]) & {
+    :host(:not([active])) & {
       visibility: hidden;
     }
 
-    :host(:not([active])) & {
+    :host([active]) & {
       padding: 0 var(---webdmx-switch-padding) 0 var(---webdmx-switch-label-gap);
     }
   }
@@ -114,11 +114,11 @@ slot {
     background-color: var(--webdmx-color-grey-100);
     color: var(--webdmx-color-grey-35);
 
-    :host([active]) & {
+    :host(:not([active])) & {
       padding: 0 var(---webdmx-switch-label-gap) 0 var(---webdmx-switch-padding);
     }
 
-    :host(:not([active])) & {
+    :host([active]) & {
       visibility: hidden;
     }
   }

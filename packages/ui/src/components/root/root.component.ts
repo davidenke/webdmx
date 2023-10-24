@@ -185,8 +185,8 @@ export class Root extends LitElement {
 
         <nav slot="header">
           <webdmx-switch
-            ?active="${this.data.activeView === 'editor'}"
             ?disabled="${this.data.universes.length === 0}"
+            ?active="${this.data.activeView === 'preview'}"
             @webdmx-switch:toggle="${this.handleModeChange}"
           >
             <span slot="off">Preview</span>

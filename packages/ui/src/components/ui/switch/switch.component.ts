@@ -35,8 +35,8 @@ export class Switch extends LitElement {
     return html`
       <label>
         <input type="checkbox" ?checked="${this.active}" ?disabled="${this.disabled}" @input="${this.handleInput}" />
-        <slot name="on" aria-hidden="${this.active}"></slot>
         <slot name="off" aria-hidden="${this.active}"></slot>
+        <slot name="on" aria-hidden="${this.active}"></slot>
       </label>
     `;
   }
