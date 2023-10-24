@@ -120,7 +120,7 @@ export class Editor extends LitElement {
   }
 
   #emitChangeEvent(devices: Partial<DeviceData>[]) {
-    const event = new CustomEvent('webdmx-editor:change', { detail: devices });
+    const event = new CustomEvent('webdmx-editor:change', { detail: devices, bubbles: true });
     this.dispatchEvent(event);
   }
 

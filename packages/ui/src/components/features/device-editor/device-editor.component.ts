@@ -37,7 +37,7 @@ export class DeviceEditor extends LitElement {
   }
 
   #emitRemoveEvent() {
-    const event = new CustomEvent('webdmx-device-editor:remove');
+    const event = new CustomEvent('webdmx-device-editor:remove', { bubbles: true });
     this.dispatchEvent(event);
   }
 

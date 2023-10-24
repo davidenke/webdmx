@@ -28,7 +28,7 @@ export class Switch extends LitElement {
   @eventOptions({ passive: true })
   private handleInput() {
     this.active = !this.active;
-    this.dispatchEvent(new CustomEvent('webdmx-switch:toggle', { detail: this.active }));
+    this.dispatchEvent(new CustomEvent('webdmx-switch:toggle', { detail: this.active, bubbles: true }));
   }
 
   override render(): TemplateResult {

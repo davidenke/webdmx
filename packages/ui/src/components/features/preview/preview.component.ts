@@ -51,8 +51,7 @@ export class Preview extends LitElement {
 
   #emitUpdateEvent(name: string, channels: Channels) {
     const detail = { name, channels } satisfies PreviewUpdateEvent['detail'];
-    const event = new CustomEvent('webdmx-preview:update', { detail });
-    this.dispatchEvent(event);
+    this.dispatchEvent(new CustomEvent('webdmx-preview:update', { detail, bubbles: true }));
   }
 
   #renderRange(control: Slider, channel: number): TemplateResult {
