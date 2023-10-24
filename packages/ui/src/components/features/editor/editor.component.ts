@@ -87,7 +87,8 @@ export class Editor extends LitElement {
     event.dataTransfer!.effectAllowed = 'move';
     event.dataTransfer!.setData('text/plain', data.join(DRAG_OFFSET_SPLIT));
 
-    // close the parameter editor popup
+    // close the parameter editor popup and set dragging state
+    deviceElement.dragging = true;
     deviceElement.parameterEditorVisible = false;
   }
 
@@ -106,6 +107,11 @@ export class Editor extends LitElement {
     const { clientX, clientY, dataTransfer } = event;
     const [index, offsetX, offsetY] = dataTransfer!.getData('text/plain').split(DRAG_OFFSET_SPLIT);
     const deviceIndex = parseInt(index);
+
+    // reset dragging state
+    const deviceSelector = `webdmx-device-editor[data-device-index="${deviceIndex}"]`;
+    const deviceElement = this.renderRoot.querySelector(deviceSelector) as DeviceEditor;
+    deviceElement.dragging = false;
 
     // calculate new (relative) position (as percentage)
     const clientRect = this.getBoundingClientRect();

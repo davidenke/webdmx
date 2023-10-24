@@ -17,3 +17,7 @@
   border-radius: 10px;
   cursor: move;
 }
+
+:host([dragging]) {
+  opacity: 0.5;
+}
