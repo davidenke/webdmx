@@ -82,7 +82,7 @@ export class Editor extends LitElement {
             data-device-index="${index}"
             .deviceData="${device}"
             @webdmx-device-parameter-editor:change="${this.handleDeviceChange}"
-            @webdmx-device-parameter-editor:remove="${this.handleDeviceRemove}"
+            @webdmx-device-editor:remove="${this.handleDeviceRemove}"
           ></webdmx-device-editor>
         `,
       )}

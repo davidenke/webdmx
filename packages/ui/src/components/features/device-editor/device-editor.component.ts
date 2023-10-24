@@ -25,9 +25,24 @@ export class DeviceEditor extends LitElement {
     this.parameterEditorVisible = !this.parameterEditorVisible;
   }
 
+  @eventOptions({ passive: true })
+  private handleRemoveClick() {
+    this.#emitRemoveEvent();
+  }
+
+  #emitRemoveEvent() {
+    const event = new CustomEvent('webdmx-device-editor:remove');
+    this.dispatchEvent(event);
+  }
+
   override render(): TemplateResult {
     return html`
-      <button @click="${this.handleParametersClick}">Parameters</button>
+      <button @click="${this.handleParametersClick}">
+        <webdmx-icon name="options"></webdmx-icon>
+      </button>
+      <button @click="${this.handleRemoveClick}">
+        <webdmx-icon name="remove"></webdmx-icon>
+      </button>
 
       <webdmx-popup ?visible="${this.parameterEditorVisible}">
         <webdmx-device-parameter-editor .deviceData="${this.deviceData}"></webdmx-device-parameter-editor>
@@ -38,7 +53,6 @@ export class DeviceEditor extends LitElement {
 
 declare global {
   interface HTMLEventMap {
-    'webdmx-device-editor:change': DeviceEditorChangeEvent;
     'webdmx-device-editor:remove': DeviceEditorRemoveEvent;
   }
 

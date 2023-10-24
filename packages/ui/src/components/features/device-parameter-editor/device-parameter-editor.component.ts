@@ -58,18 +58,8 @@ export class DeviceParameterEditor extends LitElement {
     this.#emitChangeEvent({ ...this.#device, ...data });
   }
 
-  @eventOptions({ passive: true })
-  private handleRemoveClick() {
-    this.#emitRemoveEvent();
-  }
-
   #emitChangeEvent(device: Readonly<Partial<DeviceData>>) {
     const event = new CustomEvent('webdmx-device-parameter-editor:change', { detail: device });
-    this.dispatchEvent(event);
-  }
-
-  #emitRemoveEvent() {
-    const event = new CustomEvent('webdmx-device-parameter-editor:remove');
     this.dispatchEvent(event);
   }
 
@@ -97,7 +87,6 @@ export class DeviceParameterEditor extends LitElement {
           )}
         </select>
 
-        <button @click="${this.handleRemoveClick}">Remove</button>
         <button type="submit">Save</button>
       </form>
     `;
@@ -107,7 +96,6 @@ export class DeviceParameterEditor extends LitElement {
 declare global {
   interface HTMLEventMap {
     'webdmx-device-parameter-editor:change': DeviceParameterEditorChangeEvent;
-    'webdmx-device-parameter-editor:remove': DeviceParameterEditorRemoveEvent;
   }
 
   interface HTMLElementTagNameMap {
