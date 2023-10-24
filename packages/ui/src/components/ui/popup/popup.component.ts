@@ -3,6 +3,9 @@ import { customElement, property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
 import styles from './popup.component.scss?inline';
+import { hideOtherPopupsThan, registerPopup, unregisterPopup } from './popup.utils.js';
+
+export type PopupHiddenEvent = CustomEvent<boolean>;
 
 /**
  * @element webdmx-popup
@@ -13,11 +16,22 @@ import styles from './popup.component.scss?inline';
 export class Popup extends LitElement {
   static override readonly styles = unsafeCSS(styles);
 
+  #hidden = true;
+
   /**
    * The visibility state of the popup.
    */
-  @property({ type: Boolean, reflect: true })
-  readonly visible = false;
+  @property({ type: Boolean, reflect: true, noAccessor: true })
+  override set hidden(hidden: boolean) {
+    const wasHidden = this.#hidden;
+    this.#hidden = hidden;
+    if (!this.#hidden) hideOtherPopupsThan(this);
+    if (wasHidden !== this.#hidden) this.#emitHiddenEvent();
+    this.requestUpdate('hidden', wasHidden);
+  }
+  override get hidden(): boolean {
+    return this.#hidden;
+  }
 
   /**
    * The position of the popup.
@@ -25,12 +39,32 @@ export class Popup extends LitElement {
   @property({ type: String, reflect: true })
   position: 'top' | 'right' | 'bottom' | 'left' = 'bottom';
 
+  #emitHiddenEvent() {
+    const detail = this.#hidden;
+    const event = new CustomEvent('webdmx-popup:hidden', { detail }) satisfies PopupHiddenEvent;
+    this.dispatchEvent(event);
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    registerPopup(this);
+  }
+
+  override disconnectedCallback() {
+    unregisterPopup(this);
+    super.disconnectedCallback();
+  }
+
   override render(): TemplateResult {
-    return html`${when(this.visible, () => html`<slot></slot>`)}`;
+    return html`${when(!this.#hidden, () => html`<slot></slot>`)}`;
   }
 }
 
 declare global {
+  interface HTMLElementEventMap {
+    'webdmx-popup:hidden': PopupHiddenEvent;
+  }
+
   interface HTMLElementTagNameMap {
     'webdmx-popup': Popup;
   }
