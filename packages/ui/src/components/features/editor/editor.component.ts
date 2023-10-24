@@ -80,9 +80,9 @@ export class Editor extends LitElement {
         (device, index) => html`
           <webdmx-device-editor
             data-device-index="${index}"
-            .device="${device}"
-            @webdmx-device-editor:change="${this.handleDeviceChange}"
-            @webdmx-device-editor:remove="${this.handleDeviceRemove}"
+            .deviceData="${device}"
+            @webdmx-device-parameter-editor:change="${this.handleDeviceChange}"
+            @webdmx-device-parameter-editor:remove="${this.handleDeviceRemove}"
           ></webdmx-device-editor>
         `,
       )}

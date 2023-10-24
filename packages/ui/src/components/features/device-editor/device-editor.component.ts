@@ -1,12 +1,7 @@
-import type { Preset } from '@webdmx/common';
-import { DMX } from '@webdmx/controller';
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
-import { customElement, eventOptions, property, state } from 'lit/decorators.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
-import { map } from 'lit/directives/map.js';
+import { customElement, eventOptions, property } from 'lit/decorators.js';
 
 import type { DeviceData } from '../../../utils/data.utils.js';
-import { loadPreset } from '../../../utils/preset.utils.js';
 import styles from './device-editor.component.scss?inline';
 
 export type DeviceEditorChangeEvent = CustomEvent<Partial<DeviceData>>;
@@ -19,87 +14,24 @@ export type DeviceEditorRemoveEvent = CustomEvent<void>;
 export class DeviceEditor extends LitElement {
   static override readonly styles = unsafeCSS(styles);
 
-  #device?: Readonly<Partial<DeviceData>>;
-
-  @state()
-  private presets: Record<string, Preset | null> = Object.fromEntries(DMX.presetNames.map((name) => [name, null]));
-
-  @state()
-  private preset?: string;
+  @property({ type: Boolean, reflect: true, attribute: 'parameter-editor-visible' })
+  parameterEditorVisible = false;
 
   @property({ type: Object, attribute: false, noAccessor: true })
-  set device(device: Readonly<Partial<DeviceData>> | undefined) {
-    // update internal state
-    this.#device = device;
-    this.preset = device?.preset;
-
-    // update presets with detailed information
-    loadPreset(this.presets, this.preset).then((presets) => {
-      this.presets = presets;
-      this.requestUpdate();
-    });
-  }
+  readonly deviceData?: Readonly<Partial<DeviceData>> | undefined;
 
   @eventOptions({ passive: true })
-  private async handlePresetChange({ target }: Event) {
-    const select = target as HTMLSelectElement;
-    this.preset = select.value;
-    this.presets = await loadPreset(this.presets, this.preset);
-  }
-
-  @eventOptions({ capture: true })
-  private handleSubmit(event: SubmitEvent) {
-    // prevent reload
-    event.preventDefault();
-    // read the form data
-    const form = event.target as HTMLFormElement;
-    const data = Object.fromEntries(new FormData(form)) as Partial<DeviceData>;
-    // emit the change event
-    this.#emitChangeEvent({ ...this.#device, ...data });
-  }
-
-  @eventOptions({ passive: true })
-  private handleRemoveClick() {
-    this.#emitRemoveEvent();
-  }
-
-  #emitChangeEvent(device: Readonly<Partial<DeviceData>>) {
-    const event = new CustomEvent('webdmx-device-editor:change', { detail: device });
-    this.dispatchEvent(event);
-  }
-
-  #emitRemoveEvent() {
-    const event = new CustomEvent('webdmx-device-editor:remove');
-    this.dispatchEvent(event);
+  private handleParametersClick() {
+    this.parameterEditorVisible = !this.parameterEditorVisible;
   }
 
   override render(): TemplateResult {
     return html`
-      <form @submit="${this.handleSubmit}">
-        <input required name="address" type="number" min="1" max="512" value="${ifDefined(this.#device?.address)}" />
+      <button @click="${this.handleParametersClick}">Parameters</button>
 
-        <select required name="preset" @change="${this.handlePresetChange}">
-          <option disabled value="" ?selected="${this.#device?.preset === undefined}"></option>
-          ${map(
-            Object.keys(this.presets),
-            (preset) => html`
-              <option value="${preset}" ?selected="${preset === this.#device?.preset}">${preset}</option>
-            `,
-          )}
-        </select>
-
-        <select required name="profile" ?disabled="${this.preset === undefined}">
-          <option disabled value="" ?selected="${this.#device?.profile === undefined}"></option>
-          ${map(
-            Object.keys(this.presets[this.preset!]?.profiles ?? {}),
-            (profile) =>
-              html`<option value="${profile}" ?selected="${profile === this.#device?.profile}">${profile}</option>`,
-          )}
-        </select>
-
-        <button type="button" @click="${this.handleRemoveClick}">Remove</button>
-        <button type="submit">Save</button>
-      </form>
+      <webdmx-popup ?visible="${this.parameterEditorVisible}">
+        <webdmx-device-parameter-editor .deviceData="${this.deviceData}"></webdmx-device-parameter-editor>
+      </webdmx-popup>
     `;
   }
 }
