@@ -36,6 +36,11 @@ export class DeviceEditor extends LitElement {
     this.parameterEditorVisible = !event.detail;
   }
 
+  @eventOptions({ passive: true })
+  private handleParametersChange() {
+    this.parameterEditorVisible = false;
+  }
+
   #emitRemoveEvent() {
     const event = new CustomEvent('webdmx-device-editor:remove', { bubbles: true, composed: true });
     this.dispatchEvent(event);
@@ -51,7 +56,10 @@ export class DeviceEditor extends LitElement {
       </button>
 
       <webdmx-popup .hidden="${!this.parameterEditorVisible}" @webdmx-popup:hidden="${this.handleParametersHidden}">
-        <webdmx-device-parameter-editor .deviceData="${this.deviceData}"></webdmx-device-parameter-editor>
+        <webdmx-device-parameter-editor
+          .deviceData="${this.deviceData}"
+          @webdmx-device-parameter-editor:change="${this.handleParametersChange}"
+        ></webdmx-device-parameter-editor>
       </webdmx-popup>
     `;
   }
