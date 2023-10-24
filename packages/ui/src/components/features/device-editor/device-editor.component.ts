@@ -10,6 +10,7 @@ import { loadPreset } from '../../../utils/preset.utils.js';
 import styles from './device-editor.component.scss?inline';
 
 export type DeviceEditorChangeEvent = CustomEvent<Partial<DeviceData>>;
+export type DeviceEditorRemoveEvent = CustomEvent<void>;
 
 /**
  * @element webdmx-device-editor
@@ -46,8 +47,18 @@ export class DeviceEditor extends LitElement {
     this.#emitChangeEvent({ ...this.#device, ...data });
   }
 
+  @eventOptions({ passive: true })
+  private async handleRemoveClick() {
+    this.#emitRemoveEvent();
+  }
+
   #emitChangeEvent(device: Readonly<Partial<DeviceData>>) {
     const event = new CustomEvent('webdmx-device-editor:change', { detail: device });
+    this.dispatchEvent(event);
+  }
+
+  #emitRemoveEvent() {
+    const event = new CustomEvent('webdmx-device-editor:remove');
     this.dispatchEvent(event);
   }
 
@@ -73,6 +84,7 @@ export class DeviceEditor extends LitElement {
           )}
         </select>
 
+        <button type="button" @click="${this.handleRemoveClick}">Remove</button>
         <button type="submit">Save</button>
       </form>
     `;
@@ -82,6 +94,7 @@ export class DeviceEditor extends LitElement {
 declare global {
   interface HTMLEventMap {
     'webdmx-device-editor:change': DeviceEditorChangeEvent;
+    'webdmx-device-editor:remove': DeviceEditorRemoveEvent;
   }
 
   interface HTMLElementTagNameMap {

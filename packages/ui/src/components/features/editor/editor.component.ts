@@ -49,6 +49,18 @@ export class Editor extends LitElement {
   }
 
   @eventOptions({ passive: true })
+  private async handleDeviceRemove({ target }: CustomEvent<void>) {
+    // read the selected index
+    const { dataset } = target as DeviceEditor;
+    const index = parseInt(dataset.deviceIndex!);
+    // update corresponding device
+    const devices = this.#universe?.devices?.slice() ?? [];
+    devices.splice(index, 1);
+    // emit the change event
+    this.#emitChangeEvent(devices);
+  }
+
+  @eventOptions({ passive: true })
   private async handleAddDeviceClick() {
     // update corresponding device
     const devices = [...(this.#universe?.devices ?? []), {}];
@@ -70,6 +82,7 @@ export class Editor extends LitElement {
             data-device-index="${index}"
             .device="${device}"
             @webdmx-device-editor:change="${this.handleDeviceChange}"
+            @webdmx-device-editor:remove="${this.handleDeviceRemove}"
           ></webdmx-device-editor>
         `,
       )}
