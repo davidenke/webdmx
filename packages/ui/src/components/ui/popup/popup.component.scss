@@ -1,0 +1,80 @@
+:host {
+  ---webdmx-popup-background: var(--webdmx-popup-background, #fff);
+  ---webdmx-popup-overlap: var(--webdmx-popup-overlap, 3px);
+
+  ---webdmx-popup-offset: calc(100% + var(---webdmx-popup-overlap));
+}
+
+:host {
+  position: absolute;
+  z-index: 10;
+
+  display: none;
+  padding: 10px;
+  width: fit-content;
+
+  background-color: var(---webdmx-popup-background);
+  border-radius: 5px;
+
+  &::before {
+    content: '';
+    position: absolute;
+
+    aspect-ratio: 1;
+    width: 10px;
+
+    background-color: var(---webdmx-popup-background);
+  }
+}
+
+:host([visible]) {
+  display: block;
+}
+
+:host([position='top']) {
+  bottom: var(---webdmx-popup-offset);
+  left: 50%;
+  transform: translateX(-50%);
+
+  &::before {
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+}
+
+:host([position='bottom']) {
+  top: var(---webdmx-popup-offset);
+  left: 50%;
+  transform: translateX(-50%);
+
+  &::before {
+    bottom: 100%;
+    left: 50%;
+    transform: translate(-50%, 50%) rotate(45deg);
+  }
+}
+
+:host([position='left']) {
+  top: 50%;
+  right: var(---webdmx-popup-offset);
+  transform: translateY(-50%);
+
+  &::before {
+    left: 100%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+}
+
+:host([position='right']) {
+  top: 50%;
+  left: var(---webdmx-popup-offset);
+  transform: translateY(-50%);
+
+  &::before {
+    right: 100%;
+    top: 50%;
+    transform: translate(50%, -50%) rotate(45deg);
+  }
+}
