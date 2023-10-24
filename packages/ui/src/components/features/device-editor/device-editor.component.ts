@@ -2,6 +2,7 @@ import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property } from 'lit/decorators.js';
 
 import type { DeviceData } from '../../../utils/data.utils.js';
+import type { PopupHiddenEvent } from '../../ui/popup/popup.component.js';
 import styles from './device-editor.component.scss?inline';
 
 export type DeviceEditorChangeEvent = CustomEvent<Partial<DeviceData>>;
@@ -30,6 +31,11 @@ export class DeviceEditor extends LitElement {
     this.#emitRemoveEvent();
   }
 
+  @eventOptions({ passive: true })
+  private handleParametersHidden(event: PopupHiddenEvent) {
+    this.parameterEditorVisible = !event.detail;
+  }
+
   #emitRemoveEvent() {
     const event = new CustomEvent('webdmx-device-editor:remove');
     this.dispatchEvent(event);
@@ -44,7 +50,7 @@ export class DeviceEditor extends LitElement {
         <webdmx-icon name="remove"></webdmx-icon>
       </button>
 
-      <webdmx-popup ?visible="${this.parameterEditorVisible}">
+      <webdmx-popup .hidden="${!this.parameterEditorVisible}" @webdmx-popup:hidden="${this.handleParametersHidden}">
         <webdmx-device-parameter-editor .deviceData="${this.deviceData}"></webdmx-device-parameter-editor>
       </webdmx-popup>
     `;
