@@ -259,6 +259,9 @@ importers:
       '@webdmx/controller':
         specifier: workspace:*
         version: link:../controller
+      css.gg:
+        specifier: 2.1.1
+        version: 2.1.1
       lit:
         specifier: 3.0.0
         version: 3.0.0
@@ -1493,6 +1496,10 @@ packages:
       shebang-command: 2.0.0
       which: 2.0.2
     dev: true
+
+  /css.gg@2.1.1:
+    resolution: {integrity: sha512-OJrjd4+CdjrLvrVB+EFctAnk7eeM+zc8aKfVlO5BfNBgSqcC9wMHQTZ7ALcCiZGpE62kVVhwQ3Mvl1u6RkVFvQ==}
+    dev: false
 
   /de-indent@1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}

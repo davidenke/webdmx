@@ -27,6 +27,7 @@
   "dependencies": {
     "@webdmx/common": "workspace:*",
     "@webdmx/controller": "workspace:*",
+    "css.gg": "2.1.1",
     "lit": "3.0.0"
   },
   "devDependencies": {
