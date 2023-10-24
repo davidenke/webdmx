@@ -19,6 +19,9 @@ export class Popup extends LitElement {
   @property({ type: Boolean, reflect: true })
   readonly visible = false;
 
+  /**
+   * The position of the popup.
+   */
   @property({ type: String, reflect: true })
   position: 'top' | 'right' | 'bottom' | 'left' = 'bottom';
 
