@@ -1,5 +1,13 @@
 :host {
-  position: relative;
+  ---webdmx-device-editor-x: var(--webdmx-device-editor-x, 50%);
+  ---webdmx-device-editor-y: var(--webdmx-device-editor-y, 50%);
+}
+
+:host {
+  position: absolute;
+  top: var(---webdmx-device-editor-y);
+  left: var(---webdmx-device-editor-x);
+  transform: translate(-50%, -50%);
 
   display: block;
   aspect-ratio: 1;
@@ -7,4 +15,5 @@
 
   background-color: #333;
   border-radius: 10px;
+  cursor: move;
 }

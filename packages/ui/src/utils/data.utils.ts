@@ -18,6 +18,14 @@ export type DeviceData = {
    * The start address of the device in the universe.
    */
   address: number;
+
+  /**
+   * The relative position of the device in the universe editor as percentage.
+   */
+  position: {
+    x: number;
+    y: number;
+  };
 };
 
 /**
