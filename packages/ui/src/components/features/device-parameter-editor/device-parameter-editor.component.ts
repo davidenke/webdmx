@@ -59,7 +59,11 @@ export class DeviceParameterEditor extends LitElement {
   }
 
   #emitChangeEvent(device: Readonly<Partial<DeviceData>>) {
-    const event = new CustomEvent('webdmx-device-parameter-editor:change', { detail: device, bubbles: true });
+    const event = new CustomEvent('webdmx-device-parameter-editor:change', {
+      detail: device,
+      bubbles: true,
+      composed: true,
+    });
     this.dispatchEvent(event);
   }
 

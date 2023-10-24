@@ -41,7 +41,11 @@ export class Popup extends LitElement {
 
   #emitHiddenEvent() {
     const detail = this.#hidden;
-    const event = new CustomEvent('webdmx-popup:hidden', { detail, bubbles: true }) satisfies PopupHiddenEvent;
+    const event = new CustomEvent('webdmx-popup:hidden', {
+      detail,
+      bubbles: true,
+      composed: true,
+    }) satisfies PopupHiddenEvent;
     this.dispatchEvent(event);
   }
 
