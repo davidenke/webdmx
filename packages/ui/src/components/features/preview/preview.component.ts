@@ -1,5 +1,4 @@
-import type { Channels, Preset, Slider } from '@webdmx/common';
-import { DMX } from '@webdmx/controller';
+import type { Channels, Slider } from '@webdmx/common';
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
 import { choose } from 'lit/directives/choose.js';
@@ -7,7 +6,7 @@ import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
 
 import type { UniverseData } from '../../../utils/data.utils.js';
-import { loadPreset } from '../../../utils/preset.utils.js';
+import { presets } from '../../../utils/preset.utils.js';
 import styles from './preview.component.scss?inline';
 
 export type PreviewUpdateEvent = CustomEvent<{ name: string; channels: Channels }>;
@@ -22,7 +21,7 @@ export class Preview extends LitElement {
   #universe?: Readonly<UniverseData>;
 
   @state()
-  presets: Record<string, Preset | null> = Object.fromEntries(DMX.presetNames.map((name) => [name, null]));
+  presets = presets;
 
   @property({ type: Boolean, reflect: true })
   connected: boolean = false;
@@ -30,14 +29,12 @@ export class Preview extends LitElement {
   @property({ type: Object, attribute: false, noAccessor: true })
   set universe(universe: Readonly<UniverseData> | undefined) {
     // update internal state
+    const oldUniverse = this.#universe;
     this.#universe = universe;
 
     // update presets with detailed information
     const names = this.#universe?.devices.map(({ preset }) => preset) ?? [];
-    loadPreset(this.presets, ...names).then((presets) => {
-      this.presets = presets;
-      this.requestUpdate();
-    });
+    this.presets.load(...names).then(() => this.requestUpdate('universe', oldUniverse));
   }
 
   @eventOptions({ passive: true })
@@ -79,21 +76,22 @@ export class Preview extends LitElement {
         (device) => html`
           <h2>${device.preset}</h2>
 
-          ${when(
-            device.preset !== undefined && device.profile !== undefined,
-            () =>
-              this.presets[device.preset!]?.profiles?.[device.profile!]?.channels?.map(
-                (channel, index) =>
-                  html` ${choose(this.presets[device.preset!]?.controls?.[channel]?.type, [
+          ${when(device.preset !== undefined && device.profile !== undefined, () =>
+            this.presets
+              .getChannels(device.preset, device.profile)
+              .map(
+                (channel, index) => html`
+                  ${choose(this.presets.getControl(device.preset, channel)?.type, [
                     [
                       'slider',
                       () =>
                         this.#renderRange(
-                          this.presets[device.preset!]?.controls?.[channel] as Slider,
+                          this.presets.getControl<Slider>(device.preset, channel)!,
                           (device.address ?? 1) - 1 + index,
                         ),
                     ],
-                  ])}`,
+                  ])}
+                `,
               ),
           )}
         `,
