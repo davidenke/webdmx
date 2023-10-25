@@ -78,10 +78,10 @@ export class DeviceEditor extends LitElement {
   override render(): TemplateResult {
     return html`
       <nav>
-        <button @click="${this.handleParametersClick}">
+        <button aria-label="Edit device parameters" @click="${this.handleParametersClick}">
           <webdmx-icon name="options"></webdmx-icon>
         </button>
-        <button @click="${this.handleRemoveClick}">
+        <button aria-label="Remove device from universe" @click="${this.handleRemoveClick}">
           <webdmx-icon name="trash"></webdmx-icon>
         </button>
       </nav>
@@ -92,7 +92,11 @@ export class DeviceEditor extends LitElement {
         <span>${this.deviceData?.address}</span>
       </section>
 
-      <webdmx-popup .hidden="${!this.parameterEditorVisible}" @webdmx-popup:hidden="${this.handleParametersHidden}">
+      <webdmx-popup
+        aria-expanded="${String(this.parameterEditorVisible) as 'true' | 'false'}"
+        .hidden="${!this.parameterEditorVisible}"
+        @webdmx-popup:hidden="${this.handleParametersHidden}"
+      >
         <webdmx-device-parameter-editor
           .deviceData="${this.deviceData}"
           @webdmx-device-parameter-editor:change="${this.handleParametersChange}"

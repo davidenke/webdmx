@@ -169,7 +169,9 @@ export class Editor extends LitElement {
         `,
       )}
 
-      <button @click="${this.handleAddDeviceClick}">Add device</button>
+      <button aria-label="Add device" @click="${this.handleAddDeviceClick}">
+        <webdmx-icon name="add"></webdmx-icon>
+      </button>
     `;
   }
 }
