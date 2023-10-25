@@ -1,18 +1,15 @@
-import type { Preset } from '@webdmx/common';
-import { DMX } from '@webdmx/controller';
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 import { styleMap } from 'lit/directives/style-map.js';
 
 import type { DeviceData, UniverseData } from '../../../utils/data.utils.js';
-import { loadPreset } from '../../../utils/preset.utils.js';
+import { presets } from '../../../utils/preset.utils.js';
 import { DeviceEditor, type DeviceEditorChangeEvent } from '../device-editor/device-editor.component.js';
 import styles from './editor.component.scss?inline';
+import { prepareDeviceDrag, processDeviceDrop } from './editor.utils.js';
 
 export type EditorChangeEvent = CustomEvent<Partial<DeviceData>[]>;
-
-const DRAG_OFFSET_SPLIT = ';';
 
 /**
  * @element webdmx-editor
@@ -24,19 +21,17 @@ export class Editor extends LitElement {
   #universe?: Readonly<UniverseData>;
 
   @state()
-  presets: Record<string, Preset | null> = Object.fromEntries(DMX.presetNames.map((name) => [name, null]));
+  presets = presets;
 
   @property({ type: Object, attribute: false, noAccessor: true })
   set universe(universe: Readonly<UniverseData> | undefined) {
     // update internal state
+    const oldUniverse = this.#universe;
     this.#universe = universe;
 
     // update presets with detailed information
     const names = this.#universe?.devices.map(({ preset }) => preset) ?? [];
-    loadPreset(this.presets, ...names).then((presets) => {
-      this.presets = presets;
-      this.requestUpdate();
-    });
+    this.presets.load(...names).then(() => this.requestUpdate('universe', oldUniverse));
   }
 
   @eventOptions({ passive: true })
@@ -76,16 +71,8 @@ export class Editor extends LitElement {
     // prevent event from bubbling up
     event.stopPropagation();
 
-    // gather pointer offset and element reference
-    const { clientX, clientY, target } = event;
-    const deviceElement = target as DeviceEditor;
-    const { dataset } = deviceElement;
-    const { x, y, height, width } = deviceElement.getBoundingClientRect();
-
-    // prepare and set data as serialized payload for event transfer
-    const data = [dataset.deviceIndex, clientX - (x + width / 2), clientY - (y + height / 2)];
-    event.dataTransfer!.effectAllowed = 'move';
-    event.dataTransfer!.setData('text/plain', data.join(DRAG_OFFSET_SPLIT));
+    // prepare drag event and retrieve element reference
+    const deviceElement = prepareDeviceDrag(event);
 
     // close the parameter editor popup and set dragging state
     deviceElement.dragging = true;
@@ -103,27 +90,14 @@ export class Editor extends LitElement {
 
   @eventOptions({ passive: true })
   private async handleDrop(event: DragEvent) {
-    // gather information and element reference
-    const { clientX, clientY, dataTransfer } = event;
-    const [index, offsetX, offsetY] = dataTransfer!.getData('text/plain').split(DRAG_OFFSET_SPLIT);
-    const deviceIndex = parseInt(index);
-
-    // reset dragging state
-    const deviceSelector = `webdmx-device-editor[data-device-index="${deviceIndex}"]`;
-    const deviceElement = this.renderRoot.querySelector(deviceSelector) as DeviceEditor;
+    // process drop event and retrieve element reference
+    const { deviceElement, deviceIndex, position } = processDeviceDrop(event, false);
     deviceElement.dragging = false;
-
-    // calculate new (relative) position (as percentage)
-    const clientRect = this.getBoundingClientRect();
-    const deviceX = clientX - clientRect.x - parseInt(offsetX);
-    const deviceY = clientY - clientRect.y - parseInt(offsetY);
-    const x = (deviceX / clientRect.width) * 100;
-    const y = (deviceY / clientRect.height) * 100;
-    const position = { x, y };
 
     // update corresponding device position
     const devices = this.#universe?.devices?.slice() ?? [];
     devices[deviceIndex] = { ...this.#universe?.devices?.[deviceIndex], position };
+
     // emit the change event
     this.#emitChangeEvent(devices);
   }
@@ -162,8 +136,8 @@ export class Editor extends LitElement {
             @webdmx-device-parameter-editor:change="${this.handleDeviceChange}"
             @webdmx-device-editor:remove="${this.handleDeviceRemove}"
             style="${styleMap({
-              '--webdmx-device-editor-x': `${device.position?.x ?? 50}%`,
-              '--webdmx-device-editor-y': `${device.position?.y ?? 50}%`,
+              '--webdmx-device-editor-x': device.position?.x ? `${device.position?.x}px` : '50%',
+              '--webdmx-device-editor-y': device.position?.y ? `${device.position?.y}px` : '50%',
             })}"
           ></webdmx-device-editor>
         `,
