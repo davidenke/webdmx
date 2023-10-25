@@ -22,9 +22,10 @@ export type Profile = {
  * A single control of a preset.
  * Can be either a slider or a set of predefined options.
  */
-export type Control = ({ type: 'options' } & Options) | ({ type: 'slider' } & Slider);
+export type Control = Options | Slider;
 
 export type Options = {
+  type: 'options';
   options: Array<Option | Slider>;
 };
 
@@ -34,6 +35,7 @@ export type Option = {
 };
 
 export type Slider = {
+  type: 'slider';
   label: string;
   from: number;
   to: number;
