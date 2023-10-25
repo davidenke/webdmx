@@ -3,6 +3,11 @@ import type { DriverName } from '@webdmx/controller';
 
 import { readData, writeData } from './storage.utils.js';
 
+export type Position = {
+  x: number;
+  y: number;
+};
+
 export type DeviceData = {
   /**
    * Name of the preset of the device.
@@ -22,10 +27,7 @@ export type DeviceData = {
   /**
    * The relative position of the device in the universe editor as percentage.
    */
-  position: {
-    x: number;
-    y: number;
-  };
+  position: Position;
 };
 
 /**
