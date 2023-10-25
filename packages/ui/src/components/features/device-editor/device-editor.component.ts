@@ -24,7 +24,7 @@ export class DeviceEditor extends LitElement {
   @property({ type: Boolean, reflect: true, attribute: 'dragging' })
   dragging = false;
 
-  @property({ type: Object, attribute: false, noAccessor: true })
+  @property({ type: Object, attribute: false })
   deviceData?: Readonly<Partial<DeviceData>> | undefined;
 
   @eventOptions({ passive: true })
