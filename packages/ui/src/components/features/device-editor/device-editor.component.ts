@@ -51,12 +51,20 @@ export class DeviceEditor extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <button @click="${this.handleParametersClick}">
-        <webdmx-icon name="options"></webdmx-icon>
-      </button>
-      <button @click="${this.handleRemoveClick}">
-        <webdmx-icon name="remove"></webdmx-icon>
-      </button>
+      <nav>
+        <button @click="${this.handleParametersClick}">
+          <webdmx-icon name="options"></webdmx-icon>
+        </button>
+        <button @click="${this.handleRemoveClick}">
+          <webdmx-icon name="trash"></webdmx-icon>
+        </button>
+      </nav>
+
+      <section>
+        <span>${this.deviceData?.preset}</span>
+        <span>${this.deviceData?.profile}</span>
+        <span>${this.deviceData?.address}</span>
+      </section>
 
       <webdmx-popup .hidden="${!this.parameterEditorVisible}" @webdmx-popup:hidden="${this.handleParametersHidden}">
         <webdmx-device-parameter-editor

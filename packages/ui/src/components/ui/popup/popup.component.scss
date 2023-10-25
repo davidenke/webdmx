@@ -15,6 +15,7 @@
 
   background-color: var(---webdmx-popup-background);
   border-radius: 5px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.35);
 
   &::before {
     content: '';
