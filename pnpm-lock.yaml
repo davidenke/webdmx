@@ -265,6 +265,9 @@ importers:
       lit:
         specifier: 3.0.0
         version: 3.0.0
+      lit-shared-state:
+        specifier: 0.2.1
+        version: 0.2.1(lit@3.0.0)
     devDependencies:
       '@types/node':
         specifier: 20.8.4
@@ -2767,6 +2770,14 @@ packages:
     resolution: {integrity: sha512-DNJIE8dNY0dQF2Gs0sdMNUppMQT2/CvV4OVnSdg7BXAsGqkVwsE5bqQ04POfkYH5dBIuGnJYdFz5fYYyNnOxiA==}
     dependencies:
       '@types/trusted-types': 2.0.3
+    dev: false
+
+  /lit-shared-state@0.2.1(lit@3.0.0):
+    resolution: {integrity: sha512-4KnwRCVTqMWxVxO5u50+Q+RZJWAbCo34w5MxRh1GwbpW8sO7rupnNVYwqtp3WTmXN5Pdp2ZuaRWpPu/shfIauA==}
+    peerDependencies:
+      lit: ^2.0.2
+    dependencies:
+      lit: 3.0.0
     dev: false
 
   /lit@3.0.0:

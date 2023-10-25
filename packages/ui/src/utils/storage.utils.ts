@@ -1,32 +1,36 @@
-/**
- * Map of all storage keys to their respective types.
- * We use an interface here, as this can be extended by other
- * packages using Typescripts declaration merging.
- */
-declare global {
-  interface StorageMap {}
-}
-
-/**
- * Union type of all storage keys.
- */
-type StorageKey = keyof StorageMap;
+import type { ReadonlyStateVar, StateOptions, StateVar } from 'lit-shared-state';
 
 // use an internal prefix to avoid collisions with
 // other packages in local storage
 const STORAGE_PREFIX = 'webdmx-';
 
 /**
- * Generic function to read data from storage.
+ * Persistance layer for the managed global state.
+ * https://sijakret.github.io/lit-shared-state/#Custom-Storage
  */
-export async function readData<K extends StorageKey>(key: K): Promise<StorageMap[K] | undefined> {
-  const data = localStorage.getItem(`${STORAGE_PREFIX}${key}`);
-  return data ? JSON.parse(data) : undefined;
-}
-
-/**
- * Generic function to write data to storage.
- */
-export async function writeData<K extends StorageKey>(key: K, value: StorageMap[K]): Promise<void> {
-  localStorage.setItem(`${STORAGE_PREFIX}${key}`, JSON.stringify(value));
-}
+export const persistLocalStorage = (prefix = STORAGE_PREFIX) =>
+  ({
+    // save to local storage
+    set<T>(stateVar: StateVar<T>, value: T) {
+      // store state in local storage, don't forget to notify
+      localStorage.setItem(`${prefix}${stateVar.key}`, JSON.stringify(value));
+      stateVar.notifyObservers(stateVar.key, value);
+    },
+    // load from local storage, fall back to undefined
+    get<T>(stateVar: ReadonlyStateVar<T>): T | undefined {
+      // read from local storage and parse JSON if defined
+      const stored = localStorage.getItem(`${prefix}${stateVar.key}`);
+      return stored ? JSON.parse(stored) : undefined;
+    },
+    // initialize from local storage
+    init<T>(stateVar: ReadonlyStateVar<T>, initialValue?: T): T | undefined {
+      const value = stateVar.options.get(stateVar);
+      // if the value is undefined, we store the initial value
+      // as it will be read right after initialization
+      if (value === undefined && initialValue !== undefined) {
+        localStorage.setItem(`${prefix}${stateVar.key}`, JSON.stringify(initialValue));
+      }
+      // fall back to initializer value
+      return value ?? initialValue;
+    },
+  }) satisfies StateOptions;

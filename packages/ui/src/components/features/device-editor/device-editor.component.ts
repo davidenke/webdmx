@@ -1,12 +1,12 @@
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property } from 'lit/decorators.js';
 
-import type { DeviceData } from '../../../utils/data.utils.js';
+import type { DeviceConfig } from '../../../state/config.state.js';
 import { isSameOrWithin } from '../../../utils/dom.utils.js';
 import type { PopupHiddenEvent } from '../../ui/popup/popup.component.js';
 import styles from './device-editor.component.scss?inline';
 
-export type DeviceEditorChangeEvent = CustomEvent<Partial<DeviceData>>;
+export type DeviceEditorChangeEvent = CustomEvent<Partial<DeviceConfig>>;
 export type DeviceEditorRemoveEvent = CustomEvent<void>;
 
 /**
@@ -25,7 +25,7 @@ export class DeviceEditor extends LitElement {
   dragging = false;
 
   @property({ type: Object, attribute: false, noAccessor: true })
-  deviceData?: Readonly<Partial<DeviceData>> | undefined;
+  deviceData?: Readonly<Partial<DeviceConfig>> | undefined;
 
   @eventOptions({ passive: true })
   private handleParametersClick() {

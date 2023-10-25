@@ -1,15 +1,15 @@
-import type { Preset } from '@webdmx/common';
-import { DMX } from '@webdmx/controller';
+import type { PresetName } from '@webdmx/controller';
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { map } from 'lit/directives/map.js';
+import { use } from 'lit-shared-state';
 
-import type { DeviceData } from '../../../utils/data.utils.js';
-import { loadPreset } from '../../../utils/preset.utils.js';
+import type { DeviceConfig } from '../../../state/config.state.js';
+import { presets } from '../../../state/presets.state.js';
 import styles from './device-parameter-editor.component.scss?inline';
 
-export type DeviceParameterEditorChangeEvent = CustomEvent<Partial<DeviceData>>;
+export type DeviceParameterEditorChangeEvent = CustomEvent<Partial<DeviceConfig>>;
 export type DeviceParameterEditorRemoveEvent = CustomEvent<void>;
 
 /**
@@ -19,32 +19,27 @@ export type DeviceParameterEditorRemoveEvent = CustomEvent<void>;
 export class DeviceParameterEditor extends LitElement {
   static override readonly styles = unsafeCSS(styles);
 
-  #device?: Readonly<Partial<DeviceData>>;
+  #device?: Readonly<Partial<DeviceConfig>>;
 
-  @state()
-  private presets: Record<string, Preset | null> = Object.fromEntries(DMX.presetNames.map((name) => [name, null]));
+  @use() private presets = presets;
 
-  @state()
-  private selectedPreset?: string;
+  @state() private selectedPreset?: PresetName;
 
   @property({ type: Object, attribute: false, noAccessor: true })
-  set deviceData(device: Readonly<Partial<DeviceData>> | undefined) {
+  set deviceData(device: Readonly<Partial<DeviceConfig>> | undefined) {
     // update internal state
     this.#device = device;
-    this.selectedPreset = device?.preset;
+    this.selectedPreset = device?.preset as PresetName;
 
     // update presets with detailed information
-    loadPreset(this.presets, this.selectedPreset).then((presets) => {
-      this.presets = presets;
-      this.requestUpdate();
-    });
+    this.presets.loadPreset(this.selectedPreset).then(() => this.requestUpdate('deviceData'));
   }
 
   @eventOptions({ passive: true })
   private async handlePresetChange({ target }: Event) {
     const select = target as HTMLSelectElement;
-    this.selectedPreset = select.value;
-    this.presets = await loadPreset(this.presets, this.selectedPreset);
+    this.selectedPreset = select.value as PresetName;
+    await this.presets.loadPreset(this.selectedPreset);
   }
 
   @eventOptions({ capture: true })
@@ -53,12 +48,12 @@ export class DeviceParameterEditor extends LitElement {
     event.preventDefault();
     // read the form data
     const form = event.target as HTMLFormElement;
-    const data = Object.fromEntries(new FormData(form)) as Partial<DeviceData>;
+    const data = Object.fromEntries(new FormData(form)) as Partial<DeviceConfig>;
     // emit the change event
     this.#emitChangeEvent({ ...this.#device, ...data });
   }
 
-  #emitChangeEvent(device: Readonly<Partial<DeviceData>>) {
+  #emitChangeEvent(device: Readonly<Partial<DeviceConfig>>) {
     const event = new CustomEvent('webdmx-device-parameter-editor:change', {
       detail: device,
       bubbles: true,

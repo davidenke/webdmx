@@ -1,13 +1,14 @@
-import type { Channels, Preset, Slider } from '@webdmx/common';
-import { DMX } from '@webdmx/controller';
+import type { Channels, Slider } from '@webdmx/common';
+import type { PresetName } from '@webdmx/controller';
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
-import { customElement, eventOptions, property, state } from 'lit/decorators.js';
+import { customElement, eventOptions, property } from 'lit/decorators.js';
 import { choose } from 'lit/directives/choose.js';
 import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
+import { use } from 'lit-shared-state';
 
-import type { UniverseData } from '../../../utils/data.utils.js';
-import { loadPreset } from '../../../utils/preset.utils.js';
+import type { UniverseConfig } from '../../../state/config.state.js';
+import { presets } from '../../../state/presets.state.js';
 import styles from './preview.component.scss?inline';
 
 export type PreviewUpdateEvent = CustomEvent<{ name: string; channels: Channels }>;
@@ -19,26 +20,22 @@ export type PreviewUpdateEvent = CustomEvent<{ name: string; channels: Channels 
 export class Preview extends LitElement {
   static override readonly styles = unsafeCSS(styles);
 
-  #universe?: Readonly<UniverseData>;
+  #universe?: Readonly<UniverseConfig>;
 
-  @state()
-  presets: Record<string, Preset | null> = Object.fromEntries(DMX.presetNames.map((name) => [name, null]));
-
-  @property({ type: Boolean, reflect: true })
-  connected: boolean = false;
+  @use() private presets = presets;
 
   @property({ type: Object, attribute: false, noAccessor: true })
-  set universe(universe: Readonly<UniverseData> | undefined) {
+  set universe(universe: Readonly<UniverseConfig> | undefined) {
     // update internal state
     this.#universe = universe;
 
     // update presets with detailed information
     const names = this.#universe?.devices.map(({ preset }) => preset) ?? [];
-    loadPreset(this.presets, ...names).then((presets) => {
-      this.presets = presets;
-      this.requestUpdate();
-    });
+    this.presets.loadPreset(...names).then(() => this.requestUpdate('universe'));
   }
+
+  @property({ type: Boolean, reflect: true })
+  connected: boolean = false;
 
   @eventOptions({ passive: true })
   private updateRangeInput(event: InputEvent) {
@@ -82,14 +79,14 @@ export class Preview extends LitElement {
           ${when(
             device.preset !== undefined && device.profile !== undefined,
             () =>
-              this.presets[device.preset!]?.profiles?.[device.profile!]?.channels?.map(
+              this.presets[device.preset as PresetName]?.profiles?.[device.profile!]?.channels?.map(
                 (channel, index) =>
-                  html` ${choose(this.presets[device.preset!]?.controls?.[channel]?.type, [
+                  html` ${choose(this.presets[device.preset as PresetName]?.controls?.[channel]?.type, [
                     [
                       'slider',
                       () =>
                         this.#renderRange(
-                          this.presets[device.preset!]?.controls?.[channel] as Slider,
+                          this.presets[device.preset as PresetName]?.controls?.[channel] as Slider,
                           (device.address ?? 1) - 1 + index,
                         ),
                     ],
