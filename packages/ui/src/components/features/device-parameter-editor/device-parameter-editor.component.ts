@@ -9,7 +9,7 @@ import { presets } from '../../../utils/preset.utils.js';
 import styles from './device-parameter-editor.component.scss?inline';
 
 export type DeviceParameterEditorChangeEvent = CustomEvent<Partial<DeviceData>>;
-export type DeviceParameterEditorRemoveEvent = CustomEvent<void>;
+export type DeviceParameterEditorAddressFocusEvent = CustomEvent<boolean>;
 
 /**
  * @element webdmx-device-parameter-editor
@@ -45,6 +45,16 @@ export class DeviceParameterEditor extends LitElement {
   }
 
   @eventOptions({ capture: true })
+  private handleAddressFocus(event: FocusEvent) {
+    this.#emitAddressFocusEvent(event.target, true);
+  }
+
+  @eventOptions({ capture: true })
+  private handleAddressBlur(event: FocusEvent) {
+    this.#emitAddressFocusEvent(event.target, false);
+  }
+
+  @eventOptions({ capture: true })
   private handleSubmit(event: SubmitEvent) {
     // prevent reload
     event.preventDefault();
@@ -53,6 +63,12 @@ export class DeviceParameterEditor extends LitElement {
     const data = Object.fromEntries(new FormData(form)) as Partial<DeviceData>;
     // emit the change event
     this.#emitChangeEvent({ ...this.#deviceData, ...data });
+  }
+
+  #emitAddressFocusEvent(target: EventTarget | null, focusInside: boolean) {
+    const options = { detail: focusInside, bubbles: true, composed: true };
+    const repeat = new CustomEvent('webdmx-device-parameter-editor:address-focus', options);
+    target?.dispatchEvent(repeat);
   }
 
   #emitChangeEvent(device: Readonly<Partial<DeviceData>>) {
@@ -73,6 +89,8 @@ export class DeviceParameterEditor extends LitElement {
           type="number"
           min="1"
           max="512"
+          @focusin="${this.handleAddressFocus}"
+          @focusout="${this.handleAddressBlur}"
           value="${ifDefined(this.#deviceData?.address)}"
         />
 
@@ -103,6 +121,7 @@ export class DeviceParameterEditor extends LitElement {
 
 declare global {
   interface HTMLEventMap {
+    'webdmx-device-parameter-editor:address-focus': DeviceParameterEditorAddressFocusEvent;
     'webdmx-device-parameter-editor:change': DeviceParameterEditorChangeEvent;
   }
 

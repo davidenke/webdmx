@@ -4,6 +4,7 @@ import { customElement, eventOptions, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
 import { type Data, loadData, saveData } from '../../utils/data.utils.js';
+import type { DeviceParameterEditorAddressFocusEvent } from '../features/device-parameter-editor/device-parameter-editor.component.js';
 import type { EditorChangeEvent } from '../features/editor/editor.component.js';
 import type { PreviewUpdateEvent } from '../features/preview/preview.component.js';
 import styles from './root.component.scss?inline';
@@ -28,6 +29,7 @@ export class Root extends LitElement {
   @state() private loaded = false;
   @state() private idle = true;
   @state() private connected = false;
+  @state() private isAddressEditorVisible = false;
 
   @eventOptions({ passive: true })
   private async handleModeChange() {
@@ -121,6 +123,11 @@ export class Root extends LitElement {
   }
 
   @eventOptions({ passive: true })
+  private handleEditorAddressFocus(event: DeviceParameterEditorAddressFocusEvent) {
+    this.isAddressEditorVisible = event.detail;
+  }
+
+  @eventOptions({ passive: true })
   private handlePreviewUpdate({ detail: { name, channels } }: PreviewUpdateEvent) {
     this.#dmx.update(name, channels);
   }
@@ -203,6 +210,7 @@ export class Root extends LitElement {
           ? html`
               <webdmx-editor
                 .universe="${this.data.universes[this.selectedUniverseIndex!]}"
+                @webdmx-device-parameter-editor:address-focus="${this.handleEditorAddressFocus}"
                 @webdmx-editor:change="${this.handleEditorChange}"
               ></webdmx-editor>
             `
