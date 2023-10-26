@@ -131,6 +131,7 @@ export class Editor extends LitElement {
           <webdmx-device-editor
             draggable="true"
             data-device-index="${index}"
+            ?autofocus="${index === 0}"
             .deviceData="${device}"
             @dragstart="${this.handleDragStart}"
             @webdmx-device-parameter-editor:change="${this.handleDeviceChange}"
