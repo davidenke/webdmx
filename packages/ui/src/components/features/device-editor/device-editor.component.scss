@@ -36,6 +36,12 @@ nav {
   button {
     all: unset;
     cursor: pointer;
+
+    &:focus,
+    &:focus-within,
+    &:hover {
+      color: #b4b4b4;
+    }
   }
 }
 
