@@ -12,7 +12,9 @@ slot {
 
   // the default slot
   &:not([name]) {
+    position: relative;
     flex: 1 0 auto;
+    z-index: 1;
   }
 
   // all named slots
