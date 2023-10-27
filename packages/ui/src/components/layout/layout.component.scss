@@ -27,5 +27,13 @@ slot {
       justify-content: space-between;
       padding: 10px 20px;
     }
+
+    &[name='footer'] {
+      display: flex;
+      flex-direction: column;
+
+      max-height: 25svh;
+      overflow: auto;
+    }
   }
 }
