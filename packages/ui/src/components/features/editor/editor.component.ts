@@ -4,10 +4,10 @@ import { map } from 'lit/directives/map.js';
 import { styleMap } from 'lit/directives/style-map.js';
 
 import type { DeviceData, UniverseData } from '../../../utils/data.utils.js';
+import { DropTarget, prepareDrag, processDrop } from '../../../utils/drag-drop.utils.js';
 import { presets } from '../../../utils/preset.utils.js';
 import { DeviceEditor, type DeviceEditorChangeEvent } from '../device-editor/device-editor.component.js';
 import styles from './editor.component.scss?inline';
-import { prepareDeviceDrag, processDeviceDrop } from './editor.utils.js';
 
 export type EditorChangeEvent = CustomEvent<Partial<DeviceData>[]>;
 
@@ -15,7 +15,7 @@ export type EditorChangeEvent = CustomEvent<Partial<DeviceData>[]>;
  * @element webdmx-editor
  */
 @customElement('webdmx-editor')
-export class Editor extends LitElement {
+export class Editor extends DropTarget(LitElement) {
   static override readonly styles = unsafeCSS(styles);
 
   #universe?: Readonly<UniverseData>;
@@ -72,29 +72,19 @@ export class Editor extends LitElement {
     event.stopPropagation();
 
     // prepare drag event and retrieve element reference
-    const deviceElement = prepareDeviceDrag(event);
+    const deviceElement = prepareDrag<DeviceEditor>(event);
 
-    // close the parameter editor popup and set dragging state
-    deviceElement.dragging = true;
+    // close the parameter editor popup
     deviceElement.parameterEditorVisible = false;
   }
 
-  @eventOptions({ capture: true })
-  private handleDragging(event: DragEvent) {
-    // cancel default behavior to allow drop by preventing
-    // the dragenter, dragover and dragleave events
-    // https://stackoverflow.com/a/21341021/1146207
-    // https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/Drag_operations#performing_a_drop
-    event.preventDefault();
-  }
-
   @eventOptions({ passive: true })
-  private async handleDrop(event: DragEvent) {
+  override async dropCallback(event: DragEvent) {
     // process drop event and retrieve element reference
-    const { deviceElement, deviceIndex, position } = processDeviceDrop(event, false);
-    deviceElement.dragging = false;
+    const { element, position } = processDrop(event, false);
 
     // update corresponding device position
+    const deviceIndex = parseInt(element.dataset.deviceIndex!);
     const devices = this.#universe?.devices?.slice() ?? [];
     devices[deviceIndex] = { ...this.#universe?.devices?.[deviceIndex], position };
 
@@ -105,22 +95,6 @@ export class Editor extends LitElement {
   #emitChangeEvent(devices: Partial<DeviceData>[]) {
     const event = new CustomEvent('webdmx-editor:change', { detail: devices, bubbles: true, composed: true });
     this.dispatchEvent(event);
-  }
-
-  constructor() {
-    super();
-    this.addEventListener('drop', this.handleDrop, false);
-    this.addEventListener('dragenter', this.handleDragging, false);
-    this.addEventListener('dragleave', this.handleDragging, false);
-    this.addEventListener('dragover', this.handleDragging, false);
-  }
-
-  override disconnectedCallback() {
-    this.removeEventListener('drop', this.handleDrop, false);
-    this.removeEventListener('dragenter', this.handleDragging, false);
-    this.removeEventListener('dragleave', this.handleDragging, false);
-    this.removeEventListener('dragover', this.handleDragging, false);
-    super.disconnectedCallback();
   }
 
   override render(): TemplateResult {
