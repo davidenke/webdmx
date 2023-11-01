@@ -8,11 +8,14 @@ import type { DeviceData } from '../../../utils/data.utils.js';
 import { presets } from '../../../utils/preset.utils.js';
 import styles from './address-editor.component.scss?inline';
 
+// every address is either a regular address or a device address,
+// but both consist of a label and a length
 type EmptyAddressData = {
   label: string;
   length: number;
 };
 
+// a device address has additional information to the empty address
 type DeviceAddressData = EmptyAddressData & {
   deviceIndex: number;
   device: Partial<DeviceData>;
@@ -20,14 +23,9 @@ type DeviceAddressData = EmptyAddressData & {
   isDeviceEnd: true;
 };
 
+// all stored addresses are keyed by their address number and contain
+// either an empty address or an address with device information
 type Addresses = Map<number, EmptyAddressData | DeviceAddressData>;
-
-type DeviceDataset = {
-  deviceIndex: string;
-  deviceStart: string;
-  deviceLength: string;
-  deviceOffset: string;
-};
 
 export type AddressEditorChangeEvent = CustomEvent<Partial<DeviceData>[]>;
 
@@ -39,10 +37,11 @@ export class AddressEditor extends LitElement {
   static override readonly styles = unsafeCSS(styles);
 
   #addressData: Addresses = new Map();
-
+  #deviceData: DeviceAddressData[] = [];
   #devices: Partial<DeviceData>[] = [];
-  #draggedElement?: HTMLElement;
+
   #draggedAddressOffset?: number;
+  #draggedElement?: HTMLElement;
   #draggedGhostElement?: HTMLElement;
 
   @state()
@@ -60,12 +59,7 @@ export class AddressEditor extends LitElement {
   @property({ type: Array, attribute: false, noAccessor: true })
   set devices(devices: Partial<DeviceData>[] | undefined) {
     // update internal state
-    this.#devices = (devices ?? [])
-      // filter out devices without address
-      .filter(({ address }) => address !== undefined)
-      // sort devices by address ascending
-      .sort(({ address: a = 0 }, { address: b = 0 }) => a - b);
-
+    this.#devices = devices ?? [];
     // update presets with detailed information
     const names = this.#devices.map(({ preset }) => preset) ?? [];
     this.presets.load(...names).then(() => {
@@ -83,6 +77,7 @@ export class AddressEditor extends LitElement {
     event.dataTransfer!.effectAllowed = 'move';
 
     // set invisible ghost image (must not have display: none!)
+    // https://www.kryogenix.org/code/browser/custom-drag-image.html
     this.#draggedGhostElement = document.createElement('canvas');
     this.#draggedGhostElement.style.opacity = '0';
     this.#draggedGhostElement.style.position = 'absolute';
@@ -90,10 +85,13 @@ export class AddressEditor extends LitElement {
     document.body.appendChild(this.#draggedGhostElement);
     event.dataTransfer!.setDragImage(this.#draggedGhostElement, 0, 0);
 
-    // store dragged element reference and address offset
+    // store dragged element reference
     this.#draggedElement = event.target as HTMLElement;
-    const { deviceOffset } = this.#draggedElement.dataset as DeviceDataset;
-    this.#draggedAddressOffset = parseInt(deviceOffset);
+
+    // derive and store address offset
+    const address = parseInt(this.#draggedElement.dataset!.address!);
+    const deviceIndex = parseInt(this.#draggedElement.dataset!.deviceIndex!);
+    this.#draggedAddressOffset = address - this.#devices[deviceIndex!].address!;
   }
 
   @eventOptions({ capture: true })
@@ -114,26 +112,34 @@ export class AddressEditor extends LitElement {
     if (target.isSameNode(this.#draggedElement ?? null)) return;
 
     // retrieve data from element references
-    const { deviceIndex } = this.#draggedElement?.dataset as DeviceDataset;
-    const { address } = target.dataset;
+    const address = parseInt(target.dataset!.address!);
+    const deviceLength = parseInt(this.#draggedElement!.dataset.deviceLength!);
+    const deviceIndex = parseInt(this.#draggedElement!.dataset.deviceIndex!);
 
-    // prevent dragging on existing device, so we need to know the
-    // first and last address of the device and check if the current
-    // address is within this range
-    // const usedAddresses = Array.from({ length: parseInt(deviceLength) }, (_, i) => parseInt(deviceStart) + i);
-    // console.log(usedAddresses);
-    // const isUsedAddress = usedAddresses.some((usedAddress) => this.#addressesUsed.has(usedAddress));
-    // if (isUsedAddress) return;
+    // prevent dragging on existing device, so we need to know all
+    // new addresses of the device that will be targeted
+    const newAddress = address - this.#draggedAddressOffset!;
 
-    // quick check if the actually dragged element would be dropped
-    // onto an existing device, so we can skip the more expensive
-    // check for the begin and the end of the dragged device
-    if (target.dataset.deviceIndex !== undefined) return;
+    // first of all, limit the new address to the range of the editor
+    if (newAddress < this.first) return;
+    if (newAddress + deviceLength - 1 > this.length) return;
+
+    // now we need to know the reserved addresses of all other devices
+    // to check if the dragged device would overlap with any of them
+    const reservedAddresses = this.#devices.reduce((addresses, { address }, index) => {
+      if (index === deviceIndex) return addresses;
+      const length = this.#deviceData[index].length;
+      return addresses.concat(Array.from({ length }, (_, i) => address! + i));
+    }, [] as number[]);
+
+    // now check for intersections and if so, skip the drop event
+    const newAddresses = Array.from({ length: deviceLength }, (_, i) => newAddress + i);
+    const isIntersecting = newAddresses.some((address) => reservedAddresses.includes(address));
+    if (isIntersecting) return;
 
     // update corresponding device address
     const devices = this.#devices.slice();
-    const newAddress = parseInt(address!) - this.#draggedAddressOffset!;
-    devices[parseInt(deviceIndex!)].address = newAddress;
+    devices[deviceIndex].address = newAddress;
 
     // emit the change event
     this.#emitChangeEvent(devices);
@@ -176,6 +182,7 @@ export class AddressEditor extends LitElement {
         if (i === 0) deviceData.isDeviceBegin = true;
         if (i === length - 1) deviceData.isDeviceEnd = true;
         addressData.set(address, deviceData as DeviceAddressData);
+        this.#deviceData.push(deviceData as DeviceAddressData);
         ++address;
       }
     }
@@ -214,10 +221,8 @@ export class AddressEditor extends LitElement {
         })}"
         draggable="true"
         data-address="${address}"
-        data-device-start="${device!.address!}"
-        data-device-length="${length}"
-        data-device-offset="${address - device!.address!}"
         data-device-index="${deviceIndex!}"
+        data-device-length="${length!}"
         @dragstart="${this.handleDragStart}"
         @dragover="${this.handleDragOver}"
         @dragenter="${this.handleDragEnter}"
