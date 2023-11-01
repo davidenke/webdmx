@@ -17,6 +17,7 @@ export type IconName = keyof typeof Icons;
  */
 @customElement('webdmx-icon')
 export class Icon extends LitElement {
+  private static cache = new Map<string, string>();
   static override readonly styles = unsafeCSS(styles);
 
   #name?: IconName;
@@ -39,13 +40,18 @@ export class Icon extends LitElement {
   }
 
   async #resolveIcon(name?: IconName): Promise<void> {
+    // reset icon if name is undefined
     if (name === undefined) {
       this.icon = undefined;
       return;
     }
-
-    const icon = await import(`../../../../node_modules/css.gg/icons/svg/${name}.svg?raw`);
-    this.icon = icon.default;
+    // load icon lazily if not already loaded
+    if (!Icon.cache.has(name)) {
+      const icon = await import(`../../../../node_modules/css.gg/icons/svg/${name}.svg?raw`);
+      Icon.cache.set(name, icon.default);
+    }
+    // update icon from cache
+    this.icon = Icon.cache.get(name);
   }
 
   override render(): TemplateResult {
