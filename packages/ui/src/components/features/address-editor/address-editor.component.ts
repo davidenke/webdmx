@@ -112,13 +112,13 @@ export class AddressEditor extends LitElement {
     if (target.isSameNode(this.#draggedElement ?? null)) return;
 
     // retrieve data from element references
-    const address = parseInt(target.dataset!.address!);
-    const deviceLength = parseInt(this.#draggedElement!.dataset.deviceLength!);
+    const targetAddress = parseInt(target.dataset!.address!);
     const deviceIndex = parseInt(this.#draggedElement!.dataset.deviceIndex!);
+    const deviceLength = parseInt(this.#draggedElement!.dataset.deviceLength!);
 
     // prevent dragging on existing device, so we need to know all
     // new addresses of the device that will be targeted
-    const newAddress = address - this.#draggedAddressOffset!;
+    const newAddress = targetAddress - this.#draggedAddressOffset!;
 
     // first of all, limit the new address to the range of the editor
     if (newAddress < this.first) return;
@@ -164,6 +164,7 @@ export class AddressEditor extends LitElement {
   #deriveAddresses() {
     // prepare address data for rendering
     const addressData: Addresses = new Map();
+    const deviceData: DeviceAddressData[] = [];
     for (let address = this.first; address <= this.length; ) {
       const deviceIndex = this.#devices.findIndex((device) => device.address === address);
       const label = `${address}`.padStart(3, '0');
@@ -178,15 +179,16 @@ export class AddressEditor extends LitElement {
       const device = this.#devices[deviceIndex];
       const { length } = this.presets.getChannels(device.preset, device.profile);
       for (let i = 0; i < length; ++i) {
-        const deviceData: Partial<DeviceAddressData> = { deviceIndex, device, length, label };
-        if (i === 0) deviceData.isDeviceBegin = true;
-        if (i === length - 1) deviceData.isDeviceEnd = true;
-        addressData.set(address, deviceData as DeviceAddressData);
-        this.#deviceData.push(deviceData as DeviceAddressData);
+        const deviceAddressData: Partial<DeviceAddressData> = { deviceIndex, device, length, label };
+        if (i === 0) deviceAddressData.isDeviceBegin = true;
+        if (i === length - 1) deviceAddressData.isDeviceEnd = true;
+        addressData.set(address, deviceAddressData as DeviceAddressData);
+        deviceData[deviceIndex] = deviceAddressData as DeviceAddressData;
         ++address;
       }
     }
     this.#addressData = addressData;
+    this.#deviceData = deviceData;
   }
 
   #emitChangeEvent(devices: Partial<DeviceData>[]) {
