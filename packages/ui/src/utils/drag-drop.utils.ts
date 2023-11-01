@@ -2,27 +2,43 @@ import type { LitElement } from 'lit';
 
 import type { Position } from './data.utils.js';
 
+export type GetUniqueSerial<R extends Element = HTMLElement> = (item: R) => string;
+
+export type GetDroppedElement<R extends Element = HTMLElement> = (
+  serial: string,
+  root: HTMLElement | ShadowRoot,
+) => R | undefined;
+
 export const DRAG_PAYLOAD_SPLIT = ';';
 
 /**
  * Prepares a drag event for an element and derives the
  * element reference from the event.
  */
-export function prepareDrag<R extends HTMLElement = HTMLElement>(event: DragEvent): R {
+export function prepareDrag<R extends HTMLElement = HTMLElement>(
+  /**
+   * The original drag event.
+   */
+  event: DragEvent,
+
+  /**
+   * A function to derive a unique serial from the element reference.
+   */
+  uniqueSerial: GetUniqueSerial<R>,
+): R {
   // gather pointer offset
   const { clientX, clientY, target } = event;
 
   // gather element reference and set dragging state
   const element = target as R;
   const { x, y, height, width } = element.getBoundingClientRect();
-  element.dataset.dragging = 'true';
 
   // the device element is positioned with its center
   const offsetX = clientX - (x + width / 2);
   const offsetY = clientY - (y + height / 2);
 
   // prepare and set data as serialized payload for event transfer
-  const data = [offsetX, offsetY];
+  const data = [uniqueSerial(element), offsetX, offsetY];
   event.dataTransfer!.effectAllowed = 'move';
   event.dataTransfer!.setData('text/plain', data.join(DRAG_PAYLOAD_SPLIT));
 
@@ -41,6 +57,11 @@ export function processDrop<R extends HTMLElement = HTMLElement>(
   event: DragEvent,
 
   /**
+   * Retrieve element reference from serial.
+   */
+  getElement: GetDroppedElement<R>,
+
+  /**
    * Use relative position as percentage instead of absolute position in pixels.
    */
   usePercentage = true,
@@ -48,7 +69,7 @@ export function processDrop<R extends HTMLElement = HTMLElement>(
   /**
    * The element reference that was dragged.
    */
-  element: R;
+  element: R | undefined;
 
   /**
    * The new position of the element.
@@ -57,13 +78,13 @@ export function processDrop<R extends HTMLElement = HTMLElement>(
 } {
   // gather information and element reference
   const { clientX, clientY, dataTransfer, target } = event;
-  const [offsetX, offsetY] = dataTransfer!.getData('text/plain').split(DRAG_PAYLOAD_SPLIT);
+  const [serial, offsetX, offsetY] = dataTransfer!.getData('text/plain').split(DRAG_PAYLOAD_SPLIT);
   const dropTarget = target as HTMLElement;
-  const dropRoot = dropTarget.shadowRoot ?? dropTarget;
+  const dropRoot = dropTarget.getRootNode() as HTMLElement | ShadowRoot;
 
   // retrieve the element reference
-  const element = dropRoot.querySelector<R>(`[data-dragging="true"]`)!;
-  element.dataset.dragging = undefined;
+  const element = getElement(serial, dropRoot);
+  if (!element || dropTarget.isSameNode(element)) return { element, position: { x: 0, y: 0 } };
 
   // calculate new (relative) position (as percentage)
   const clientRect = dropTarget.getBoundingClientRect();

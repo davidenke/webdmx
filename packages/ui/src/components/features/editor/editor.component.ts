@@ -1,6 +1,6 @@
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
-import { map } from 'lit/directives/map.js';
+import { repeat } from 'lit/directives/repeat.js';
 import { styleMap } from 'lit/directives/style-map.js';
 
 import type { DeviceData, UniverseData } from '../../../utils/data.utils.js';
@@ -72,19 +72,25 @@ export class Editor extends DropTarget(LitElement) {
     event.stopPropagation();
 
     // prepare drag event and retrieve element reference
-    const deviceElement = prepareDrag<DeviceEditor>(event);
+    const element = prepareDrag<DeviceEditor>(event, (element) => element.dataset.deviceIndex!);
+    element.dataset.dragging = String(true);
 
     // close the parameter editor popup
-    deviceElement.parameterEditorVisible = false;
+    element.parameterEditorVisible = false;
   }
 
   @eventOptions({ passive: true })
   override async dropCallback(event: DragEvent) {
     // process drop event and retrieve element reference
-    const { element, position } = processDrop(event, false);
+    const getElement = (serial: string) =>
+      this.renderRoot.querySelector<DeviceEditor>(`[data-device-index="${serial}"]`) ?? undefined;
+    const { element, position } = processDrop(event, getElement, false);
+
+    if (element === undefined) return;
+    element.dataset.dragging = undefined;
 
     // update corresponding device position
-    const deviceIndex = parseInt(element.dataset.deviceIndex!);
+    const deviceIndex = parseInt(element!.dataset.deviceIndex!);
     const devices = this.#universe?.devices?.slice() ?? [];
     devices[deviceIndex] = { ...this.#universe?.devices?.[deviceIndex], position };
 
@@ -93,14 +99,16 @@ export class Editor extends DropTarget(LitElement) {
   }
 
   #emitChangeEvent(devices: Partial<DeviceData>[]) {
-    const event = new CustomEvent('webdmx-editor:change', { detail: devices, bubbles: true, composed: true });
+    const options = { detail: devices, bubbles: true, composed: true };
+    const event = new CustomEvent('webdmx-editor:change', options);
     this.dispatchEvent(event);
   }
 
   override render(): TemplateResult {
     return html`
-      ${map(
+      ${repeat(
         this.#universe?.devices ?? [],
+        ({ address }) => address,
         (device, index) => html`
           <webdmx-device-editor
             draggable="true"

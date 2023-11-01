@@ -21,9 +21,6 @@ export class DeviceEditor extends LitElement {
   @property({ type: Boolean, reflect: true, attribute: 'parameter-editor-visible' })
   parameterEditorVisible = false;
 
-  @property({ type: Boolean, reflect: true })
-  dragging = false;
-
   @property({ type: Object, attribute: false })
   deviceData?: Readonly<Partial<DeviceData>> | undefined;
 
