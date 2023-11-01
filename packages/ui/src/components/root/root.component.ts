@@ -132,6 +132,11 @@ export class Root extends LitElement {
     // load stored data (or initialize with empty data)
     this.data = await loadData();
 
+    // TODO: remove me once universe editing is implemented
+    if (!this.data.universes.length) {
+      this.data = { ...this.data, universes: [{ label: 'default', driver: 'null', devices: [] }] };
+    }
+
     // pre-select the first universe if only one is available
     if (this.data.universes.length === 1 && this.selectedUniverseIndex === undefined) {
       this.selectedUniverseIndex = 0;
