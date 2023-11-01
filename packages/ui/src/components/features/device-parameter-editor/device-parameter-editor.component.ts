@@ -70,6 +70,7 @@ export class DeviceParameterEditor extends LitElement {
       <form @submit="${this.handleSubmit}">
         <input
           required
+          autocomplete="off"
           name="address"
           type="number"
           min="1"
@@ -77,7 +78,7 @@ export class DeviceParameterEditor extends LitElement {
           value="${ifDefined(this.#deviceData?.address)}"
         />
 
-        <select required name="preset" @change="${this.handlePresetChange}">
+        <select required name="preset" autocomplete="off" @change="${this.handlePresetChange}">
           <option disabled value="" ?selected="${this.#deviceData?.preset === undefined}"></option>
           ${map(
             PRESET_NAMES,
@@ -87,7 +88,7 @@ export class DeviceParameterEditor extends LitElement {
           )}
         </select>
 
-        <select required name="profile" ?disabled="${this.selectedPreset === undefined}">
+        <select required name="profile" autocomplete="off" ?disabled="${this.selectedPreset === undefined}">
           <option disabled value="" ?selected="${this.#deviceData?.profile === undefined}"></option>
           ${map(
             this.presets.getProfileNames(this.selectedPreset),
