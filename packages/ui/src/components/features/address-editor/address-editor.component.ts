@@ -27,10 +27,22 @@ type DeviceAddressData = EmptyAddressData & {
 // either an empty address or an address with device information
 type Addresses = Map<number, EmptyAddressData | DeviceAddressData>;
 
+/**
+ * The change event of the address editor. Will contain the
+ * new device data of all devices.
+ */
 export type AddressEditorChangeEvent = CustomEvent<Partial<DeviceData>[]>;
 
 /**
  * @element webdmx-address-editor
+ *
+ * @cssprop --webdmx-address-editor-item-gap - The gap between address items.
+ * @cssprop --webdmx-address-editor-item-radius - The border radius of address items.
+ * @cssprop --webdmx-address-editor-item-width - The width of address items.
+ * @cssprop --webdmx-address-editor-item-spacing-horizontal - The horizontal spacing of address items.
+ * @cssprop --webdmx-address-editor-item-spacing-vertical - The vertical spacing of address items.
+ *
+ * @emits webdmx-address-editor:change - Emitted when an address has been changed.
  */
 @customElement('webdmx-address-editor')
 export class AddressEditor extends LitElement {
@@ -45,17 +57,29 @@ export class AddressEditor extends LitElement {
   #draggedGhostElement?: HTMLElement;
 
   @state()
-  presets = presets;
+  private presets = presets;
 
+  /**
+   * Disables the address editor.
+   */
   @property({ type: Boolean, reflect: true })
   disabled = false;
 
+  /**
+   * The first address of the editor.
+   */
   @property({ type: Number, reflect: true })
   first = 1;
 
+  /**
+   * The overall length of the editor.
+   */
   @property({ type: Number, reflect: true })
   length = 512;
 
+  /**
+   * The devices to be rendered. Consists of partial device data.
+   */
   @property({ type: Array, attribute: false, noAccessor: true })
   set devices(devices: Partial<DeviceData>[] | undefined) {
     // update internal state
@@ -229,8 +253,13 @@ export class AddressEditor extends LitElement {
         @dragover="${this.handleDragOver}"
         @dragenter="${this.handleDragEnter}"
         @drop="${this.handleDrop}"
+        style="---webdmx-address-editor-device-offset: ${device!.address! - address + 1}"
       >
-        <span>${label} ${device!.preset} (${device!.profile})</span>
+        ${when(
+          isDeviceBegin,
+          () => html`<span>${label}</span>`,
+          () => html`<span>${device!.preset} (${device!.profile})</span>`,
+        )}
       </span>
     `;
   }

@@ -1,7 +1,10 @@
+// prettier-ignore
 :host {
   ---webdmx-address-editor-item-gap: var(--webdmx-address-editor-item-gap, 5px);
   ---webdmx-address-editor-item-radius: var(--webdmx-address-editor-item-width, 5px);
   ---webdmx-address-editor-item-width: var(--webdmx-address-editor-item-width, 35px);
+  ---webdmx-address-editor-item-spacing-horizontal: var(--webdmx-address-editor-item-spacing-horizontal, 6px);
+  ---webdmx-address-editor-item-spacing-vertical: var(--webdmx-address-editor-item-spacing-vertical, 4px);
 }
 
 :host {
@@ -21,12 +24,10 @@ section {
 
 .address,
 .device {
-  display: inline-block;
   font-size: 10px;
   line-height: 12px;
 
   box-sizing: border-box;
-  padding: 0.4em 0.6em;
 
   // https://github.com/necolas/normalize.css/issues/519#issuecomment-197131966
   font-family: monospace, monospace;
@@ -37,7 +38,9 @@ section {
 }
 
 .address {
+  display: inline-block;
   margin: calc(var(---webdmx-address-editor-item-gap) / 2);
+  padding: var(---webdmx-address-editor-item-spacing-vertical) var(---webdmx-address-editor-item-spacing-horizontal);
 
   cursor: default;
   background-color: #ddedf3;
@@ -49,21 +52,30 @@ section {
 }
 
 .device {
+  display: inline-flex;
   margin-bottom: calc(var(---webdmx-address-editor-item-gap) / 2);
   margin-top: calc(var(---webdmx-address-editor-item-gap) / 2);
+  padding-bottom: var(---webdmx-address-editor-item-spacing-vertical);
+  padding-top: var(---webdmx-address-editor-item-spacing-vertical);
 
   background-clip: padding-box;
   background-color: #263e46;
   color: #f4f4f4;
 
+  overflow: hidden;
+
   &.device-begin {
     margin-left: calc(var(---webdmx-address-editor-item-gap) / 2);
+    padding-left: var(---webdmx-address-editor-item-spacing-horizontal);
+
     border-top-left-radius: var(---webdmx-address-editor-item-radius);
     border-bottom-left-radius: var(---webdmx-address-editor-item-radius);
   }
 
   &.device-end {
     margin-right: calc(var(---webdmx-address-editor-item-gap) / 2);
+    padding-right: var(---webdmx-address-editor-item-spacing-horizontal);
+
     border-top-right-radius: var(---webdmx-address-editor-item-radius);
     border-bottom-right-radius: var(---webdmx-address-editor-item-radius);
   }
@@ -74,14 +86,14 @@ section {
 
   span {
     position: relative;
-    display: inline;
+    display: inline-block;
 
     pointer-events: none;
-    overflow: visible;
+    overflow: hidden;
     white-space: nowrap;
   }
 
   &:not(.device-begin) span {
-    display: none;
+    text-indent: calc(var(---webdmx-address-editor-device-offset) * var(---webdmx-address-editor-item-width));
   }
 }
