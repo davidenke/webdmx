@@ -3,6 +3,15 @@ import type { DriverName } from '@webdmx/controller';
 
 import { readData, writeData } from './storage.utils.js';
 
+/**
+ * Extend the storage map with the data key and the corresponding type.
+ */
+declare global {
+  interface StorageMap {
+    [DATA_KEY]: Data;
+  }
+}
+
 export type Position = {
   x: number;
   y: number;
@@ -73,13 +82,4 @@ export async function loadData(): Promise<Data> {
  */
 export async function saveData(data: Data): Promise<void> {
   writeData(DATA_KEY, data);
-}
-
-/**
- * Extend the storage map with the data key and the corresponding type.
- */
-declare global {
-  interface StorageMap {
-    [DATA_KEY]: Data;
-  }
 }

@@ -1,7 +1,7 @@
 import type { Control, Preset } from '@webdmx/common';
 import { DMX, PRESET_NAMES, type PresetName } from '@webdmx/controller';
 
-class Presets {
+export class Presets {
   // internal cache for loaded presets
   #loaded = PRESET_NAMES.reduce((acc, name) => ({ ...acc, [name]: null }), {}) as Record<PresetName, Preset | null>;
 

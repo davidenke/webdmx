@@ -5,6 +5,7 @@ import { repeat } from 'lit/directives/repeat.js';
 import { when } from 'lit/directives/when.js';
 
 import type { DeviceData } from '../../../utils/data.utils.js';
+import { getReservedAddresses } from '../../../utils/device.utils.js';
 import { presets } from '../../../utils/preset.utils.js';
 import styles from './address-editor.component.scss?inline';
 
@@ -49,7 +50,6 @@ export class AddressEditor extends LitElement {
   static override readonly styles = unsafeCSS(styles);
 
   #addressData: Addresses = new Map();
-  #deviceData: DeviceAddressData[] = [];
   #devices: Partial<DeviceData>[] = [];
 
   #draggedAddressOffset?: number;
@@ -150,11 +150,7 @@ export class AddressEditor extends LitElement {
 
     // now we need to know the reserved addresses of all other devices
     // to check if the dragged device would overlap with any of them
-    const reservedAddresses = this.#devices.reduce((addresses, { address }, index) => {
-      if (index === deviceIndex) return addresses;
-      const length = this.#deviceData[index].length;
-      return addresses.concat(Array.from({ length }, (_, i) => address! + i));
-    }, [] as number[]);
+    const reservedAddresses = getReservedAddresses(this.#devices, this.presets, [deviceIndex]);
 
     // now check for intersections and if so, skip the drop event
     const newAddresses = Array.from({ length: deviceLength }, (_, i) => newAddress + i);
@@ -188,7 +184,6 @@ export class AddressEditor extends LitElement {
   #deriveAddresses() {
     // prepare address data for rendering
     const addressData: Addresses = new Map();
-    const deviceData: DeviceAddressData[] = [];
     for (let address = this.first; address <= this.length; ) {
       const deviceIndex = this.#devices.findIndex((device) => device.address === address);
       const label = `${address}`.padStart(3, '0');
@@ -207,12 +202,10 @@ export class AddressEditor extends LitElement {
         if (i === 0) deviceAddressData.isDeviceBegin = true;
         if (i === length - 1) deviceAddressData.isDeviceEnd = true;
         addressData.set(address, deviceAddressData as DeviceAddressData);
-        deviceData[deviceIndex] = deviceAddressData as DeviceAddressData;
         ++address;
       }
     }
     this.#addressData = addressData;
-    this.#deviceData = deviceData;
   }
 
   #emitChangeEvent(devices: Partial<DeviceData>[]) {
