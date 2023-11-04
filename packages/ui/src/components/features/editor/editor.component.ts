@@ -31,17 +31,18 @@ export class Editor extends DropTarget(LitElement) {
 
     // update presets with detailed information
     const names = this.#universe?.devices.map(({ preset }) => preset) ?? [];
-    this.presets.load(...names).then(() => this.requestUpdate('universe', oldUniverse));
+    this.presets.load(...names).then(() => {
+      this.requestUpdate('universe', oldUniverse);
+    });
   }
 
   @eventOptions({ passive: true })
   private async handleDeviceChange({ detail, target }: DeviceEditorChangeEvent) {
     // read the selected index and data
-    const { dataset } = target as DeviceEditor;
-    const index = parseInt(dataset.deviceIndex!);
+    const { deviceIndex } = target as DeviceEditor;
     // update corresponding device
     const devices = this.#universe?.devices?.slice() ?? [];
-    devices[index] = { ...this.#universe?.devices?.[index], ...detail };
+    devices[deviceIndex!] = { ...this.#universe?.devices?.[deviceIndex!], ...detail };
     // emit the change event
     this.#emitChangeEvent(devices);
   }
@@ -49,11 +50,10 @@ export class Editor extends DropTarget(LitElement) {
   @eventOptions({ passive: true })
   private async handleDeviceRemove({ target }: CustomEvent<void>) {
     // read the selected index
-    const { dataset } = target as DeviceEditor;
-    const index = parseInt(dataset.deviceIndex!);
+    const { deviceIndex } = target as DeviceEditor;
     // update corresponding device
     const devices = this.#universe?.devices?.slice() ?? [];
-    devices.splice(index, 1);
+    devices.splice(deviceIndex!, 1);
     // emit the change event
     this.#emitChangeEvent(devices);
   }
@@ -90,9 +90,9 @@ export class Editor extends DropTarget(LitElement) {
     element.dataset.dragging = undefined;
 
     // update corresponding device position
-    const deviceIndex = parseInt(element!.dataset.deviceIndex!);
+    const { deviceIndex } = element;
     const devices = this.#universe?.devices?.slice() ?? [];
-    devices[deviceIndex] = { ...this.#universe?.devices?.[deviceIndex], position };
+    devices[deviceIndex!] = { ...this.#universe?.devices?.[deviceIndex!], position };
 
     // emit the change event
     this.#emitChangeEvent(devices);
@@ -112,9 +112,9 @@ export class Editor extends DropTarget(LitElement) {
         (device, index) => html`
           <webdmx-device-editor
             draggable="true"
-            data-device-index="${index}"
+            device-index="${index}"
             ?autofocus="${index === 0}"
-            .deviceData="${device}"
+            .devices="${this.#universe?.devices}"
             @dragstart="${this.handleDragStart}"
             @webdmx-device-parameter-editor:change="${this.handleDeviceChange}"
             @webdmx-device-editor:remove="${this.handleDeviceRemove}"

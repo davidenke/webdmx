@@ -21,8 +21,11 @@ export class DeviceEditor extends LitElement {
   @property({ type: Boolean, reflect: true, attribute: 'parameter-editor-visible' })
   parameterEditorVisible = false;
 
-  @property({ type: Object, attribute: false })
-  deviceData?: Readonly<Partial<DeviceData>> | undefined;
+  @property({ type: Number, reflect: true, attribute: 'device-index' })
+  deviceIndex?: number;
+
+  @property({ type: Array, attribute: false })
+  devices?: Partial<DeviceData>[] = [];
 
   @eventOptions({ passive: true })
   private handleParametersClick() {
@@ -84,9 +87,9 @@ export class DeviceEditor extends LitElement {
       </nav>
 
       <section>
-        <span>${this.deviceData?.preset}</span>
-        <span>${this.deviceData?.profile}</span>
-        <span>${this.deviceData?.address}</span>
+        <span>${this.devices?.[this.deviceIndex!]?.preset}</span>
+        <span>${this.devices?.[this.deviceIndex!]?.profile}</span>
+        <span>${this.devices?.[this.deviceIndex!]?.address}</span>
       </section>
 
       <webdmx-popup
@@ -95,7 +98,7 @@ export class DeviceEditor extends LitElement {
         @webdmx-popup:hidden="${this.handleParametersHidden}"
       >
         <webdmx-device-parameter-editor
-          .deviceData="${this.deviceData}"
+          .deviceData="${this.devices?.[this.deviceIndex!]}"
           @webdmx-device-parameter-editor:change="${this.handleParametersChange}"
         ></webdmx-device-parameter-editor>
       </webdmx-popup>
