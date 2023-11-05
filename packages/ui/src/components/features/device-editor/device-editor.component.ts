@@ -1,8 +1,10 @@
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
-import { customElement, eventOptions, property } from 'lit/decorators.js';
+import { customElement, eventOptions, property, state } from 'lit/decorators.js';
 
 import type { DeviceData } from '../../../utils/data.utils.js';
+import { getReservedAddresses } from '../../../utils/device.utils.js';
 import { isSameOrWithin } from '../../../utils/dom.utils.js';
+import { presets } from '../../../utils/preset.utils.js';
 import type { PopupHiddenEvent } from '../../ui/popup/popup.component.js';
 import styles from './device-editor.component.scss?inline';
 
@@ -16,7 +18,14 @@ export type DeviceEditorRemoveEvent = CustomEvent<void>;
 export class DeviceEditor extends LitElement {
   static override readonly styles = unsafeCSS(styles);
 
+  #devices: Partial<DeviceData>[] = [];
   #handleClickOutside = this.handleClickOutside.bind(this);
+
+  @state()
+  private reservedAddresses: number[] = [];
+
+  @state()
+  private presets = presets;
 
   @property({ type: Boolean, reflect: true, attribute: 'parameter-editor-visible' })
   parameterEditorVisible = false;
@@ -24,8 +33,22 @@ export class DeviceEditor extends LitElement {
   @property({ type: Number, reflect: true, attribute: 'device-index' })
   deviceIndex?: number;
 
-  @property({ type: Array, attribute: false })
-  devices?: Partial<DeviceData>[] = [];
+  /**
+   * The devices to be rendered. Consists of partial device data.
+   */
+  @property({ type: Array, attribute: false, noAccessor: true })
+  set devices(devices: Partial<DeviceData>[] | undefined) {
+    // update internal state
+    this.#devices = devices ?? [];
+    // update presets with detailed information
+    const names = this.#devices.map(({ preset }) => preset) ?? [];
+    this.presets.load(...names).then(() => {
+      // derive reserved addresses
+      const { reservedAddresses } = this;
+      this.reservedAddresses = getReservedAddresses(this.#devices, this.presets, [this.deviceIndex!]);
+      this.requestUpdate('reservedAddresses', reservedAddresses);
+    });
+  }
 
   @eventOptions({ passive: true })
   private handleParametersClick() {
@@ -87,9 +110,9 @@ export class DeviceEditor extends LitElement {
       </nav>
 
       <section>
-        <span>${this.devices?.[this.deviceIndex!]?.preset}</span>
-        <span>${this.devices?.[this.deviceIndex!]?.profile}</span>
-        <span>${this.devices?.[this.deviceIndex!]?.address}</span>
+        <span>${this.#devices?.[this.deviceIndex!]?.preset}</span>
+        <span>${this.#devices?.[this.deviceIndex!]?.profile}</span>
+        <span>${this.#devices?.[this.deviceIndex!]?.address}</span>
       </section>
 
       <webdmx-popup
@@ -98,7 +121,8 @@ export class DeviceEditor extends LitElement {
         @webdmx-popup:hidden="${this.handleParametersHidden}"
       >
         <webdmx-device-parameter-editor
-          .deviceData="${this.devices?.[this.deviceIndex!]}"
+          .deviceData="${this.#devices?.[this.deviceIndex!]}"
+          .reservedAddresses="${this.reservedAddresses}"
           @webdmx-device-parameter-editor:change="${this.handleParametersChange}"
         ></webdmx-device-parameter-editor>
       </webdmx-popup>

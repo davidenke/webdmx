@@ -75,6 +75,8 @@ export class Preview extends LitElement {
         this.#universe?.devices ?? [],
         (device) => html`
           <h2>${device.preset}</h2>
+          <h3>${device.profile}</h3>
+          <p>${device.address}</p>
 
           ${when(device.preset !== undefined && device.profile !== undefined, () =>
             this.presets

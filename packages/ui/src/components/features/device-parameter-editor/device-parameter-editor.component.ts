@@ -36,6 +36,19 @@ export class DeviceParameterEditor extends LitElement {
     this.presets.load(this.selectedPreset).then(() => this.requestUpdate());
   }
 
+  @property({ type: Array, attribute: false })
+  reservedAddresses: number[] = [];
+
+  @eventOptions({ passive: false })
+  handleAddressInput(event: InputEvent) {
+    const target = event.target as HTMLInputElement;
+    if (this.reservedAddresses.includes(target.valueAsNumber)) {
+      target.setCustomValidity('Address is already in use.');
+    } else {
+      target.setCustomValidity('');
+    }
+  }
+
   @eventOptions({ passive: true })
   private async handlePresetChange({ target }: Event) {
     const select = target as HTMLSelectElement;
@@ -48,8 +61,12 @@ export class DeviceParameterEditor extends LitElement {
   private handleSubmit(event: SubmitEvent) {
     // prevent reload
     event.preventDefault();
-    // read the form data
+
+    // check if the form is valid
     const form = event.target as HTMLFormElement;
+    if (!form.checkValidity()) return;
+
+    // read the form data
     const data = Object.fromEntries(new FormData(form)) as Partial<DeviceData>;
     data.address = Number(data.address);
     // emit the change event
@@ -71,11 +88,13 @@ export class DeviceParameterEditor extends LitElement {
         <input
           required
           autocomplete="off"
+          inputmode="numeric"
           name="address"
           type="number"
           min="1"
           max="512"
           value="${ifDefined(this.#deviceData?.address)}"
+          @input="${this.handleAddressInput}"
         />
 
         <select required name="preset" autocomplete="off" @change="${this.handlePresetChange}">
