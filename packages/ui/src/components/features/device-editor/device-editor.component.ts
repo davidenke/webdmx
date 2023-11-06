@@ -40,6 +40,12 @@ export class DeviceEditor extends LitElement {
   set devices(devices: Partial<DeviceData>[] | undefined) {
     // update internal state
     this.#devices = devices ?? [];
+    // update position
+    if (this.deviceIndex !== undefined) {
+      const { position } = this.#devices[this.deviceIndex!];
+      this.style.setProperty('--webdmx-device-editor-x', position?.x ? `${position?.x}px` : '50%');
+      this.style.setProperty('--webdmx-device-editor-y', position?.y ? `${position?.y}px` : '50%');
+    }
     // update presets with detailed information
     const names = this.#devices.map(({ preset }) => preset) ?? [];
     this.presets.load(...names).then(() => {
@@ -99,6 +105,8 @@ export class DeviceEditor extends LitElement {
   }
 
   override render(): TemplateResult {
+    const device = this.#devices[this.deviceIndex!];
+
     return html`
       <nav>
         <button aria-label="Edit device parameters" @click="${this.handleParametersClick}">
@@ -110,9 +118,9 @@ export class DeviceEditor extends LitElement {
       </nav>
 
       <section>
-        <span>${this.#devices?.[this.deviceIndex!]?.preset}</span>
-        <span>${this.#devices?.[this.deviceIndex!]?.profile}</span>
-        <span>${this.#devices?.[this.deviceIndex!]?.address}</span>
+        <span>${device?.preset}</span>
+        <span>${device?.profile}</span>
+        <span>${device?.address}</span>
       </section>
 
       <webdmx-popup
@@ -121,7 +129,7 @@ export class DeviceEditor extends LitElement {
         @webdmx-popup:hidden="${this.handleParametersHidden}"
       >
         <webdmx-device-parameter-editor
-          .deviceData="${this.#devices?.[this.deviceIndex!]}"
+          .device="${device}"
           .reservedAddresses="${this.reservedAddresses}"
           @webdmx-device-parameter-editor:change="${this.handleParametersChange}"
         ></webdmx-device-parameter-editor>

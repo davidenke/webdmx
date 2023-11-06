@@ -18,7 +18,7 @@ export type DeviceParameterEditorChangeEvent = CustomEvent<Partial<DeviceData>>;
 export class DeviceParameterEditor extends LitElement {
   static override readonly styles = unsafeCSS(styles);
 
-  #deviceData?: Readonly<Partial<DeviceData>>;
+  #device?: Readonly<Partial<DeviceData>>;
 
   @state()
   private presets = presets;
@@ -27,9 +27,9 @@ export class DeviceParameterEditor extends LitElement {
   private selectedPreset?: string;
 
   @property({ type: Object, attribute: false, noAccessor: true })
-  set deviceData(device: Readonly<Partial<DeviceData>> | undefined) {
+  set device(device: Readonly<Partial<DeviceData>> | undefined) {
     // update internal state
-    this.#deviceData = device;
+    this.#device = device;
     this.selectedPreset = device?.preset;
 
     // update presets with detailed information
@@ -70,7 +70,7 @@ export class DeviceParameterEditor extends LitElement {
     const data = Object.fromEntries(new FormData(form)) as Partial<DeviceData>;
     data.address = Number(data.address);
     // emit the change event
-    this.#emitChangeEvent({ ...this.#deviceData, ...data });
+    this.#emitChangeEvent({ ...this.#device, ...data });
   }
 
   #emitChangeEvent(device: Readonly<Partial<DeviceData>>) {
@@ -93,26 +93,26 @@ export class DeviceParameterEditor extends LitElement {
           type="number"
           min="1"
           max="512"
-          value="${ifDefined(this.#deviceData?.address)}"
+          value="${ifDefined(this.#device?.address)}"
           @input="${this.handleAddressInput}"
         />
 
         <select required name="preset" autocomplete="off" @change="${this.handlePresetChange}">
-          <option disabled value="" ?selected="${this.#deviceData?.preset === undefined}"></option>
+          <option disabled value="" ?selected="${this.#device?.preset === undefined}"></option>
           ${map(
             PRESET_NAMES,
             (preset) => html`
-              <option value="${preset}" ?selected="${preset === this.#deviceData?.preset}">${preset}</option>
+              <option value="${preset}" ?selected="${preset === this.#device?.preset}">${preset}</option>
             `,
           )}
         </select>
 
         <select required name="profile" autocomplete="off" ?disabled="${this.selectedPreset === undefined}">
-          <option disabled value="" ?selected="${this.#deviceData?.profile === undefined}"></option>
+          <option disabled value="" ?selected="${this.#device?.profile === undefined}"></option>
           ${map(
             this.presets.getProfileNames(this.selectedPreset),
             (profile) =>
-              html`<option value="${profile}" ?selected="${profile === this.#deviceData?.profile}">${profile}</option>`,
+              html`<option value="${profile}" ?selected="${profile === this.#device?.profile}">${profile}</option>`,
           )}
         </select>
 
