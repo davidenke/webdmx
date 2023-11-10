@@ -34,7 +34,7 @@
   "profiles": {
     "default": {
       "label": "Default",
-      "channels": ["dimmer", "red", "green", "blue"]
+      "channels": ["dimmer", "red", "green", "blue", "", "", ""]
     }
   }
 }

@@ -37,7 +37,11 @@ export function getCombinedControls(devices: Partial<DeviceData>[], presets: Pre
 
     // loop all device channels and corresponding controls and set it with a unique key
     presets.getChannels(preset, profile).forEach((name, channel) => {
-      const control = presets.getControl(preset, name)!;
+      // find the control for the channel
+      const control = presets.getControl(preset, name);
+      if (control === undefined) return;
+
+      // add the control to the map with a unique key
       const key = `${control.type}-${name}`;
       const channels = controls.get(key)?.channels ?? [];
       controls.set(key, { control, channels: [...channels, channel + address - 1] });
