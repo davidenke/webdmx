@@ -1,15 +1,12 @@
-import type { Channels, Slider } from '@webdmx/common';
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
-import { choose } from 'lit/directives/choose.js';
 import { map } from 'lit/directives/map.js';
-import { when } from 'lit/directives/when.js';
 
-import type { UniverseData } from '../../../utils/data.utils.js';
+import type { DeviceData } from '../../../utils/data.utils.js';
 import { presets } from '../../../utils/preset.utils.js';
 import styles from './preview.component.scss?inline';
 
-export type PreviewUpdateEvent = CustomEvent<{ name: string; channels: Channels }>;
+export type PreviewDeviceSelectedEvent = CustomEvent<number[]>;
 
 /**
  * @element webdmx-preview
@@ -18,84 +15,59 @@ export type PreviewUpdateEvent = CustomEvent<{ name: string; channels: Channels 
 export class Preview extends LitElement {
   static override readonly styles = unsafeCSS(styles);
 
-  #universe?: Readonly<UniverseData>;
+  #devices: Partial<DeviceData>[] = [];
 
   @state()
   presets = presets;
 
+  @property({ type: Array, attribute: false })
+  selectedDevices: number[] = [];
+
   @property({ type: Boolean, reflect: true })
   connected: boolean = false;
 
-  @property({ type: Object, attribute: false, noAccessor: true })
-  set universe(universe: Readonly<UniverseData> | undefined) {
+  /**
+   * The devices to be rendered. Consists of partial device data.
+   */
+  @property({ type: Array, attribute: false, noAccessor: true })
+  set devices(devices: Partial<DeviceData>[] | undefined) {
     // update internal state
-    const oldUniverse = this.#universe;
-    this.#universe = universe;
-
+    this.#devices = devices ?? [];
     // update presets with detailed information
-    const names = this.#universe?.devices.map(({ preset }) => preset) ?? [];
-    this.presets.load(...names).then(() => this.requestUpdate('universe', oldUniverse));
+    const names = this.#devices.map(({ preset }) => preset) ?? [];
+    this.presets.load(...names).then(() => this.requestUpdate());
   }
 
   @eventOptions({ passive: true })
-  private updateRangeInput(event: InputEvent) {
-    const { dataset, valueAsNumber } = event.target as HTMLInputElement;
-    // pick corresponding device
-    const name = this.#universe?.label ?? 'default';
-    const { channel } = dataset;
-    this.#emitUpdateEvent(name, { [parseInt(channel!)]: valueAsNumber });
+  private handleDeviceClick(event: MouseEvent) {
+    const { dataset } = event.target as HTMLElement;
+    const index = parseInt(dataset.deviceIndex!);
+
+    if (this.selectedDevices.includes(index)) {
+      const selectedDevices = this.selectedDevices.filter((i) => i !== index);
+      this.#emitDeviceSelected(selectedDevices);
+    } else {
+      const selectedDevices = [...this.selectedDevices, index];
+      this.#emitDeviceSelected(selectedDevices);
+    }
   }
 
-  #emitUpdateEvent(name: string, channels: Channels) {
-    const detail = { name, channels } satisfies PreviewUpdateEvent['detail'];
-    this.dispatchEvent(new CustomEvent('webdmx-preview:update', { detail, bubbles: true }));
-  }
-
-  #renderRange(control: Slider, channel: number): TemplateResult {
-    return html`
-      <label>
-        ${control.label}
-        <input
-          type="range"
-          min="${control.from}"
-          max="${control.to}"
-          step="${control.step}"
-          data-channel="${channel}"
-          ?disabled="${!this.connected}"
-          .valueAsNumber="${0}"
-          @input="${this.updateRangeInput}"
-        />
-      </label>
-    `;
+  #emitDeviceSelected(detail: number[]) {
+    const event = new CustomEvent('webdmx-preview:device-selected', { detail, bubbles: true });
+    this.dispatchEvent(event);
   }
 
   override render(): TemplateResult {
     return html`
       ${map(
-        this.#universe?.devices ?? [],
-        (device) => html`
-          <h2>${device.preset}</h2>
-          <h3>${device.profile}</h3>
-          <p>${device.address}</p>
-
-          ${when(device.preset !== undefined && device.profile !== undefined, () =>
-            this.presets
-              .getChannels(device.preset, device.profile)
-              .map(
-                (channel, index) => html`
-                  ${choose(this.presets.getControl(device.preset, channel)?.type, [
-                    [
-                      'slider',
-                      () =>
-                        this.#renderRange(
-                          this.presets.getControl<Slider>(device.preset, channel)!,
-                          (device.address ?? 1) - 1 + index,
-                        ),
-                    ],
-                  ])}
-                `,
-              ),
-          )}
+        this.#devices,
+        (device, index) => html`
+          <webdmx-device-preview
+            data-device-index="${index}"
+            ?selected="${this.selectedDevices.includes(index)}"
+            .device="${device}"
+            @click="${this.handleDeviceClick}"
+          ></webdmx-device-preview>
         `,
       )}
     `;
@@ -104,7 +76,7 @@ export class Preview extends LitElement {
 
 declare global {
   interface HTMLEventMap {
-    'webdmx-preview:update': PreviewUpdateEvent;
+    'webdmx-preview:device-selected': PreviewDeviceSelectedEvent;
   }
 
   interface HTMLElementTagNameMap {

@@ -4,8 +4,9 @@ import { customElement, eventOptions, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
 import { type Data, loadData, saveData } from '../../utils/data.utils.js';
+import type { DeviceChannelsPreviewUpdateEvent } from '../features/device-channels-preview/device-channels-preview.component.js';
 import type { EditorChangeEvent } from '../features/editor/editor.component.js';
-import type { PreviewUpdateEvent } from '../features/preview/preview.component.js';
+import type { PreviewDeviceSelectedEvent } from '../features/preview/preview.component.js';
 import styles from './root.component.scss?inline';
 
 /**
@@ -23,6 +24,7 @@ export class Root extends LitElement {
 
   @state() private data!: Data;
   @state() private selectedUniverseIndex?: number;
+  @state() private selectedDevices: number[] = [];
   @state() private driverNames = DMX.driverNames;
 
   @state() private loaded = false;
@@ -122,8 +124,14 @@ export class Root extends LitElement {
   }
 
   @eventOptions({ passive: true })
-  private handlePreviewUpdate({ detail: { name, channels } }: PreviewUpdateEvent) {
-    this.#dmx.update(name, channels);
+  private handlePreviewDeviceSelected({ detail }: PreviewDeviceSelectedEvent) {
+    this.selectedDevices = detail;
+  }
+
+  @eventOptions({ passive: true })
+  private handleChannelsUpdate({ detail }: DeviceChannelsPreviewUpdateEvent) {
+    const name = this.data.universes[this.selectedUniverseIndex!]?.label ?? 'default';
+    this.#dmx.update(name, detail);
   }
 
   override async connectedCallback() {
@@ -226,9 +234,19 @@ export class Root extends LitElement {
           : html`
               <webdmx-preview
                 ?connected="${this.connected}"
-                .universe="${this.data.universes[this.selectedUniverseIndex!]}"
-                @webdmx-preview:update="${this.handlePreviewUpdate}"
+                .devices="${this.data.universes[this.selectedUniverseIndex!]?.devices}"
+                .selectedDevices="${this.selectedDevices}"
+                @webdmx-preview:device-selected="${this.handlePreviewDeviceSelected}"
               ></webdmx-preview>
+
+              <webdmx-device-channels-preview
+                slot="footer"
+                ?connected="${this.connected}"
+                .devices="${this.data.universes[this.selectedUniverseIndex!]?.devices.filter((_, index) =>
+                  this.selectedDevices.includes(index),
+                )}"
+                @webdmx-device-channels-preview:update="${this.handleChannelsUpdate}"
+              ></webdmx-device-channels-preview>
             `}
       </webdmx-layout>
     `;
