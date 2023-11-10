@@ -20,7 +20,7 @@ export class Editor extends DropTarget(LitElement) {
   #universe?: Readonly<UniverseData>;
 
   @state()
-  presets = presets;
+  private presets = presets;
 
   @property({ type: Object, attribute: false, noAccessor: true })
   set universe(universe: Readonly<UniverseData> | undefined) {

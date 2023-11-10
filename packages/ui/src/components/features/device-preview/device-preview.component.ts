@@ -1,8 +1,7 @@
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 
 import type { DeviceData } from '../../../utils/data.utils.js';
-import { presets } from '../../../utils/preset.utils.js';
 import styles from './device-preview.component.scss?inline';
 
 /**
@@ -11,9 +10,6 @@ import styles from './device-preview.component.scss?inline';
 @customElement('webdmx-device-preview')
 export class DevicePreview extends LitElement {
   static override readonly styles = unsafeCSS(styles);
-
-  @state()
-  presets = presets;
 
   /**
    * The device to be previewed.

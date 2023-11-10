@@ -18,7 +18,7 @@ export class Preview extends LitElement {
   #devices: Partial<DeviceData>[] = [];
 
   @state()
-  presets = presets;
+  private presets = presets;
 
   @property({ type: Array, attribute: false })
   selectedDevices: number[] = [];
