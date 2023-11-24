@@ -1,0 +1,22 @@
+{
+  "name": "@webdmx/osc-ws-bridge",
+  "version": "0.0.1",
+  "description": "",
+  "main": "/src/bridge.ts",
+  "scripts": {
+    "start": "ts-node src/bridge.ts",
+    "dev": "npx nodemon  src/bridge.ts",
+    "lint": "npx eslint . -c .eslintrc --ext .ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "16.3.1",
+    "osc-js": "2.4.0",
+    "ts-node": "10.9.1"
+  },
+  "devDependencies": {
+    "@types/ws": "8.5.10"
+  }
+}
