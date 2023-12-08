@@ -1,11 +1,11 @@
-import dgram from 'dgram';
-import dotenv from 'dotenv';
+import { createSocket } from 'dgram';
+import { config } from 'dotenv';
 import OSC from 'osc-js';
-import WebSocket from 'ws';
+import { Server } from 'ws';
 
 console.log('Starting DMX to OSC bridge');
 
-dotenv.config();
+config();
 
 const dmx_universe = process.env.DMX_UNIVERSE || 'dmx/universe/0';
 const host = process.env.OSC_HOST;
@@ -17,8 +17,8 @@ console.log(`OSC port: ${port}`);
 console.log(`WS port: ${ws_port}`);
 console.log(`DMX universe: ${dmx_universe}`);
 
-const udp_socket = dgram.createSocket('udp4');
-const wss = new WebSocket.Server({ port: ws_port });
+const udp_socket = createSocket('udp4');
+const wss = new Server({ port: ws_port });
 
 wss.on('connection', function connection(ws) {
   console.log('New connection');
