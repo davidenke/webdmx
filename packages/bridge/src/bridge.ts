@@ -26,8 +26,10 @@ wss.on('connection', function connection(ws) {
     // console.log('Received DMX data');
     const buffer = Buffer.isBuffer(dmx_raw_data) ? dmx_raw_data : Buffer.concat(dmx_raw_data as Buffer[]);
     const dmx_data = new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+    console.log('dmx');
     dmx_data.forEach((value, index) => {
       const oscBuffer = Buffer.from(new OSC.Message([dmx_universe, (index + 1).toString()], value).pack());
+      console.log(`Sending OSC message: ${oscBuffer.toString('hex')}`);
       udp_socket.send(oscBuffer, 0, oscBuffer.length, port, host);
     });
   });
