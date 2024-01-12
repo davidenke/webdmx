@@ -1,3 +1,4 @@
+use log::{info, warn, error, LevelFilter};
 use std::env;
 use std::net::UdpSocket;
 use std::sync::{Arc, Mutex};
@@ -7,19 +8,36 @@ use tokio::net::TcpListener;
 use tokio_tungstenite::{accept_async, tungstenite::Message};
 use futures_util::StreamExt;
 
+use log4rs::append::file::FileAppender;
+use log4rs::encode::pattern::PatternEncoder;
+use log4rs::config::{Appender, Config, Root};
+
 #[tokio::main]
-async fn main() {
-    println!("Starting DMX to OSC bridge");
+async fn main() -> Result<(), Box<dyn std::error::Error>>{
+    let logfile = FileAppender::builder()
+    .encoder(Box::new(PatternEncoder::new("{l} - {m}\n")))
+    .build("dmx-osc-bridge.log")?;
+
+    let config = Config::builder()
+      .appender(Appender::builder().build("logfile", Box::new(logfile)))
+      .build(Root::builder()
+                .appender("logfile")
+                .build(LevelFilter::Info))?;
+
+    log4rs::init_config(config)?;
+
+
+    info!("Starting DMX to OSC bridge");
 
     let dmx_universe = env::var("DMX_UNIVERSE").unwrap_or_else(|_| "dmx/universe/0".to_string());
     let host = env::var("OSC_HOST").expect("OSC_HOST environment variable not set");
     let port: u16 = env::var("OSC_PORT").unwrap_or_else(|_| "7770".to_string()).parse().expect("Invalid OSC_PORT");
     let ws_port: u16 = env::var("WS_PORT").unwrap_or_else(|_| "8080".to_string()).parse().expect("Invalid WS_PORT");
 
-    println!("OSC host: {}", host);
-    println!("OSC port: {}", port);
-    println!("WS port: {}", ws_port);
-    println!("DMX universe: {}", dmx_universe);
+    info!("OSC host: {}", host);
+    info!("OSC port: {}", port);
+    info!("WS port: {}", ws_port);
+    info!("DMX universe: {}", dmx_universe);
     
     let udp_socket = Arc::new(Mutex::new(UdpSocket::bind("0.0.0.0:0").expect("Failed to bind UDP socket")));
     udp_socket.lock().unwrap().connect((host.as_str(), port)).expect("Failed to connect UDP socket");
@@ -46,11 +64,12 @@ async fn main() {
             });
           },
           Err(e) => {
-              println!("Failed to accept WebSocket connection: {}", e);
+              error!("Failed to accept WebSocket connection: {}", e);
               continue;
           }
       }
     }
+    Ok(())
 }
 
 fn send_dmx_data(dmx_data: &[u8], udp_socket: &Arc<Mutex<UdpSocket>>, dmx_universe: &str) {
@@ -67,12 +86,12 @@ fn send_dmx_data(dmx_data: &[u8], udp_socket: &Arc<Mutex<UdpSocket>>, dmx_univer
                 match udp_socket.lock().unwrap().send(&osc_buffer) {
                     Ok(_) => {},
                     Err(e) => {
-                        println!("Failed to send OSC message: {}", e);
+                        warn!("Failed to send OSC message: {}", e);
                     }
                 }
             },
             Err(e) => {
-                println!("Failed to encode OSC message: {}", e);
+                warn!("Failed to encode OSC message: {}", e);
             }
         }
     }

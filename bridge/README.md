@@ -27,13 +27,6 @@ Set the following environment variables:
 - Forwards OSC messages using the UDP socket.
 - OSC address format: `/{dmx_universe}/{channel}`.
 
-## Error Handling
+## Logging
 
-- Requires certain environment variables; exits if not set or invalid.
-- Logs errors related to WebSocket and OSC communications.
-
-## Future Enhancements
-
-- Enhanced error handling and application resilience.
-- Configurable DMX channel size.
-- Advanced logging and debugging.
+The application writes all log messages to the file `dmx-osc-bridge.log` in the current working directory.
