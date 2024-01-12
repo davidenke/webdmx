@@ -21,51 +21,59 @@ async fn main() {
     println!("WS port: {}", ws_port);
     println!("DMX universe: {}", dmx_universe);
     
-    let dmx_universe_ref = &dmx_universe; // Create a reference to dmx_universe
-
     let udp_socket = Arc::new(Mutex::new(UdpSocket::bind("0.0.0.0:0").expect("Failed to bind UDP socket")));
     udp_socket.lock().unwrap().connect((host.as_str(), port)).expect("Failed to connect UDP socket");
 
-    let try_socket = TcpListener::bind(format!("0.0.0.0:{}", ws_port)).await;
-    let listener = try_socket.expect("Failed to bind WebSocket server");
+    let socket = TcpListener::bind(format!("0.0.0.0:{}", ws_port)).await;
+    let listener = socket.expect("Failed to bind WebSocket server");
 
-    while let Ok((stream, _)) = listener.accept().await {
-        let ws_stream = accept_async(stream).await.expect("Error during WebSocket handshake");
-        let udp_socket = udp_socket.clone();
-        let dmx_universe_clone = dmx_universe_ref.to_string();
-
-        let _spawn = tokio::spawn(async move {
-            let (_, mut read) = ws_stream.split();
-            while let Some(Ok(message)) = read.next().await {
-              if let Message::Binary(dmx_raw_data) = message {
-                  let mut dmx_data = [0; 512];
-                  dmx_data[..dmx_raw_data.len()].copy_from_slice(&dmx_raw_data);
-                  //println!("First four DMX values: {:?}", &dmx_raw_data[..4]);
-                  
-                  for (index, &value) in dmx_data.iter().enumerate() {
-                      let addr = format!("/{}/{}", dmx_universe_clone, index + 1);
-                      let args = vec![OscType::Int(value as i32)];
-                      let var_name = OscMessage {
-                          addr,
-                          args,
-                      };
-                      let osc_msg = var_name;
-                      let packet: OscPacket = OscPacket::Message(osc_msg);
-                      let osc_buffer = rosc::encoder::encode(&packet).expect("Failed to encode OSC message");
-                      
-                      match udp_socket.lock().unwrap().send(&osc_buffer) {
-                          Ok(_) => {
-                              //println!("Sent OSC message: {}", to_hex_string(&osc_buffer));
-                          },
-                          Err(e) => {
-                              println!("Failed to send OSC message: {}", e);
-                          }
-                      }
-
-                  }
+    while let Ok((tcp_stream, _)) = listener.accept().await {
+      match accept_async(tcp_stream).await {
+          Ok(ws_stream) => {
+            let udp_socket = udp_socket.clone();
+            let dmx_universe_clone = dmx_universe.clone();
+            
+            // process websocket messages
+            tokio::spawn(async move {
+              let (_, mut read) = ws_stream.split();
+              while let Some(Ok(message)) = read.next().await {
+                if let Message::Binary(dmx_raw_data) = message {
+                    let mut dmx_data = [0; 512];
+                    dmx_data[..dmx_raw_data.len()].copy_from_slice(&dmx_raw_data);
+                    send_dmx_data(&dmx_data, &udp_socket, &dmx_universe_clone);
+                }
               }
-            }
-          });
+            });
+          },
+          Err(e) => {
+              println!("Failed to accept WebSocket connection: {}", e);
+              continue;
+          }
+      }
     }
 }
 
+fn send_dmx_data(dmx_data: &[u8], udp_socket: &Arc<Mutex<UdpSocket>>, dmx_universe: &str) {
+    for (index, &value) in dmx_data.iter().enumerate() {
+        let addr = format!("/{}/{}", dmx_universe, index + 1);
+        let args = vec![OscType::Int(value as i32)];
+        let packet: OscPacket = OscPacket::Message(OscMessage {
+          addr,
+          args,
+        });
+
+        match rosc::encoder::encode(&packet) {
+            Ok(osc_buffer) => {
+                match udp_socket.lock().unwrap().send(&osc_buffer) {
+                    Ok(_) => {},
+                    Err(e) => {
+                        println!("Failed to send OSC message: {}", e);
+                    }
+                }
+            },
+            Err(e) => {
+                println!("Failed to encode OSC message: {}", e);
+            }
+        }
+    }
+}
