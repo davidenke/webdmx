@@ -30,3 +30,11 @@ Set the following environment variables:
 ## Logging
 
 The application writes all log messages to the file `dmx-osc-bridge.log` in the current working directory.
+
+## Deployment
+
+We implemented a deployment script using a Docker container to deploy the application to a Raspberry Pi 4.
+
+```bash 
+deploy2pi4
+```

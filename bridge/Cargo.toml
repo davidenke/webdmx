@@ -1,5 +1,5 @@
 [package]
-name = "osc-bridge-rust"
+name = "dmx-osc-bridge"
 version = "0.1.0"
 edition = "2021"
 
