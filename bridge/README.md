@@ -12,6 +12,7 @@ Set the following environment variables:
 - `OSC_HOST`: Host address for OSC messages.
 - `OSC_PORT`: Port for OSC messages. Defaults to 7770.
 - `WS_PORT`: WebSocket server port. Defaults to 8080.
+- `LOG_LEVEL`: (Optional) Specifies the log level. Defaults to "info". Possible values: "trace", "debug", "info", "warn", "error".
 
 ## Running the Application
 

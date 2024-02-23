@@ -1,4 +1,8 @@
-use log::{info, warn, error, LevelFilter};
+use log::{debug, error, info, warn, LevelFilter};
+use log4rs::append::rolling_file::policy::compound::roll::fixed_window::FixedWindowRoller;
+use log4rs::append::rolling_file::policy::compound::trigger::size::SizeTrigger;
+use log4rs::append::rolling_file::policy::compound::CompoundPolicy;
+use log4rs::append::rolling_file::RollingFileAppender;
 use std::env;
 use std::net::UdpSocket;
 use std::sync::{Arc, Mutex};
@@ -8,24 +12,39 @@ use tokio::net::TcpListener;
 use tokio_tungstenite::{accept_async, tungstenite::Message};
 use futures_util::StreamExt;
 
-use log4rs::append::file::FileAppender;
 use log4rs::encode::pattern::PatternEncoder;
 use log4rs::config::{Appender, Config, Root};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>>{
-    let logfile = FileAppender::builder()
-    .encoder(Box::new(PatternEncoder::new("{l} - {m}\n")))
-    .build("dmx-osc-bridge.log")?;
+
+    // === Setup logging ===
+
+    let log_level_str = env::var("LOG_LEVEL").unwrap_or_else(|_| "info".to_string());
+    let log_level = match log_level_str.to_lowercase().as_str() {
+        "error" => LevelFilter::Error,
+        "warn" => LevelFilter::Warn,
+        "info" => LevelFilter::Info,
+        "debug" => LevelFilter::Debug,
+        "trace" => LevelFilter::Trace,
+        _ => LevelFilter::Info, // default to Info if unspecified or invalid
+    };
+
+    let logfile = RollingFileAppender::builder()
+    .encoder(Box::new(PatternEncoder::new("{d(%Y-%m-%d %H:%M:%S)} {l} - {m}\n")))
+    .build("dmx-osc-bridge.log", Box::new(CompoundPolicy::new(
+        Box::new(SizeTrigger::new(10 * 1024 * 1024)), // Trigger at 10 MB
+        Box::new(FixedWindowRoller::builder().build("dmx-osc-bridge.{}.log", 7)?),
+    )))?;
 
     let config = Config::builder()
       .appender(Appender::builder().build("logfile", Box::new(logfile)))
       .build(Root::builder()
                 .appender("logfile")
-                .build(LevelFilter::Info))?;
-
+                .build(log_level))?;
     log4rs::init_config(config)?;
-
+    
+    // === End setup logging ===
 
     info!("Starting DMX to OSC bridge");
 
@@ -73,6 +92,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>{
 }
 
 fn send_dmx_data(dmx_data: &[u8], udp_socket: &Arc<Mutex<UdpSocket>>, dmx_universe: &str) {
+    debug!("Sending DMX data: {}", dmx_data.iter().map(|x| format!("{:02x}", x)).collect::<Vec<String>>().join(""));
     for (index, &value) in dmx_data.iter().enumerate() {
         let addr = format!("/{}/{}", dmx_universe, index + 1);
         let args = vec![OscType::Int(value as i32)];
