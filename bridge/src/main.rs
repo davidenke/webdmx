@@ -1,4 +1,4 @@
-use log::{debug, error, info, warn, LevelFilter};
+use log::{debug, error, info, trace, LevelFilter};
 use log4rs::append::rolling_file::policy::compound::roll::fixed_window::FixedWindowRoller;
 use log4rs::append::rolling_file::policy::compound::trigger::size::SizeTrigger;
 use log4rs::append::rolling_file::policy::compound::CompoundPolicy;
@@ -104,14 +104,16 @@ fn send_dmx_data(dmx_data: &[u8], udp_socket: &Arc<Mutex<UdpSocket>>, dmx_univer
         match rosc::encoder::encode(&packet) {
             Ok(osc_buffer) => {
                 match udp_socket.lock().unwrap().send(&osc_buffer) {
-                    Ok(_) => {},
+                    Ok(s) => {
+                        trace!("Sent OSC message: {}", s);
+                    },
                     Err(e) => {
-                        warn!("Failed to send OSC message: {}", e);
+                        error!("Failed to send OSC message: {}", e);
                     }
                 }
             },
             Err(e) => {
-                warn!("Failed to encode OSC message: {}", e);
+                error!("Failed to encode OSC message: {}", e);
             }
         }
     }
