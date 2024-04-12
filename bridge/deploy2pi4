@@ -14,5 +14,5 @@ docker build -t dmx-osc-bridge-builder .
 docker run --rm -v "$(pwd)":/usr/src/bridge -w /usr/src/bridge dmx-osc-bridge-builder cargo build --release --target=${TARGET_ARCH}
 
 rsync ${SOURCE_PATH} ${TARGET_HOST}:${TARGET_PATH}
-ssh -t ${TARGET_HOST} ${TARGET_PATH}
+ssh -t ${TARGET_HOST} sudo systemctl restart dmx-osc-bridge-builder.sevice
 
