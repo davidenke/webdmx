@@ -8,7 +8,7 @@ import type { AbstractDriver } from './drivers/base/abstract.driver.js';
 export type DriverName = (typeof DRIVER_NAMES)[number];
 export type PresetName = keyof typeof PRESETS;
 
-export const DRIVER_NAMES = ['enttec-open-dmx-usb', 'null'] as const;
+export const DRIVER_NAMES = ['enttec-open-dmx-usb', 'null', 'ws'] as const;
 export const PRESET_NAMES = Object.keys(PRESETS) as ReadonlyArray<PresetName>;
 
 export class DMX {
