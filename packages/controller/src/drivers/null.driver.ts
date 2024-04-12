@@ -1,17 +1,22 @@
-import { SerialDriver } from './serial.driver.js';
+import { SerialDriver } from './base/serial.driver.js';
 
 export default class NullDriver extends SerialDriver {
-  override readonly filers = [];
-  override readonly options = {
-    baudRate: 0,
-    dataBits: 0,
-    stopBits: 0,
-    parity: 'none',
-    sendInterval: 1000, // log the universe once every second
-  } satisfies SerialDriver['options'];
+  constructor() {
+    super({
+      baudRate: 0,
+      dataBits: 0,
+      stopBits: 0,
+      parity: 'none',
+      sendInterval: 1000, // log the universe once every second
+    });
+  }
 
   override async connect() {
-    // no-op
+    console.clear();
+  }
+
+  override async disconnect() {
+    console.clear();
   }
 
   override async send(_: SerialPort, universe: Uint8Array) {
