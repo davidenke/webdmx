@@ -1,6 +1,8 @@
-import type { Channels, Universe } from '@webdmx/common';
+import type { Universe } from '@webdmx/common';
 
-export type SerialDriverBaseOptions = SerialOptions & { sendInterval: number };
+import { AbstractDriver, CHANNELS } from './abstract.driver.js';
+
+export type SerialDriverOptions = SerialOptions & { sendInterval: number };
 
 declare global {
   interface SerialDriverEventMap {
@@ -18,14 +20,12 @@ declare global {
  * 6. close()
  * 7. disconnect()
  */
-export abstract class SerialDriver<
-  SerialDriverOptions extends SerialDriverBaseOptions = SerialDriverBaseOptions,
-> extends EventTarget {
-  static readonly CHANNELS = 512;
-
+export class SerialDriver<
+  DriverOptions extends SerialDriverOptions = SerialDriverOptions,
+> extends AbstractDriver<DriverOptions> {
   // add an extra bit, as we will prefix the universe with
   // an extra 0x00 byte to make all channels 1-based
-  #universe: Universe = new Uint8Array(SerialDriver.CHANNELS + 1);
+  readonly universe: Universe = new Uint8Array(CHANNELS + 1);
 
   #serialPort?: SerialPort;
   #interval?: number;
@@ -42,10 +42,21 @@ export abstract class SerialDriver<
     return this.#_transferring;
   }
 
-  // must be implemented by driver implementations
-  abstract readonly filers?: SerialPortFilter[];
-  abstract readonly options: SerialDriverOptions;
-  abstract send(serialPort: SerialPort, universe: Uint8Array): Promise<void>;
+  constructor(
+    override options: DriverOptions,
+    readonly filters: SerialPortFilter[] = [],
+  ) {
+    super();
+  }
+
+  protected async send(serialPort: SerialPort, universe: Uint8Array): Promise<void> {
+    await serialPort.setSignals({ break: true, requestToSend: false });
+    await serialPort.setSignals({ break: false, requestToSend: false });
+
+    const writer = serialPort.writable?.getWriter();
+    await writer?.write(Uint8Array.from([0x00, ...universe]));
+    await writer?.close();
+  }
 
   // type the extended event listeners to use the correct event map
   override addEventListener<K extends keyof SerialDriverEventMap | string>(
@@ -68,8 +79,12 @@ export abstract class SerialDriver<
   }
 
   async connect(): Promise<void> {
-    const filters = this.filers ?? [];
+    const filters = this.filters ?? [];
     this.#serialPort = await navigator.serial.requestPort({ filters });
+  }
+
+  async disconnect(): Promise<void> {
+    await this.#serialPort?.forget();
   }
 
   async open(): Promise<void> {
@@ -83,14 +98,11 @@ export abstract class SerialDriver<
     await this.#serialPort?.close();
   }
 
-  async disconnect(): Promise<void> {
-    await this.#serialPort?.forget();
-  }
-
-  start(): void {
+  async start(): Promise<void> {
+    this.send(this.#serialPort!, this.universe);
     this.#interval = window.setInterval(async () => {
       // call the drivers send method
-      await this.send(this.#serialPort!, this.#universe);
+      await this.send(this.#serialPort!, this.universe);
       // reset the transferring flag as all changes have been sent
       this.#transferring = false;
     }, this.options.sendInterval);
@@ -98,32 +110,5 @@ export abstract class SerialDriver<
 
   stop(): void {
     window.clearInterval(this.#interval);
-  }
-
-  get(channel: number): number | undefined {
-    if (channel < 1 || channel > SerialDriver.CHANNELS) return;
-    return this.#universe[channel];
-  }
-
-  get channels(): Channels {
-    return Object.fromEntries(this.#universe.slice(0, SerialDriver.CHANNELS).entries());
-  }
-
-  update(channels: Channels): void {
-    this.#transferring = true;
-    for (const channel in channels) {
-      const value = channels[channel];
-      this.#universe[channel] = value;
-    }
-  }
-
-  updateFrom(from: number, values: ArrayLike<number>): void {
-    this.#transferring = true;
-    this.#universe.set(values, from);
-  }
-
-  updateAll(value: number): void {
-    this.#transferring = true;
-    this.#universe = this.#universe.fill(value, 0, SerialDriver.CHANNELS);
   }
 }

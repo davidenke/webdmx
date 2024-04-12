@@ -3,7 +3,7 @@ import type { Channels, Preset } from '@webdmx/common';
 // import the generated index file to retrieve a list of all presets,
 // to be loaded once necessary in the UI
 import PRESETS from '../presets/presets.json' assert { type: 'json' };
-import type { SerialDriver } from './drivers/serial.driver.js';
+import type { AbstractDriver } from './drivers/base/abstract.driver.js';
 
 export type DriverName = (typeof DRIVER_NAMES)[number];
 export type PresetName = keyof typeof PRESETS;
@@ -13,7 +13,7 @@ export const PRESET_NAMES = Object.keys(PRESETS) as ReadonlyArray<PresetName>;
 
 export class DMX {
   static readonly #presets = PRESETS;
-  readonly #universes = new Map<string, SerialDriver>();
+  readonly #universes = new Map<string, AbstractDriver>();
 
   /**
    * Returns a list of all available drivers by name.
@@ -29,7 +29,7 @@ export class DMX {
     return Object.keys(this.#presets) as PresetName[];
   }
 
-  static async loadDriver(name: DriverName): Promise<{ new (): SerialDriver } | undefined> {
+  static async loadDriver(name: DriverName): Promise<{ new (): AbstractDriver } | undefined> {
     if (!DRIVER_NAMES.includes(name)) return;
     const { default: driver } = await import(`./drivers/${name}.driver.ts`);
     return driver;
@@ -48,7 +48,7 @@ export class DMX {
   /**
    * Add a universe to the DMX controller.
    */
-  async addUniverse(name: string, driver: SerialDriver): Promise<void> {
+  async addUniverse(name: string, driver: AbstractDriver): Promise<void> {
     await driver.connect();
     await driver.open();
 
