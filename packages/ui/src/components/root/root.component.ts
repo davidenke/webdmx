@@ -84,9 +84,13 @@ export class Root extends LitElement {
 
     // create universe and connect
     const universe = this.data.universes[this.selectedUniverseIndex!]?.label ?? 'default';
-    await this.#dmx.addUniverse(universe, this.#driver);
-    this.#driver.addEventListener('transferring', this.#handleTransferring);
-    this.connected = true;
+    try {
+      await this.#dmx.addUniverse(universe, this.#driver);
+      this.#driver.addEventListener('transferring', this.#handleTransferring);
+      this.connected = true;
+    } catch (error) {
+      // noop, usually the user aborted serial port selection
+    }
   }
 
   @eventOptions({ passive: true })
