@@ -166,7 +166,7 @@ export class Animation {
 
   run(driver: SerialDriver, onFinish?: () => void) {
     // Optimization to run transition updates at double the rate of driver updates using Nyquist's theorem
-    this.frameDelay = driver.sendInterval / 2;
+    this.frameDelay = driver.options.sendInterval / 2;
 
     this.reset();
     this.currentLoop = 0;

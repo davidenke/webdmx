@@ -55,7 +55,7 @@ export abstract class SerialDriver<
       : EventListenerOrEventListenerObject,
     options?: boolean | AddEventListenerOptions,
   ) {
-    super.addEventListener(type, listener, options);
+    super.addEventListener(type, listener as EventListener, options);
   }
   override removeEventListener<K extends keyof SerialDriverEventMap | string>(
     type: K,
@@ -64,7 +64,7 @@ export abstract class SerialDriver<
       : EventListenerOrEventListenerObject,
     options?: boolean | AddEventListenerOptions,
   ) {
-    super.removeEventListener(type, listener, options);
+    super.removeEventListener(type, listener as EventListener, options);
   }
 
   async connect(): Promise<void> {
