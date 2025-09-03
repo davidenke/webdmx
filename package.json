@@ -12,5 +12,8 @@
     "email": "david@enke.dev"
   },
   "license": "MIT",
-  "type": "module"
+  "packageManager": "pnpm@10.15.1",
+  "scripts": {
+    "preinstall": "npx -y only-allow pnpm"
+  }
 }
