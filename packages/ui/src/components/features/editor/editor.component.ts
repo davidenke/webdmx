@@ -51,6 +51,19 @@ export class Editor extends DropTarget(LitElement) {
   }
 
   @eventOptions({ passive: true })
+  private async handleDeviceDuplicate({ target }: CustomEvent<void>) {
+    // read the selected index
+    const { deviceIndex } = target as DeviceEditor;
+    if (deviceIndex === undefined) return;
+    // duplicate device
+    const devices = this.#universe?.devices?.slice() ?? [];
+    const duplicate = structuredClone(devices[deviceIndex]);
+    devices.push({ ...duplicate, position: { x: 0, y: 0 } });
+    // emit the change event
+    this.#emitChangeEvent(devices);
+  }
+
+  @eventOptions({ passive: true })
   private async handleDeviceRemove({ target }: CustomEvent<void>) {
     // read the selected index
     const { deviceIndex } = target as DeviceEditor;
@@ -122,6 +135,7 @@ export class Editor extends DropTarget(LitElement) {
             .devices="${this.#universe?.devices}"
             @dragstart="${this.handleDragStart}"
             @webdmx-device-parameter-editor:change="${this.handleDeviceChange}"
+            @webdmx-device-editor:duplicate="${this.handleDeviceDuplicate}"
             @webdmx-device-editor:remove="${this.handleDeviceRemove}"
           ></webdmx-device-editor>
         `,

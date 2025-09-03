@@ -11,6 +11,7 @@ import type { PopupHiddenEvent } from '../../ui/popup/popup.component.js';
 import styles from './device-editor.component.scss?inline';
 
 export type DeviceEditorChangeEvent = CustomEvent<Partial<DeviceData>>;
+export type DeviceEditorDuplicateEvent = CustomEvent<void>;
 export type DeviceEditorRemoveEvent = CustomEvent<void>;
 
 /**
@@ -70,6 +71,11 @@ export class DeviceEditor extends LitElement {
   }
 
   @eventOptions({ passive: true })
+  private handleDuplicateClick() {
+    this.#emitDuplicateEvent();
+  }
+
+  @eventOptions({ passive: true })
   private handleParametersHidden(event: PopupHiddenEvent) {
     this.parameterEditorVisible = !event.detail;
   }
@@ -97,6 +103,11 @@ export class DeviceEditor extends LitElement {
     this.dispatchEvent(event);
   }
 
+  #emitDuplicateEvent() {
+    const event = new CustomEvent('webdmx-device-editor:duplicate', { bubbles: true, composed: true });
+    this.dispatchEvent(event);
+  }
+
   override connectedCallback() {
     super.connectedCallback();
     window.addEventListener('click', this.#handleClickOutside, false);
@@ -114,6 +125,9 @@ export class DeviceEditor extends LitElement {
       <nav>
         <button aria-label="Edit device parameters" @click="${this.handleParametersClick}">
           <webdmx-icon name="options"></webdmx-icon>
+        </button>
+        <button aria-label="Duplicate device in universe" @click="${this.handleDuplicateClick}">
+          <webdmx-icon name="duplicate"></webdmx-icon>
         </button>
         <button aria-label="Remove device from universe" @click="${this.handleRemoveClick}">
           <webdmx-icon name="trash"></webdmx-icon>
@@ -143,6 +157,7 @@ export class DeviceEditor extends LitElement {
 
 declare global {
   interface HTMLEventMap {
+    'webdmx-device-editor:duplicate': DeviceEditorDuplicateEvent;
     'webdmx-device-editor:remove': DeviceEditorRemoveEvent;
   }
 
