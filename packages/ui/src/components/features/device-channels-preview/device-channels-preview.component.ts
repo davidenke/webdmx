@@ -87,7 +87,7 @@ export class DeviceChannelsPreview extends LitElement {
   #renderOptions(control: Options, channels: number[]): TemplateResult {
     return html`
       <label>
-        ${control.label}
+        ${control.options.map(({ label }) => label).join(', ')}
         <pre>channels: ${channels}</pre>
       </label>
     `;
