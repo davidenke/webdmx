@@ -23,7 +23,7 @@
     "lint:eslint": "eslint -c eslint.config.ts",
     "lint:prettier": "prettier --check .",
     "clean": "shx rm -rf dist encoded/*",
-    "build": "tsc",
+    "build": "vite build",
     "dev": "tsx src/bin.ts --source ./fixtures --target ./encoded"
   },
   "dependencies": {
@@ -42,6 +42,8 @@
     "prettier": "3.6.2",
     "shx": "0.4.0",
     "tsx": "4.20.5",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "vite": "7.1.4",
+    "vite-plugin-checker": "0.10.3"
   }
 }

@@ -13,6 +13,7 @@
     "preserveConstEnums": true,
     "resolveJsonModule": true,
     "removeComments": false,
+    "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
     "verbatimModuleSyntax": true

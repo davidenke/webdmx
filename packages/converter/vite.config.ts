@@ -1,26 +1,20 @@
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
-import dts from 'vite-plugin-dts';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     // add type check directly to vite
     checker({ typescript: true, overlay: false }),
-    // https://github.com/qmhc/vite-plugin-dts#options
-    dts({
-      entryRoot: 'src',
-      include: 'src/**/*.ts',
-      exclude: ['src/vite-env.d.ts'],
-      copyDtsFiles: true,
-      strictOutput: true,
-    }),
   ],
   build: {
+    // this is a node lib, setting ssr helps us here
+    // https://github.com/vitejs/vite/issues/13926#issuecomment-1708536097
+    ssr: true,
     lib: {
-      entry: 'src/index.ts',
+      entry: 'src/bin.ts',
       formats: ['es'],
-      fileName: 'index',
+      fileName: 'bin',
     },
     minify: false,
   },

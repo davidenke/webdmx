@@ -11,7 +11,6 @@ export default defineConfig({
     dts({
       entryRoot: 'src',
       include: 'src/**/*.ts',
-      exclude: ['src/vite-env.d.ts'],
       copyDtsFiles: true,
       strictOutput: true,
     }),
