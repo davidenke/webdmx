@@ -1,5 +1,6 @@
 import type { Control, Preset } from '@webdmx/common';
-import { DMX, PRESET_NAMES, type PresetName } from '@webdmx/controller';
+import type { PresetName } from '@webdmx/controller';
+import { DMX, PRESET_NAMES } from '@webdmx/controller';
 
 export class Presets {
   // internal cache for loaded presets
@@ -23,15 +24,15 @@ export class Presets {
   /**
    * The profile names of the preset with the given name.
    */
-  getProfileNames(presetName?: string | PresetName): ReadonlyArray<keyof Preset['profiles']> {
+  getProfileNames(presetName?: string | PresetName): readonly (keyof Preset['profiles'])[] {
     return Object.keys(this.#loaded[presetName as PresetName]?.profiles ?? {});
   }
 
   /**
    * Delivers the channels of the preset with the given name and profile.
    */
-  getChannels(presetName?: string | PresetName, profileName?: string): Preset['profiles'][string]['channels'] {
-    return this.#loaded[presetName as PresetName]?.profiles?.[profileName!]?.channels ?? [];
+  getChannels(presetName: string | PresetName, profileName: string): Preset['profiles'][string]['channels'] {
+    return this.#loaded[presetName as PresetName]?.profiles?.[profileName]?.channels ?? [];
   }
 
   /**
@@ -44,14 +45,14 @@ export class Presets {
   /**
    * Returns a specific control of the preset with the given name.
    */
-  getControl<R extends Control>(presetName?: string | PresetName, channelName?: string): R | undefined {
-    return this.#loaded[presetName as PresetName]?.controls?.[channelName!] as R | undefined;
+  getControl<R extends Control>(presetName: string | PresetName, channelName: string): R | undefined {
+    return this.#loaded[presetName as PresetName]?.controls?.[channelName] as R | undefined;
   }
 
   /**
    * Loads the preset with the given name and stores it in the cache.
    */
-  async load(...presetNames: (string | PresetName | undefined)[]): Promise<Array<Preset | undefined>> {
+  async load(...presetNames: (string | PresetName | undefined)[]): Promise<(Preset | undefined)[]> {
     return Promise.all(
       presetNames
         // remove duplicates and undefined values

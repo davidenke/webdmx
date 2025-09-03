@@ -1,11 +1,13 @@
 import { PRESET_NAMES } from '@webdmx/controller';
-import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
+import type { TemplateResult } from 'lit';
+import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { map } from 'lit/directives/map.js';
 
 import type { DeviceData } from '../../../utils/data.utils.js';
 import { presets } from '../../../utils/preset.utils.js';
+
 import styles from './device-parameter-editor.component.scss?inline';
 
 export type DeviceParameterEditorChangeEvent = CustomEvent<Partial<DeviceData>>;

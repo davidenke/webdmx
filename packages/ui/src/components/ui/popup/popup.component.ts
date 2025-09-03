@@ -1,9 +1,11 @@
-import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
+import type { TemplateResult } from 'lit';
+import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
-import styles from './popup.component.scss?inline';
 import { hideOtherPopupsThan, registerPopup, unregisterPopup } from './popup.utils.js';
+
+import styles from './popup.component.scss?inline';
 
 export type PopupHiddenEvent = CustomEvent<boolean>;
 

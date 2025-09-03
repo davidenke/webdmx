@@ -16,13 +16,13 @@ export interface TransitionOptions {
   easing: keyof typeof EASING;
 }
 
-export type Transition = {
+export interface Transition {
   from?: Channels;
   to: Channels;
   options: TransitionOptions;
   start: number;
   end: number;
-};
+}
 
 export class Animation {
   #timeout?: number;
@@ -43,7 +43,7 @@ export class Animation {
 
   add(to: Channels, duration = 0, options: Partial<TransitionOptions> = {}): this {
     // set default easing equation, if not provided or invalid
-    options.easing = options.easing! in EASING ? options.easing : 'linear';
+    options.easing = options.easing && options.easing in EASING ? options.easing : 'linear';
 
     this.transitions.push({
       to,

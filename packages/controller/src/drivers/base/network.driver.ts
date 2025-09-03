@@ -2,9 +2,9 @@ import type { Universe } from '@webdmx/common';
 
 import { AbstractDriver, CHANNELS } from './abstract.driver.js';
 
-export type NetworkDriverOptions = {
+export interface NetworkDriverOptions {
   url: URL;
-};
+}
 
 /**
  * Manages a network connection. The following lifecycle is expected:

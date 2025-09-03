@@ -12,12 +12,12 @@ declare global {
   }
 }
 
-export type Position = {
+export interface Position {
   x: number;
   y: number;
-};
+}
 
-export type DeviceData = {
+export interface DeviceData {
   /**
    * Name of the preset of the device.
    */
@@ -37,21 +37,21 @@ export type DeviceData = {
    * The relative position of the device in the universe editor as percentage.
    */
   position: Position;
-};
+}
 
 /**
  * A single universe with multiple devices.
  */
-export type UniverseData = {
+export interface UniverseData {
   label: string;
   devices: Partial<DeviceData>[];
   driver: DriverName;
-};
+}
 
 /**
  * The whole data structure of the configured universes.
  */
-export type Data = {
+export interface Data {
   /**
    * Multiple configured universes.
    */
@@ -61,7 +61,7 @@ export type Data = {
    * The current active view.
    */
   activeView: 'editor' | 'preview';
-};
+}
 
 const DATA_KEY = 'data' as const;
 const EMPTY_DATA: Data = {

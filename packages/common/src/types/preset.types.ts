@@ -3,20 +3,20 @@
  * Consists of a unique name and a set of controls.
  * The controls are grouped into profiles, so different profiles can reuse the same controls.
  */
-export type Preset = {
+export interface Preset {
   label: string;
   profiles: Record<string, Profile>;
   controls: Record<string, Control>;
-};
+}
 
 /**
  * Some devices allow to switch between different DMX modes.
  * Thus, a device can have multiple profiles with different controls in various amounts of channels.
  */
-export type Profile = {
+export interface Profile {
   label: string;
   channels: string[];
-};
+}
 
 /**
  * A single control of a preset.
@@ -24,20 +24,20 @@ export type Profile = {
  */
 export type Control = Options | Slider;
 
-export type Options = {
+export interface Options {
   type: 'options';
-  options: Array<Option | Slider>;
-};
+  options: (Option | Slider)[];
+}
 
-export type Option = {
+export interface Option {
   label: string;
   value: number;
-};
+}
 
-export type Slider = {
+export interface Slider {
   type: 'slider';
   label: string;
   from: number;
   to: number;
   step: number;
-};
+}

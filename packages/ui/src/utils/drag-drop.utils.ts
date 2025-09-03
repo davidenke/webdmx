@@ -38,9 +38,11 @@ export function prepareDrag<R extends HTMLElement = HTMLElement>(
   const offsetY = clientY - (y + height / 2);
 
   // prepare and set data as serialized payload for event transfer
-  const data = [uniqueSerial(element), offsetX, offsetY];
-  event.dataTransfer!.effectAllowed = 'move';
-  event.dataTransfer!.setData('text/plain', data.join(DRAG_PAYLOAD_SPLIT));
+  if (event.dataTransfer !== null) {
+    const data = [uniqueSerial(element), offsetX, offsetY];
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', data.join(DRAG_PAYLOAD_SPLIT));
+  }
 
   // deliver the associated element
   return element;
@@ -78,7 +80,7 @@ export function processDrop<R extends HTMLElement = HTMLElement>(
 } {
   // gather information and element reference
   const { clientX, clientY, dataTransfer, target } = event;
-  const [serial, offsetX, offsetY] = dataTransfer!.getData('text/plain').split(DRAG_PAYLOAD_SPLIT);
+  const [serial, offsetX, offsetY] = dataTransfer?.getData('text/plain').split(DRAG_PAYLOAD_SPLIT) ?? [];
   const dropTarget = target as HTMLElement;
   const dropRoot = dropTarget.getRootNode() as HTMLElement | ShadowRoot;
 
@@ -120,7 +122,9 @@ export const DropTarget = <T extends Constructor<LitElement>>(superClass: T) => 
     /**
      * Handles the drop event
      */
-    protected dropCallback() {}
+    protected dropCallback() {
+      // no op
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(...args: any[]) {

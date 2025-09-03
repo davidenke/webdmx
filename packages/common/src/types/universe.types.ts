@@ -1,2 +1,2 @@
 export type Universe = Uint8Array;
-export type Channels = { [key: number]: number };
+export type Channels = Record<number, number>;
