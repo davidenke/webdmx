@@ -1,4 +1,4 @@
-import { DMX, type DriverName, type SerialDriver } from '@webdmx/controller';
+import { DMX, type AbstractDriver, type DriverName } from '@webdmx/controller';
 import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
 import { customElement, eventOptions, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
@@ -17,7 +17,7 @@ export class Root extends LitElement {
   static override readonly styles = unsafeCSS(styles);
 
   #dmx = new DMX();
-  #driver!: SerialDriver;
+  #driver!: AbstractDriver;
 
   #transferringTimeout?: number;
   #handleTransferring = this.handleTransferring.bind(this);
