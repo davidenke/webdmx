@@ -40,10 +40,16 @@ export class Root extends LitElement {
   }
 
   @eventOptions({ passive: true })
-  private handleTransferring({ detail }: CustomEvent<boolean>) {
+  private handleTransferring(event: Event) {
+    // as this is only implemented by the serial driver
+    // right now, we need to differentiate at runtime
+    // TODO: once the abstract driver enforces this to
+    //  all drivers, we can remove this check
+    if (!(event instanceof CustomEvent)) return;
+
     // positive transferring events are set immediately, but
     // negative transferring events are delayed to prevent flickering
-    if (detail) {
+    if (event.detail) {
       window.clearTimeout(this.#transferringTimeout);
       this.idle = false;
       this.#transferringTimeout = window.setTimeout(() => (this.idle = true), 200);
