@@ -43,9 +43,6 @@ importers:
       eslint-plugin-unused-imports:
         specifier: 4.2.0
         version: 4.2.0(@typescript-eslint/eslint-plugin@8.42.0(@typescript-eslint/parser@7.18.0(eslint@9.34.0)(typescript@5.9.2))(eslint@9.34.0)(typescript@5.9.2))(eslint@9.34.0)
-      npm-run-all:
-        specifier: 4.1.5
-        version: 4.1.5
       prettier:
         specifier: 3.6.2
         version: 3.6.2
@@ -101,9 +98,9 @@ importers:
       eslint-plugin-unused-imports:
         specifier: 4.2.0
         version: 4.2.0(@typescript-eslint/eslint-plugin@8.42.0(@typescript-eslint/parser@7.18.0(eslint@9.34.0)(typescript@5.9.2))(eslint@9.34.0)(typescript@5.9.2))(eslint@9.34.0)
-      npm-run-all:
-        specifier: 4.1.5
-        version: 4.1.5
+      npm-run-all2:
+        specifier: 8.0.4
+        version: 8.0.4
       shx:
         specifier: 0.4.0
         version: 0.4.0
@@ -247,9 +244,6 @@ importers:
       eslint-plugin-unused-imports:
         specifier: 4.2.0
         version: 4.2.0(@typescript-eslint/eslint-plugin@8.42.0(@typescript-eslint/parser@7.18.0(eslint@9.34.0)(typescript@5.9.2))(eslint@9.34.0)(typescript@5.9.2))(eslint@9.34.0)
-      npm-run-all:
-        specifier: 4.1.5
-        version: 4.1.5
       prettier:
         specifier: 3.6.2
         version: 3.6.2
@@ -4562,17 +4556,16 @@ snapshots:
       semver: 5.7.2
       validate-npm-package-license: 3.0.4
 
-  npm-run-all@4.1.5:
+  npm-run-all2@8.0.4:
     dependencies:
-      ansi-styles: 3.2.1
-      chalk: 2.4.2
-      cross-spawn: 6.0.6
+      ansi-styles: 6.2.1
+      cross-spawn: 7.0.6
       memorystream: 0.3.1
-      minimatch: 3.1.2
-      pidtree: 0.3.1
-      read-pkg: 3.0.0
+      picomatch: 4.0.3
+      pidtree: 0.6.0
+      read-package-json-fast: 4.0.0
       shell-quote: 1.8.3
-      string.prototype.padend: 3.1.6
+      which: 5.0.0
 
   npm-run-path@2.0.2:
     dependencies:
