@@ -13,14 +13,10 @@
     "preserveConstEnums": true,
     "resolveJsonModule": true,
     "removeComments": false,
+    "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
     "verbatimModuleSyntax": true
   },
-  "exclude": ["node_modules", "dist"],
-  "ts-node": {
-    "emit": false,
-    "esm": true,
-    "experimentalSpecifierResolution": "node"
-  }
+  "exclude": ["node_modules", "dist"]
 }
