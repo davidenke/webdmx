@@ -9,7 +9,7 @@ export type DriverName = (typeof DRIVER_NAMES)[number];
 export type PresetName = keyof typeof PRESETS;
 
 export const DRIVER_NAMES = ['enttec-open-dmx-usb', 'null', 'ws'] as const;
-export const PRESET_NAMES = Object.keys(PRESETS) as ReadonlyArray<PresetName>;
+export const PRESET_NAMES = Object.keys(PRESETS) as readonly PresetName[];
 
 export class DMX {
   static readonly #presets = PRESETS;
@@ -29,7 +29,7 @@ export class DMX {
     return Object.keys(this.#presets) as PresetName[];
   }
 
-  static async loadDriver(name: DriverName): Promise<{ new (): AbstractDriver } | undefined> {
+  static async loadDriver(name: DriverName): Promise<(new () => AbstractDriver) | undefined> {
     if (!DRIVER_NAMES.includes(name)) return;
     const { default: driver } = await import(`./drivers/${name}.driver.ts`);
     return driver;

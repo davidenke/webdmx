@@ -22,7 +22,7 @@ if (!source || !target) {
   process.exit(1);
 }
 
-const from = resolve(cwd(), source!);
+const from = resolve(cwd(), source);
 const files = await readdir(from);
 const presets = files.filter((file) => file.endsWith('.preset.json'));
 
@@ -34,4 +34,4 @@ for await (const preset of presets) {
 }
 
 const contents = `${JSON.stringify(index, null, 2)}\n`;
-await writeFile(resolve(cwd(), target!), contents);
+await writeFile(resolve(cwd(), target), contents);

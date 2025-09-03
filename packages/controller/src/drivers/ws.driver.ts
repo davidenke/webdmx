@@ -1,6 +1,7 @@
 import type { Channels } from '@webdmx/common';
 
-import { NetworkDriver, type NetworkDriverOptions } from './base/network.driver.js';
+import type { NetworkDriverOptions } from './base/network.driver.js';
+import { NetworkDriver } from './base/network.driver.js';
 
 export type WsDriverOptions = NetworkDriverOptions & {
   url: URL;

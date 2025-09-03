@@ -3,20 +3,22 @@
   ---webdmx-device-preview-y: var(--webdmx-device-preview-y, 50%);
 }
 
+// stylelint-disable-next-line no-duplicate-selectors
 :host {
   position: absolute;
   top: var(---webdmx-device-preview-y);
   left: var(---webdmx-device-preview-x);
-  transform: translate(-50%, -50%);
 
   display: block;
-  aspect-ratio: 1;
+  box-sizing: border-box;
   width: 100px;
+
+  color: #f4f4f4;
 
   background-color: #263e46;
   border-radius: 50%;
-  box-sizing: border-box;
-  color: #f4f4f4;
+  transform: translate(-50%, -50%);
+  aspect-ratio: 1;
 }
 
 :host([selected]) {

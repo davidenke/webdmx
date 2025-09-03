@@ -1,11 +1,14 @@
-import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
+import type { TemplateResult } from 'lit';
+import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
 import type { DeviceData, UniverseData } from '../../../utils/data.utils.js';
 import { DropTarget, prepareDrag, processDrop } from '../../../utils/drag-drop.utils.js';
 import { presets } from '../../../utils/preset.utils.js';
-import { DeviceEditor, type DeviceEditorChangeEvent } from '../device-editor/device-editor.component.js';
+import type { DeviceEditorChangeEvent } from '../device-editor/device-editor.component.js';
+import { DeviceEditor } from '../device-editor/device-editor.component.js';
+
 import styles from './editor.component.scss?inline';
 
 export type EditorChangeEvent = CustomEvent<Partial<DeviceData>[]>;
@@ -39,9 +42,10 @@ export class Editor extends DropTarget(LitElement) {
   private async handleDeviceChange({ detail, target }: DeviceEditorChangeEvent) {
     // read the selected index and data
     const { deviceIndex } = target as DeviceEditor;
+    if (deviceIndex === undefined) return;
     // update corresponding device
     const devices = this.#universe?.devices?.slice() ?? [];
-    devices[deviceIndex!] = { ...this.#universe?.devices?.[deviceIndex!], ...detail };
+    devices[deviceIndex] = { ...this.#universe?.devices?.[deviceIndex], ...detail };
     // emit the change event
     this.#emitChangeEvent(devices);
   }
@@ -50,9 +54,10 @@ export class Editor extends DropTarget(LitElement) {
   private async handleDeviceRemove({ target }: CustomEvent<void>) {
     // read the selected index
     const { deviceIndex } = target as DeviceEditor;
+    if (deviceIndex === undefined) return;
     // update corresponding device
     const devices = this.#universe?.devices?.slice() ?? [];
-    devices.splice(deviceIndex!, 1);
+    devices.splice(deviceIndex, 1);
     // emit the change event
     this.#emitChangeEvent(devices);
   }
@@ -90,8 +95,9 @@ export class Editor extends DropTarget(LitElement) {
 
     // update corresponding device position
     const { deviceIndex } = element;
+    if (deviceIndex === undefined) return;
     const devices = this.#universe?.devices?.slice() ?? [];
-    devices[deviceIndex!] = { ...this.#universe?.devices?.[deviceIndex!], position };
+    devices[deviceIndex] = { ...this.#universe?.devices?.[deviceIndex], position };
 
     // emit the change event
     this.#emitChangeEvent(devices);

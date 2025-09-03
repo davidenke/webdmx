@@ -12,6 +12,7 @@
 }
 
 // compensate the outline
+// stylelint-disable-next-line no-duplicate-selectors
 :host {
   display: inline-block;
   padding: var(---webdmx-switch-border-width);
@@ -21,17 +22,18 @@
 // usually this should be the host itself, but for convenience a label element is used
 // and the associated input element is used as knob
 label {
+  position: relative;
+
   display: grid;
   grid-template: 'off on' auto;
-
-  position: relative;
-  user-select: none;
-
-  outline: var(---webdmx-switch-border-width) solid var(--webdmx-color-grey-70);
-  border-radius: var(---webdmx-switch-knob-size);
-
   overflow: hidden;
+
+  border-radius: var(---webdmx-switch-knob-size);
+  outline: var(---webdmx-switch-border-width) solid var(--webdmx-color-grey-70);
+
   transition: grid-template-columns 0.2s ease-in-out;
+
+  user-select: none;
 
   :host([disabled]) & {
     opacity: 0.5;
@@ -55,24 +57,24 @@ input {
   all: unset;
 
   position: absolute;
-  inset: 0 auto;
 
   display: block;
   width: var(---webdmx-switch-knob-size);
 
-  aspect-ratio: 1 / 1;
-  content: '';
-
   background-color: var(--webdmx-color-grey-90);
-  outline: var(---webdmx-switch-border-width) solid var(--webdmx-color-grey-70);
   border-radius: 50%;
+  outline: var(---webdmx-switch-border-width) solid var(--webdmx-color-grey-70);
 
   transition: left 0.2s ease-in-out;
+
+  content: '';
+  inset: 0 auto;
+  aspect-ratio: 1 / 1;
 
   :host([active]) & {
     left: var(---webdmx-switch-knob-to);
   }
-  
+
   :host(:not([active])) & {
     left: var(---webdmx-switch-knob-from);
   }
@@ -82,22 +84,24 @@ input {
 slot {
   display: block;
 
+  overflow: hidden;
+
   font-size: var(---webdmx-switch-font-size);
-  letter-spacing: 0.1em;
   line-height: var(---webdmx-switch-knob-size);
+  letter-spacing: 0.1em;
+  white-space: nowrap;
   text-align: center;
   text-transform: uppercase;
-  white-space: nowrap;
 
-  overflow: hidden;
   transition: 0.2s ease-in-out;
   transition-property: padding-left, padding-right;
 
   &[name='off'] {
     grid-area: off;
 
-    background-color: var(--webdmx-color-grey-20);
     color: var(--webdmx-color-grey-90);
+
+    background-color: var(--webdmx-color-grey-20);
 
     :host(:not([active])) & {
       visibility: hidden;
@@ -111,8 +115,9 @@ slot {
   &[name='on'] {
     grid-area: on;
 
-    background-color: var(--webdmx-color-grey-100);
     color: var(--webdmx-color-grey-35);
+
+    background-color: var(--webdmx-color-grey-100);
 
     :host(:not([active])) & {
       padding: 0 var(---webdmx-switch-label-gap) 0 var(---webdmx-switch-padding);

@@ -1,9 +1,11 @@
-import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
+import type { TemplateResult } from 'lit';
+import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 
 import type { DeviceData } from '../../../utils/data.utils.js';
 import { presets } from '../../../utils/preset.utils.js';
+
 import styles from './preview.component.scss?inline';
 
 export type PreviewDeviceSelectedEvent = CustomEvent<number[]>;
@@ -24,7 +26,7 @@ export class Preview extends LitElement {
   selectedDevices: number[] = [];
 
   @property({ type: Boolean, reflect: true })
-  connected: boolean = false;
+  connected = false;
 
   /**
    * The devices to be rendered. Consists of partial device data.
@@ -41,7 +43,8 @@ export class Preview extends LitElement {
   @eventOptions({ passive: true })
   private handleDeviceClick(event: MouseEvent) {
     const { dataset } = event.target as HTMLElement;
-    const index = parseInt(dataset.deviceIndex!);
+    if (dataset.deviceIndex === undefined) return;
+    const index = parseInt(dataset.deviceIndex);
 
     if (this.selectedDevices.includes(index)) {
       const selectedDevices = this.selectedDevices.filter((i) => i !== index);

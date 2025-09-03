@@ -3,10 +3,10 @@ import type { Control } from '@webdmx/common';
 import type { DeviceData } from './data.utils.js';
 import type { Presets } from './preset.utils.js';
 
-export type CombinedControl = {
+export interface CombinedControl {
   control: Control;
   channels: number[];
-};
+}
 
 export type CombinedControls = Map<string, CombinedControl>;
 
@@ -21,8 +21,9 @@ export function getReservedAddresses(
 ): number[] {
   return devices.reduce((addresses, { address, preset, profile }, index) => {
     if (excludeDeviceIndices.includes(index)) return addresses;
+    if (preset === undefined || profile === undefined) return addresses;
     const { length } = presets.getChannels(preset, profile);
-    return addresses.concat(Array.from({ length }, (_, i) => address! + i));
+    return addresses.concat(Array.from({ length }, (_, i) => (address ?? 1) + i));
   }, [] as number[]);
 }
 
@@ -33,7 +34,7 @@ export function getReservedAddresses(
 export function getCombinedControls(devices: Partial<DeviceData>[], presets: Presets): CombinedControls {
   const uniqueControls = devices.reduce((controls, { preset, profile, address }) => {
     // the device must have an address to derive the channels
-    if (address === undefined) return controls;
+    if (address === undefined || preset === undefined || profile === undefined) return controls;
 
     // loop all device channels and corresponding controls and set it with a unique key
     presets.getChannels(preset, profile).forEach((name, channel) => {

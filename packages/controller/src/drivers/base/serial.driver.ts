@@ -99,10 +99,18 @@ export class SerialDriver<
   }
 
   async start(): Promise<void> {
-    this.send(this.#serialPort!, this.universe);
+    const _send = async () => {
+      if (this.#serialPort === undefined) return;
+      this.send(this.#serialPort, this.universe);
+    };
+
+    // send first update
+    await _send();
+
+    // continue sending
     this.#interval = window.setInterval(async () => {
       // call the drivers send method
-      await this.send(this.#serialPort!, this.universe);
+      await _send();
       // reset the transferring flag as all changes have been sent
       this.#transferring = false;
     }, this.options.sendInterval);

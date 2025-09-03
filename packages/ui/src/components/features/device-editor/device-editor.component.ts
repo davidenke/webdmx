@@ -1,4 +1,5 @@
-import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
+import type { TemplateResult } from 'lit';
+import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
 
 import type { DeviceData } from '../../../utils/data.utils.js';
@@ -6,6 +7,7 @@ import { getReservedAddresses } from '../../../utils/device.utils.js';
 import { isSameOrWithin } from '../../../utils/dom.utils.js';
 import { presets } from '../../../utils/preset.utils.js';
 import type { PopupHiddenEvent } from '../../ui/popup/popup.component.js';
+
 import styles from './device-editor.component.scss?inline';
 
 export type DeviceEditorChangeEvent = CustomEvent<Partial<DeviceData>>;
@@ -42,7 +44,7 @@ export class DeviceEditor extends LitElement {
     this.#devices = devices ?? [];
     // update position
     if (this.deviceIndex !== undefined) {
-      const { position } = this.#devices[this.deviceIndex!];
+      const { position } = this.#devices[this.deviceIndex];
       this.style.setProperty('--webdmx-device-editor-x', position?.x ? `${position?.x}px` : '50%');
       this.style.setProperty('--webdmx-device-editor-y', position?.y ? `${position?.y}px` : '50%');
     }
@@ -51,7 +53,8 @@ export class DeviceEditor extends LitElement {
     this.presets.load(...names).then(() => {
       // derive reserved addresses
       const { reservedAddresses } = this;
-      this.reservedAddresses = getReservedAddresses(this.#devices, this.presets, [this.deviceIndex!]);
+      const without = this.deviceIndex !== undefined ? [this.deviceIndex] : [];
+      this.reservedAddresses = getReservedAddresses(this.#devices, this.presets, without);
       this.requestUpdate('reservedAddresses', reservedAddresses);
     });
   }
@@ -105,7 +108,7 @@ export class DeviceEditor extends LitElement {
   }
 
   override render(): TemplateResult {
-    const device = this.#devices[this.deviceIndex!];
+    const device = this.deviceIndex !== undefined ? this.#devices[this.deviceIndex] : undefined;
 
     return html`
       <nav>

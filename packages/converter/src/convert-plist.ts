@@ -1,14 +1,13 @@
 import type { Preset } from '@webdmx/common';
-import plist, { type PlistObject } from 'plist';
+import type { PlistObject } from 'plist';
+import plist from 'plist';
 
 type PlistData = PlistObject & {
-  $objects: ReadonlyArray<
-    PlistObject & {
-      $class: string;
-      $classname: string;
-      $objects: ReadonlyArray<PlistObject>;
-    }
-  >;
+  $objects: readonly (PlistObject & {
+    $class: string;
+    $classname: string;
+    $objects: readonly PlistObject[];
+  })[];
   $class: string;
   $classname: string;
   $label: string;
@@ -22,7 +21,7 @@ type PlistData = PlistObject & {
 
 export function convertPlistToPreset(plistData: string): Preset {
   // as a commonjs module, we need to import the default export
-  // eslint-disable-next-line import/no-named-as-default-member
+
   const parsedData = plist.parse(plistData) as PlistData;
   const preset: Preset = {
     label: `${parsedData.$name}`,

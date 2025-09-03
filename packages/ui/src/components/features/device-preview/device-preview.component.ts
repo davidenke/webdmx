@@ -1,7 +1,9 @@
-import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
+import type { TemplateResult } from 'lit';
+import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import type { DeviceData } from '../../../utils/data.utils.js';
+
 import styles from './device-preview.component.scss?inline';
 
 /**

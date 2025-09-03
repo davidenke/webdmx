@@ -4,6 +4,7 @@
  * packages using Typescripts declaration merging.
  */
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type -- will be merged with other packages later
   interface StorageMap {}
 }
 

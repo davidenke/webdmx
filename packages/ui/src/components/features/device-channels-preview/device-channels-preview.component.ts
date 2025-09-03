@@ -1,12 +1,15 @@
 import type { Channels, Options, Slider } from '@webdmx/common';
-import { html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
+import type { TemplateResult } from 'lit';
+import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
 import { choose } from 'lit/directives/choose.js';
 import { repeat } from 'lit/directives/repeat.js';
 
 import type { DeviceData } from '../../../utils/data.utils.js';
-import { type CombinedControls, getCombinedControls } from '../../../utils/device.utils.js';
+import type { CombinedControls } from '../../../utils/device.utils.js';
+import { getCombinedControls } from '../../../utils/device.utils.js';
 import { presets } from '../../../utils/preset.utils.js';
+
 import styles from './device-channels-preview.component.scss?inline';
 
 export type DeviceChannelsPreviewUpdateEvent = CustomEvent<Channels>;
@@ -27,7 +30,7 @@ export class DeviceChannelsPreview extends LitElement {
   private uniqueControls: CombinedControls = new Map();
 
   @property({ type: Boolean, reflect: true })
-  connected: boolean = false;
+  connected = false;
 
   /**
    * The devices which channels will be used.

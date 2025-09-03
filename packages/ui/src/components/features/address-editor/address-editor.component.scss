@@ -7,12 +7,13 @@
   ---webdmx-address-editor-item-spacing-vertical: var(--webdmx-address-editor-item-spacing-vertical, 4px);
 }
 
+// stylelint-disable-next-line no-duplicate-selectors
 :host {
-  align-self: center;
   display: block;
-  padding: 20px;
-  max-width: 1150px;
+  align-self: center;
   width: 100%;
+  max-width: 1150px;
+  padding: 20px;
 }
 
 section {
@@ -24,13 +25,13 @@ section {
 
 .address,
 .device {
-  font-size: 10px;
-  line-height: 12px;
-
   box-sizing: border-box;
 
+  font-size: 10px;
+
   // https://github.com/necolas/normalize.css/issues/519#issuecomment-197131966
-  font-family: monospace, monospace;
+  font-family: monospace;
+  line-height: 12px;
   letter-spacing: 0.05em;
   text-align: center;
 
@@ -42,9 +43,10 @@ section {
   margin: calc(var(---webdmx-address-editor-item-gap) / 2);
   padding: var(---webdmx-address-editor-item-spacing-vertical) var(---webdmx-address-editor-item-spacing-horizontal);
 
-  cursor: default;
   background-color: #ddedf3;
   border-radius: var(---webdmx-address-editor-item-radius);
+
+  cursor: default;
 
   :host([disabled]) & {
     opacity: 0.5;
@@ -53,16 +55,18 @@ section {
 
 .device {
   display: inline-flex;
-  margin-bottom: calc(var(---webdmx-address-editor-item-gap) / 2);
   margin-top: calc(var(---webdmx-address-editor-item-gap) / 2);
-  padding-bottom: var(---webdmx-address-editor-item-spacing-vertical);
+  margin-bottom: calc(var(---webdmx-address-editor-item-gap) / 2);
   padding-top: var(---webdmx-address-editor-item-spacing-vertical);
-
-  background-clip: padding-box;
-  background-color: #263e46;
-  color: #f4f4f4;
+  padding-bottom: var(---webdmx-address-editor-item-spacing-vertical);
 
   overflow: hidden;
+
+  color: #f4f4f4;
+
+  background-color: #263e46;
+
+  background-clip: padding-box;
 
   &.device-begin {
     margin-left: calc(var(---webdmx-address-editor-item-gap) / 2);
@@ -86,11 +90,13 @@ section {
 
   span {
     position: relative;
+
     display: inline-block;
+    overflow: hidden;
+
+    white-space: nowrap;
 
     pointer-events: none;
-    overflow: hidden;
-    white-space: nowrap;
   }
 
   &:not(.device-begin) span {
