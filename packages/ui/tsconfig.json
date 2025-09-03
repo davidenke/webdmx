@@ -23,16 +23,5 @@
     "useDefineForClassFields": false,
     "verbatimModuleSyntax": true
   },
-  "exclude": ["node_modules", "dist"],
-  "ts-node": {
-    "compilerOptions": {
-      "module": "esnext",
-      "target": "esnext"
-    },
-    "esm": true,
-    "experimentalSpecifierResolution": "node",
-    "files": true,
-    "logError": true,
-    "transpileOnly": true
-  }
+  "exclude": ["node_modules", "dist"]
 }
