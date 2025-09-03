@@ -15,6 +15,9 @@
   "packageManager": "pnpm@10.15.1",
   "scripts": {
     "preinstall": "npx -y only-allow pnpm",
-    "dev": "pnpm -r --parallel --filter-prod @webdmx/ui... dev"
+    "lint": "pnpm -r --parallel --filter '@webdmx/*' lint",
+    "test": "pnpm -r --parallel --filter '@webdmx/*' --if-present test",
+    "dev": "pnpm -r --parallel --filter-prod @webdmx/ui... dev",
+    "build": "pnpm -r --filter @webdmx/ui... build"
   }
 }
