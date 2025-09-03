@@ -23,6 +23,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@enke.dev/lit-utils": "0.2.2",
     "@webdmx/common": "workspace:*",
     "@webdmx/controller": "workspace:*",
     "css.gg": "2.1.4",
