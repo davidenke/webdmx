@@ -56,10 +56,10 @@ export class DeviceChannelsPreview extends LitElement {
     this.#emitUpdateEvent(channels);
   }
 
-  @eventOptions({ passive: true })
-  private updateOptionsInput(event: InputEvent) {
-    console.log(event);
-  }
+  // @eventOptions({ passive: true })
+  // private updateOptionsInput(event: InputEvent) {
+  //   console.log(event);
+  // }
 
   #emitUpdateEvent(channels: Channels) {
     const event = new CustomEvent('webdmx-device-channels-preview:update', { detail: channels, bubbles: true });
