@@ -22,6 +22,8 @@ pnpm -r --filter @webdmx/ui dev
 
 # run complete ui with dependencies
 pnpm -r --parallel --filter-prod @webdmx/ui... dev
+# or as convenient shortcut
+pnpm dev
 ```
 
 ## Packages

@@ -14,6 +14,7 @@
   "license": "MIT",
   "packageManager": "pnpm@10.15.1",
   "scripts": {
-    "preinstall": "npx -y only-allow pnpm"
+    "preinstall": "npx -y only-allow pnpm",
+    "dev": "pnpm -r --parallel --filter-prod @webdmx/ui... dev"
   }
 }
