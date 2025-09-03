@@ -28,7 +28,6 @@ node_modules
 coverage
 
 # generated files
-src/index.ts
 presets/preset.schema.json
 presets/presets.json
 fixtures/*
