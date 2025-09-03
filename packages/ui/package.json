@@ -46,6 +46,8 @@
     "shx": "0.4.0",
     "typedoc": "0.28.12",
     "typescript": "5.9.2",
-    "vite": "7.1.4"
+    "vite": "7.1.4",
+    "vite-plugin-checker": "0.10.3",
+    "vite-plugin-mkcert": "1.17.8"
   }
 }
