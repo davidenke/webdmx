@@ -5,6 +5,3 @@
 /node_modules
 /reports
 /*.tgz
-
-# generated files
-src/index.ts

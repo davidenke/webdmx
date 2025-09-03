@@ -13,15 +13,10 @@
     "dist"
   ],
   "scripts": {
-    "postinstall": "run-s -lns build:index",
     "lint": "npx eslint . -c .eslintrc --ext .ts",
     "predev": "run-s build",
     "dev": "vite",
-    "build:index:barrel": "barrelsby --config .barrelsby.json",
-    "build:index:fixup": "shx sed -i \"s/';/\\.js';/g\" src/index.ts",
-    "build:index": "run-s -lns build:index:*",
-    "build:compile": "vite build",
-    "build": "run-s -lns build:*",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -35,7 +30,6 @@
     "@types/w3c-web-serial": "1.0.8",
     "@types/w3c-web-usb": "1.0.10",
     "@typescript-eslint/eslint-plugin": "8.42.0",
-    "barrelsby": "2.8.1",
     "eslint": "9.34.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "4.4.4",

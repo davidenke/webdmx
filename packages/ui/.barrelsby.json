@@ -1,7 +1,0 @@
-{
-  "directory": "src",
-  "delete": true,
-  "flat": true,
-  "exclude": [".*\\.spec\\.ts$", "globals\\.d\\.ts", "vite-env\\.d\\.ts"],
-  "singleQuotes": true
-}
