@@ -26,6 +26,3 @@ node_modules
 
 .DS_Store
 coverage
-
-# generated files
-src/index.ts

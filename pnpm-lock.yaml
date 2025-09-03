@@ -16,9 +16,6 @@ importers:
       '@typescript-eslint/eslint-plugin':
         specifier: 8.42.0
         version: 8.42.0(@typescript-eslint/parser@7.18.0(eslint@9.34.0)(typescript@5.9.2))(eslint@9.34.0)(typescript@5.9.2)
-      barrelsby:
-        specifier: 2.8.1
-        version: 2.8.1
       eslint:
         specifier: 9.34.0
         version: 9.34.0
