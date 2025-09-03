@@ -12,7 +12,9 @@ The whole thing is packaged into an [Electron](https://www.electronjs.org/) app 
 
 ```bash
 pnpm i
-pnpm -r build
+pnpm lint # lints all packages
+pnpm test # runs tests in all packages
+pnpm build # builds all packages as seen from the ui
 
 # run only controller watch build
 pnpm -r --filter @webdmx/controller dev
@@ -34,6 +36,15 @@ This monorepo consists of the following packages:
 - [`@webdmx/controller`](./packages/controller/README.md): DMX controller as high level API
 - [`@webdmx/ui`](./packages/ui/README.md): UI to control DMX lights
 - [`@webdmx/app`](./packages/app/README.md): A standalone desktop app packaging the UI
+
+## Fix linting errors
+
+Run autofixes for eslint or prettier
+
+```bash
+pnpm -r lint:eslint --fix
+pnpm -r lint:prettier --write
+```
 
 ## Update dependencies
 
