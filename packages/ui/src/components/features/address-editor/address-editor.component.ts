@@ -1,7 +1,9 @@
+import type { EventWithTarget } from '@enke.dev/lit-utils/lib/types/event.types.js';
 import type { TemplateResult } from 'lit';
 import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { when } from 'lit/directives/when.js';
 
@@ -34,6 +36,7 @@ type Addresses = Map<number, EmptyAddressData | DeviceAddressData>;
  * The change event of the address editor. Will contain the
  * new device data of all devices.
  */
+export type AddressEditorInteractiveEvent = CustomEvent<number | undefined>;
 export type AddressEditorChangeEvent = CustomEvent<Partial<DeviceData>[]>;
 
 /**
@@ -45,6 +48,7 @@ export type AddressEditorChangeEvent = CustomEvent<Partial<DeviceData>[]>;
  * @cssprop --webdmx-address-editor-item-spacing-horizontal - The horizontal spacing of address items.
  * @cssprop --webdmx-address-editor-item-spacing-vertical - The vertical spacing of address items.
  *
+ * @emits webdmx-address-editor:interactive - Emitted when an device is interacted with.
  * @emits webdmx-address-editor:change - Emitted when an address has been changed.
  */
 @customElement('webdmx-address-editor')
@@ -65,19 +69,25 @@ export class AddressEditor extends LitElement {
    * Disables the address editor.
    */
   @property({ type: Boolean, reflect: true })
-  disabled = false;
+  readonly disabled = false;
 
   /**
    * The first address of the editor.
    */
   @property({ type: Number, reflect: true })
-  first = 1;
+  readonly first = 1;
 
   /**
    * The overall length of the editor.
    */
   @property({ type: Number, reflect: true })
-  length = 512;
+  readonly length = 512;
+
+  /**
+   * The maybe currently interactive device.
+   */
+  @property({ type: Number, reflect: true, attribute: 'interactive-device' })
+  readonly interactiveDevice?: number;
 
   /**
    * The devices to be rendered. Consists of partial device data.
@@ -194,6 +204,17 @@ export class AddressEditor extends LitElement {
     }
   }
 
+  @eventOptions({ passive: true })
+  private handleDeviceMouseEnter(event: EventWithTarget<HTMLElement>) {
+    const { deviceIndex } = event.target.dataset;
+    this.#emitInteractiveEvent(deviceIndex !== undefined ? parseInt(deviceIndex) : undefined);
+  }
+
+  @eventOptions({ passive: true })
+  private handleDeviceMouseLeave() {
+    this.#emitInteractiveEvent(undefined);
+  }
+
   #deriveAddresses() {
     // prepare address data for rendering
     const addressData: Addresses = new Map();
@@ -220,6 +241,12 @@ export class AddressEditor extends LitElement {
       }
     }
     this.#addressData = addressData;
+  }
+
+  #emitInteractiveEvent(deviceIndex: number | undefined) {
+    const options = { detail: deviceIndex, bubbles: true, composed: true };
+    const event = new CustomEvent('webdmx-address-editor:interactive', options);
+    this.dispatchEvent(event);
   }
 
   #emitChangeEvent(devices: Partial<DeviceData>[]) {
@@ -268,10 +295,13 @@ export class AddressEditor extends LitElement {
         data-address="${address}"
         data-device-index="${deviceIndex}"
         data-device-length="${length}"
+        data-interactive="${ifDefined(this.interactiveDevice === deviceIndex ? 'true' : undefined)}"
         @dragstart="${this.handleDragStart}"
         @dragover="${this.handleDragOver}"
         @dragenter="${this.handleDragEnter}"
         @drop="${this.handleDrop}"
+        @mouseenter="${this.handleDeviceMouseEnter}"
+        @mouseleave="${this.handleDeviceMouseLeave}"
         style="---webdmx-address-editor-device-offset: ${(device.address ?? 1) - address + 1}"
       >
         ${when(
@@ -304,6 +334,7 @@ export class AddressEditor extends LitElement {
 
 declare global {
   interface HTMLEventMap {
+    'webdmx-address-editor:interactive': AddressEditorInteractiveEvent;
     'webdmx-address-editor:change': AddressEditorChangeEvent;
   }
 

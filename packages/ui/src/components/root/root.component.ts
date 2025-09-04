@@ -7,8 +7,9 @@ import { when } from 'lit/directives/when.js';
 
 import type { Data } from '../../utils/data.utils.js';
 import { loadData, saveData } from '../../utils/data.utils.js';
+import type { AddressEditorInteractiveEvent } from '../features/address-editor/address-editor.component.js';
 import type { DeviceChannelsPreviewUpdateEvent } from '../features/device-channels-preview/device-channels-preview.component.js';
-import type { EditorChangeEvent } from '../features/editor/editor.component.js';
+import type { EditorChangeEvent, EditorInteractiveEvent } from '../features/editor/editor.component.js';
 import type { PreviewDeviceSelectedEvent } from '../features/preview/preview.component.js';
 
 import styles from './root.component.scss?inline';
@@ -29,6 +30,7 @@ export class Root extends LitElement {
   @state() private data!: Data;
   @state() private selectedUniverseIndex!: number;
   @state() private selectedDevices: number[] = [];
+  @state() private interactiveDevice?: number;
   @state() private driverNames = DMX.driverNames;
 
   @state() private loaded = false;
@@ -120,6 +122,11 @@ export class Root extends LitElement {
     // disconnect from universe
     await this.#dmx.close();
     this.connected = false;
+  }
+
+  @eventOptions({ passive: true })
+  async handleEditorInteractive({ detail: deviceIndex }: EditorInteractiveEvent | AddressEditorInteractiveEvent) {
+    this.interactiveDevice = deviceIndex;
   }
 
   @eventOptions({ passive: true })
@@ -230,7 +237,9 @@ export class Root extends LitElement {
         ${this.data.activeView === 'editor'
           ? html`
               <webdmx-editor
+                .interactiveDevice="${this.interactiveDevice}"
                 .universe="${this.data.universes[this.selectedUniverseIndex]}"
+                @webdmx-editor:interactive="${this.handleEditorInteractive}"
                 @webdmx-editor:change="${this.handleEditorChange}"
               ></webdmx-editor>
 
@@ -240,6 +249,8 @@ export class Root extends LitElement {
                   <webdmx-address-editor
                     slot="footer"
                     .devices="${this.data.universes[this.selectedUniverseIndex]?.devices}"
+                    .interactiveDevice="${this.interactiveDevice}"
+                    @webdmx-address-editor:interactive="${this.handleEditorInteractive}"
                     @webdmx-address-editor:change="${this.handleEditorChange}"
                   ></webdmx-address-editor>
                 `,

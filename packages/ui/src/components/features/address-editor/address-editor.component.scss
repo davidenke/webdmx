@@ -65,8 +65,13 @@ section {
   color: #f4f4f4;
 
   background-color: #263e46;
-
   background-clip: padding-box;
+
+  transition: background-color 0.2s ease;
+
+  &[data-interactive] {
+    background-color: #82969d;
+  }
 
   &.device-begin {
     margin-left: calc(var(---webdmx-address-editor-item-gap) / 2);

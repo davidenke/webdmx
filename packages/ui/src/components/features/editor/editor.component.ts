@@ -1,6 +1,8 @@
+import type { EventWithTarget } from '@enke.dev/lit-utils/lib/types/event.types.js';
 import type { TemplateResult } from 'lit';
 import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { repeat } from 'lit/directives/repeat.js';
 
 import type { DeviceData, UniverseData } from '../../../utils/data.utils.js';
@@ -12,6 +14,7 @@ import { DeviceEditor } from '../device-editor/device-editor.component.js';
 import styles from './editor.component.scss?inline';
 
 export type EditorChangeEvent = CustomEvent<Partial<DeviceData>[]>;
+export type EditorInteractiveEvent = CustomEvent<number | undefined>;
 
 /**
  * @element webdmx-editor
@@ -24,6 +27,9 @@ export class Editor extends DropTarget(LitElement) {
 
   @state()
   private presets = presets;
+
+  @property({ type: Number, reflect: true, attribute: 'interactive-device' })
+  readonly interactiveDevice?: number;
 
   @property({ type: Object, attribute: false, noAccessor: true })
   set universe(universe: Readonly<UniverseData> | undefined) {
@@ -97,14 +103,28 @@ export class Editor extends DropTarget(LitElement) {
   }
 
   @eventOptions({ passive: true })
+  private handleDeviceMouseEnter(event: EventWithTarget<DeviceEditor>) {
+    this.#emitInteractiveEvent(event.target.deviceIndex);
+  }
+
+  @eventOptions({ passive: true })
+  private handleDeviceMouseLeave() {
+    this.#emitInteractiveEvent(undefined);
+  }
+
+  @eventOptions({ passive: true })
   override async dropCallback(event: DragEvent) {
     // process drop event and retrieve element reference
     const getElement = (serial: string) =>
       this.renderRoot.querySelector<DeviceEditor>(`[device-index="${serial}"]`) ?? undefined;
     const { element, position } = processDrop(event, getElement, false);
 
+    // set dragging state
     if (element === undefined) return;
     element.dataset.dragging = undefined;
+
+    // restore interactive state since the mouseleave event is dispatched after drop
+    requestAnimationFrame(() => this.#emitInteractiveEvent(element.deviceIndex));
 
     // update corresponding device position
     const { deviceIndex } = element;
@@ -122,6 +142,12 @@ export class Editor extends DropTarget(LitElement) {
     this.dispatchEvent(event);
   }
 
+  #emitInteractiveEvent(deviceIndex: number | undefined) {
+    const options = { detail: deviceIndex, bubbles: true, composed: true };
+    const event = new CustomEvent('webdmx-editor:interactive', options);
+    this.dispatchEvent(event);
+  }
+
   override render(): TemplateResult {
     return html`
       ${repeat(
@@ -132,8 +158,11 @@ export class Editor extends DropTarget(LitElement) {
             draggable="true"
             device-index="${index}"
             ?autofocus="${index === 0}"
+            data-interactive="${ifDefined(this.interactiveDevice === index ? 'true' : undefined)}"
             .devices="${this.#universe?.devices}"
             @dragstart="${this.handleDragStart}"
+            @mouseenter="${this.handleDeviceMouseEnter}"
+            @mouseleave="${this.handleDeviceMouseLeave}"
             @webdmx-device-parameter-editor:change="${this.handleDeviceChange}"
             @webdmx-device-editor:duplicate="${this.handleDeviceDuplicate}"
             @webdmx-device-editor:remove="${this.handleDeviceRemove}"
@@ -151,6 +180,7 @@ export class Editor extends DropTarget(LitElement) {
 declare global {
   interface HTMLEventMap {
     'webdmx-editor:change': EditorChangeEvent;
+    'webdmx-editor:interactive': EditorInteractiveEvent;
   }
 
   interface HTMLElementTagNameMap {

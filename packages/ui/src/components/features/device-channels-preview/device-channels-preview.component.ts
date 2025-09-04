@@ -30,7 +30,7 @@ export class DeviceChannelsPreview extends LitElement {
   private uniqueControls: CombinedControls = new Map();
 
   @property({ type: Boolean, reflect: true })
-  connected = false;
+  readonly connected = false;
 
   /**
    * The devices which channels will be used.

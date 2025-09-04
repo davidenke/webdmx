@@ -24,12 +24,17 @@
   cursor: move;
 
   aspect-ratio: 1;
+
+  transition: 0.2s ease-in-out;
+  transition-property: background-color, opacity;
 }
 
 :host([data-dragging='true']) {
   opacity: 0.25;
+}
 
-  transition: opacity 0.2s ease-in-out;
+:host([data-interactive='true']) {
+  background-color: #82969d;
 }
 
 nav {
