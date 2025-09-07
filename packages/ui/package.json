@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@enke.dev/lit-utils": "0.2.2",
+    "@shoelace-style/shoelace": "2.20.1",
     "@webdmx/common": "workspace:*",
     "@webdmx/controller": "workspace:*",
     "css.gg": "2.1.4",
@@ -39,15 +40,16 @@
     "npm-run-all2": "8.0.4",
     "prettier": "3.6.2",
     "sass": "1.92.0",
+    "shx": "0.4.0",
     "stylelint": "16.23.1",
     "stylelint-config-rational-order": "0.1.2",
     "stylelint-config-standard-scss": "15.0.1",
     "stylelint-order": "7.0.0",
-    "shx": "0.4.0",
     "typedoc": "0.28.12",
     "typescript": "5.9.2",
     "vite": "7.1.4",
     "vite-plugin-checker": "0.10.3",
-    "vite-plugin-mkcert": "1.17.8"
+    "vite-plugin-mkcert": "1.17.8",
+    "vite-plugin-static-copy": "3.1.2"
   }
 }

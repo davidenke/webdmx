@@ -1,3 +1,7 @@
+import { setBasePath } from '@shoelace-style/shoelace/dist/utilities/base-path.js';
+// Set the base path for Shoelace assets
+setBasePath('/assets/');
+
 export * from './components/features/address-editor/address-editor.component.js';
 export * from './components/features/device-channels-preview/device-channels-preview.component.js';
 export * from './components/features/device-editor/device-editor.component.js';

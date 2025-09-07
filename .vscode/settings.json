@@ -4,5 +4,6 @@
     "./packages/controller",
     "./packages/converter",
     "./packages/ui"
-  ]
+  ],
+  "html.customData": ["./packages/ui/node_modules/@shoelace-style/shoelace/dist/vscode.html-custom-data.json"]
 }
