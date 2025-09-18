@@ -22,16 +22,16 @@
     "dev": "vite build --watch"
   },
   "devDependencies": {
-    "@enke.dev/lint": "0.8.4",
-    "@types/node": "24.3.1",
-    "@typescript-eslint/eslint-plugin": "8.43.0",
+    "@enke.dev/lint": "0.10.4",
+    "@types/node": "24.5.2",
+    "@typescript-eslint/eslint-plugin": "8.44.0",
     "eslint": "9.35.0",
     "jiti": "2.5.1",
     "npm-run-all2": "8.0.4",
     "prettier": "3.6.2",
     "shx": "0.4.0",
     "typescript": "5.9.2",
-    "vite": "7.1.5",
+    "vite": "7.1.6",
     "vite-plugin-checker": "0.10.3",
     "vite-plugin-dts": "4.5.4"
   }
