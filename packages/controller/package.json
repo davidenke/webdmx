@@ -31,7 +31,7 @@
     "@webdmx/common": "workspace:*"
   },
   "devDependencies": {
-    "@enke.dev/lint": "0.10.7",
+    "@enke.dev/lint": "0.11.0",
     "@types/node": "22.18.6",
     "@types/w3c-web-serial": "1.0.8",
     "@webdmx/converter": "workspace:*",
