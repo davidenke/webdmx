@@ -1,3 +1,4 @@
 # artifacts
 dist
 src/index.ts
+**/*.html
