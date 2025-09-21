@@ -27,8 +27,12 @@ export class Popup extends LitElement {
   override set hidden(hidden: boolean) {
     const wasHidden = this.#hidden;
     this.#hidden = hidden;
-    if (!this.#hidden) hideOtherPopupsThan(this);
-    if (wasHidden !== this.#hidden) this.#emitHiddenEvent();
+    if (!this.#hidden) {
+      hideOtherPopupsThan(this);
+    }
+    if (wasHidden !== this.#hidden) {
+      this.#emitHiddenEvent();
+    }
     this.requestUpdate('hidden', wasHidden);
   }
   override get hidden(): boolean {

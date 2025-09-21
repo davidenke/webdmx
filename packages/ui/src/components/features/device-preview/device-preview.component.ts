@@ -18,8 +18,14 @@ export class DevicePreview extends LitElement {
    */
   @property({ type: Object, attribute: false })
   set device(device: Partial<DeviceData> | undefined) {
-    this.style.setProperty('--webdmx-device-preview-x', device?.position?.x ? `${device.position?.x}px` : '50%');
-    this.style.setProperty('--webdmx-device-preview-y', device?.position?.y ? `${device.position?.y}px` : '50%');
+    this.style.setProperty(
+      '--webdmx-device-preview-x',
+      device?.position?.x ? `${device.position?.x}px` : '50%'
+    );
+    this.style.setProperty(
+      '--webdmx-device-preview-y',
+      device?.position?.y ? `${device.position?.y}px` : '50%'
+    );
   }
 
   /**

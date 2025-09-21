@@ -29,15 +29,26 @@ export class Switch extends LitElement {
   @eventOptions({ passive: true })
   private handleInput() {
     this.active = !this.active;
-    this.dispatchEvent(new CustomEvent('webdmx-switch:toggle', { detail: this.active, bubbles: true, composed: true }));
+    this.dispatchEvent(
+      new CustomEvent('webdmx-switch:toggle', {
+        detail: this.active,
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   override render(): TemplateResult {
     return html`
       <label>
-        <input type="checkbox" ?checked="${this.active}" ?disabled="${this.disabled}" @input="${this.handleInput}" />
-        <slot name="off" aria-hidden="${this.active}"></slot>
-        <slot name="on" aria-hidden="${this.active}"></slot>
+        <input
+          type="checkbox"
+          ?checked="${this.active}"
+          ?disabled="${this.disabled}"
+          @input="${this.handleInput}"
+        >
+        <slot name="off"></slot>
+        <slot name="on"></slot>
       </label>
     `;
   }

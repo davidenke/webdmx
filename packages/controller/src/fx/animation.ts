@@ -81,7 +81,10 @@ export class Animation {
       // Find the transition for the current point in time, the latest if multiple match
       let currentAnimation = this.lastAnimation;
 
-      while (currentAnimation < this.transitions.length && elapsedTime >= this.transitions[currentAnimation].end) {
+      while (
+        currentAnimation < this.transitions.length &&
+        elapsedTime >= this.transitions[currentAnimation].end
+      ) {
         currentAnimation++;
       }
 
@@ -89,15 +92,18 @@ export class Animation {
       const completedAnimations = this.transitions.slice(this.lastAnimation, currentAnimation);
 
       // Ensure future transitions interpolate from the most recent state
-      completedAnimations.forEach((completedAnimation) => {
+      completedAnimations.forEach(completedAnimation => {
         delete completedAnimation.from;
       });
 
       if (completedAnimations.length) {
-        const completedAnimationStatesToSet = Object.assign({}, ...completedAnimations.map((a) => a.to));
+        const completedAnimationStatesToSet = Object.assign(
+          {},
+          ...completedAnimations.map(a => a.to)
+        );
 
         if (this.filters.length) {
-          this.filters.forEach((filter) => filter(completedAnimationStatesToSet));
+          this.filters.forEach(filter => filter(completedAnimationStatesToSet));
         }
 
         // driver.update(completedAnimationStatesToSet, { origin: 'transition' });
@@ -150,7 +156,7 @@ export class Animation {
           }
 
           if (this.filters.length) {
-            this.filters.forEach((filter) => filter(intermediateValues));
+            this.filters.forEach(filter => filter(intermediateValues));
           }
 
           // driver.update(intermediateValues, { origin: 'transition' });

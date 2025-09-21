@@ -1,7 +1,7 @@
 import config from '@enke.dev/lint';
-import type { Linter } from 'eslint';
+import { defineConfig } from 'eslint/config';
 
-export default [
+export default defineConfig([
   ...config,
   // configure root dir in monorepo
   {
@@ -12,4 +12,4 @@ export default [
       },
     },
   },
-] satisfies Linter.Config[];
+]);

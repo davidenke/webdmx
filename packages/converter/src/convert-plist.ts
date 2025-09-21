@@ -30,10 +30,14 @@ export function convertPlistToPreset(plistData: string): Preset {
   };
 
   // Parse profiles
-  const profiles = parsedData.$objects.filter((obj) => obj.$class && obj.$class === 'LXFixtureProfile');
-  profiles.forEach((profile) => {
-    const channels = profile.$objects.filter((obj) => obj.$class && obj.$class === 'LXFixtureChannel');
-    const channelLabels = channels.map((channel) => `${channel.$label}`);
+  const profiles = parsedData.$objects.filter(
+    obj => obj.$class && obj.$class === 'LXFixtureProfile'
+  );
+  profiles.forEach(profile => {
+    const channels = profile.$objects.filter(
+      obj => obj.$class && obj.$class === 'LXFixtureChannel'
+    );
+    const channelLabels = channels.map(channel => `${channel.$label}`);
     preset.profiles[profile.$classname] = {
       label: `${profile.$label}`,
       channels: channelLabels,

@@ -18,13 +18,14 @@ const { values } = parseArgs({
 const { source, target } = values;
 
 if (!source || !target) {
+  // eslint-disable-next-line no-console
   console.error('Usage: build-preset-index --source <source> --target <target>');
   process.exit(1);
 }
 
 const from = resolve(cwd(), source);
 const files = await readdir(from);
-const presets = files.filter((file) => file.endsWith('.preset.json'));
+const presets = files.filter(file => file.endsWith('.preset.json'));
 
 const index: Record<string, string> = {};
 for await (const preset of presets) {

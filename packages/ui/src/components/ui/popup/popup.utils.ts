@@ -12,7 +12,9 @@ export function unregisterPopup(popup: Popup) {
 }
 
 export function hideOtherPopupsThan(popup: Popup) {
-  popups.forEach((ref) => {
-    if (ref !== popup) ref.hidden = true;
+  popups.forEach(ref => {
+    if (ref !== popup) {
+      ref.hidden = true;
+    }
   });
 }

@@ -37,6 +37,7 @@ async function main() {
 
   // check all required arguments are provided
   if (!source || !target) {
+    // eslint-disable-next-line no-console
     console.error('No source and / or target path provided');
     exit(1);
   }
@@ -44,7 +45,7 @@ async function main() {
   // prepare file list and progress bar
   const progress = new SingleBar({}, Presets.shades_classic);
   const files = await readdir(resolve(cwd(), source));
-  const fixtures = files.filter((file) => extname(file) !== '');
+  const fixtures = files.filter(file => extname(file) !== '');
 
   // init progress bar
   progress.start(fixtures.length, 0);

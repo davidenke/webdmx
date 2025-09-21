@@ -43,11 +43,13 @@ export class Preview extends LitElement {
   @eventOptions({ passive: true })
   private handleDeviceClick(event: MouseEvent) {
     const { dataset } = event.target as HTMLElement;
-    if (dataset.deviceIndex === undefined) return;
+    if (dataset.deviceIndex === undefined) {
+      return;
+    }
     const index = parseInt(dataset.deviceIndex);
 
     if (this.selectedDevices.includes(index)) {
-      const selectedDevices = this.selectedDevices.filter((i) => i !== index);
+      const selectedDevices = this.selectedDevices.filter(i => i !== index);
       this.#emitDeviceSelected(selectedDevices);
     } else {
       const selectedDevices = [...this.selectedDevices, index];
@@ -71,7 +73,7 @@ export class Preview extends LitElement {
             .device="${device}"
             @click="${this.handleDeviceClick}"
           ></webdmx-device-preview>
-        `,
+        `
       )}
     `;
   }

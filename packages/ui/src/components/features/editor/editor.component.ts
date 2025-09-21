@@ -48,7 +48,9 @@ export class Editor extends DropTarget(LitElement) {
   private async handleDeviceChange({ detail, target }: DeviceEditorChangeEvent) {
     // read the selected index and data
     const { deviceIndex } = target as DeviceEditor;
-    if (deviceIndex === undefined) return;
+    if (deviceIndex === undefined) {
+      return;
+    }
     // update corresponding device
     const devices = this.#universe?.devices?.slice() ?? [];
     devices[deviceIndex] = { ...this.#universe?.devices?.[deviceIndex], ...detail };
@@ -60,7 +62,9 @@ export class Editor extends DropTarget(LitElement) {
   private async handleDeviceDuplicate({ target }: CustomEvent<void>) {
     // read the selected index
     const { deviceIndex } = target as DeviceEditor;
-    if (deviceIndex === undefined) return;
+    if (deviceIndex === undefined) {
+      return;
+    }
     // duplicate device
     const devices = this.#universe?.devices?.slice() ?? [];
     const duplicate = structuredClone(devices[deviceIndex]);
@@ -73,7 +77,9 @@ export class Editor extends DropTarget(LitElement) {
   private async handleDeviceRemove({ target }: CustomEvent<void>) {
     // read the selected index
     const { deviceIndex } = target as DeviceEditor;
-    if (deviceIndex === undefined) return;
+    if (deviceIndex === undefined) {
+      return;
+    }
     // update corresponding device
     const devices = this.#universe?.devices?.slice() ?? [];
     devices.splice(deviceIndex, 1);
@@ -95,7 +101,7 @@ export class Editor extends DropTarget(LitElement) {
     event.stopPropagation();
 
     // prepare drag event and retrieve element reference
-    const element = prepareDrag<DeviceEditor>(event, (element) => `${element.deviceIndex}`);
+    const element = prepareDrag<DeviceEditor>(event, element => `${element.deviceIndex}`);
     element.dataset.dragging = String(true);
 
     // close the parameter editor popup
@@ -120,7 +126,9 @@ export class Editor extends DropTarget(LitElement) {
     const { element, position } = processDrop(event, getElement, false);
 
     // set dragging state
-    if (element === undefined) return;
+    if (element === undefined) {
+      return;
+    }
     element.dataset.dragging = undefined;
 
     // restore interactive state since the mouseleave event is dispatched after drop
@@ -128,7 +136,9 @@ export class Editor extends DropTarget(LitElement) {
 
     // update corresponding device position
     const { deviceIndex } = element;
-    if (deviceIndex === undefined) return;
+    if (deviceIndex === undefined) {
+      return;
+    }
     const devices = this.#universe?.devices?.slice() ?? [];
     devices[deviceIndex] = { ...this.#universe?.devices?.[deviceIndex], position };
 
@@ -167,7 +177,7 @@ export class Editor extends DropTarget(LitElement) {
             @webdmx-device-editor:duplicate="${this.handleDeviceDuplicate}"
             @webdmx-device-editor:remove="${this.handleDeviceRemove}"
           ></webdmx-device-editor>
-        `,
+        `
       )}
 
       <button aria-label="Add device" @click="${this.handleAddDeviceClick}">

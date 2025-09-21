@@ -1,15 +1,21 @@
 <!doctype html>
-<head lang="en">
-  <meta charset="utf-8" />
-  <meta
-    http-equiv="Content-Security-Policy"
-    content="default-src 'self'; connect-src *; script-src 'self'; style-src 'self' 'unsafe-inline'"
-  />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <link rel="stylesheet" href="./src/styles/global.scss" />
-</head>
+<html lang="en">
+  <head>
+    <title>WebDMX</title>
+    <meta charset="utf-8">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; connect-src *; script-src 'self'; style-src 'self' 'unsafe-inline'"
+    >
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+    <link rel="stylesheet" href="./src/styles/global.scss">
+  </head>
 
-<body>
-  <webdmx-root></webdmx-root>
-  <script type="module" src="./src/index.ts"></script>
-</body>
+  <body>
+    <webdmx-root></webdmx-root>
+    <script type="module" src="./src/index.ts"></script>
+  </body>
+</html>
