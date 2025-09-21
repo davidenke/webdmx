@@ -57,12 +57,14 @@ export class Presets {
       presetNames
         // remove duplicates and undefined values
         .filter((name, index) => name !== undefined && presetNames.indexOf(name) === index)
-        // check whether preset is already loaded
-        .filter((name) => !this.#loaded[name as PresetName])
+        // check whether preset is already loaded (not null)
+        .filter((name) => this.#loaded[name as PresetName] === null)
         // load preset and add it to the list
         .map(async (name) => {
           const preset = await DMX.loadPreset(name as PresetName);
-          this.#loaded = { ...this.#loaded, [name as PresetName]: preset ?? null };
+          // Directly mutate the existing object instead of creating a new one
+          // This prevents reactive updates in components that hold references to the object
+          this.#loaded[name as PresetName] = preset ?? null;
           return preset;
         }),
     );

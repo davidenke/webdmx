@@ -1,4 +1,10 @@
-import { PRESET_NAMES } from '@webdmx/controller';
+// Import specific Shoelace components
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/option/option.js';
+import '@shoelace-style/shoelace/dist/components/select/select.js';
+
+import { PRESETS } from '@webdmx/controller';
 import type { TemplateResult } from 'lit';
 import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
@@ -23,28 +29,51 @@ export class DeviceParameterEditor extends LitElement {
   #device?: Readonly<Partial<DeviceData>>;
 
   @state()
-  private presets = presets;
+  private selectedPreset?: string;
 
   @state()
-  private selectedPreset?: string;
+  private profileNames: readonly string[] = [];
 
   @property({ type: Object, attribute: false, noAccessor: true })
   set device(device: Readonly<Partial<DeviceData>> | undefined) {
-    // update internal state
-    this.#device = device;
-    this.selectedPreset = device?.preset;
+    // Deep comparison to avoid unnecessary updates when object reference changes
+    // but the actual data is the same
+    if (this.#device === device) return;
+    
+    // Check if the actual content is the same
+    if (
+      this.#device &&
+      device &&
+      this.#device.preset === device.preset &&
+      this.#device.profile === device.profile &&
+      this.#device.address === device.address
+    ) {
+      return;
+    }
 
-    // update presets with detailed information
-    this.presets.load(this.selectedPreset).then(() => this.requestUpdate());
+    // Update internal state
+    this.#device = device;
+    
+    // Only update selectedPreset if it actually changed
+    const newPreset = device?.preset;
+    if (this.selectedPreset !== newPreset) {
+      this.selectedPreset = newPreset;
+      
+      // Only load preset data if we have a new preset
+      if (newPreset) {
+        this.#loadPresetAndUpdateProfiles(newPreset);
+      }
+    }
   }
 
   @property({ type: Array, attribute: false })
   reservedAddresses: number[] = [];
 
   @eventOptions({ passive: false })
-  handleAddressInput(event: InputEvent) {
-    const target = event.target as HTMLInputElement;
-    if (this.reservedAddresses.includes(target.valueAsNumber)) {
+  handleAddressInput(event: CustomEvent) {
+    const target = event.target as HTMLElement & { value: string; setCustomValidity: (message: string) => void };
+    const value = parseInt(target.value);
+    if (this.reservedAddresses.includes(value)) {
       target.setCustomValidity('Address is already in use.');
     } else {
       target.setCustomValidity('');
@@ -53,10 +82,23 @@ export class DeviceParameterEditor extends LitElement {
 
   @eventOptions({ passive: true })
   private async handlePresetChange({ target }: Event) {
-    const select = target as HTMLSelectElement;
+    const select = target as HTMLElement & { value: string };
     this.selectedPreset = select.value;
-    await this.presets.load(this.selectedPreset);
-    this.requestUpdate('presets');
+    await this.#loadPresetAndUpdateProfiles(this.selectedPreset);
+  }
+
+  async #loadPresetAndUpdateProfiles(presetName: string) {
+    // Avoid redundant loading if preset is already loaded and profiles are set
+    const existingProfileNames = presets.getProfileNames(presetName);
+    if (existingProfileNames.length > 0 && this.profileNames.length > 0) {
+      // Just update profiles if preset is already loaded
+      this.profileNames = existingProfileNames;
+      return;
+    }
+    
+    // Load preset and update profiles
+    await presets.load(presetName);
+    this.profileNames = presets.getProfileNames(presetName);
   }
 
   @eventOptions({ capture: true })
@@ -87,7 +129,7 @@ export class DeviceParameterEditor extends LitElement {
   override render(): TemplateResult {
     return html`
       <form @submit="${this.handleSubmit}">
-        <input
+        <sl-input
           required
           autocomplete="off"
           inputmode="numeric"
@@ -95,30 +137,36 @@ export class DeviceParameterEditor extends LitElement {
           type="number"
           min="1"
           max="512"
-          value="${ifDefined(this.#device?.address)}"
-          @input="${this.handleAddressInput}"
-        />
+          label="Address"
+          size="small"
+          @sl-input="${this.handleAddressInput}"
+        ></sl-input>
 
-        <select required name="preset" autocomplete="off" @change="${this.handlePresetChange}">
-          <option disabled value="" ?selected="${this.#device?.preset === undefined}"></option>
-          ${map(
-            PRESET_NAMES,
-            (preset) => html`
-              <option value="${preset}" ?selected="${preset === this.#device?.preset}">${preset}</option>
-            `,
-          )}
-        </select>
+        <sl-select
+          required
+          name="preset"
+          autocomplete="off"
+          label="Preset"
+          size="small"
+          value="${ifDefined(this.selectedPreset)}"
+          @sl-change="${this.handlePresetChange}"
+        >
+          ${map(PRESETS, ([preset, label]) => html`<sl-option value="${preset}">${label}</sl-option>`)}
+        </sl-select>
 
-        <select required name="profile" autocomplete="off" ?disabled="${this.selectedPreset === undefined}">
-          <option disabled value="" ?selected="${this.#device?.profile === undefined}"></option>
-          ${map(
-            this.presets.getProfileNames(this.selectedPreset),
-            (profile) =>
-              html`<option value="${profile}" ?selected="${profile === this.#device?.profile}">${profile}</option>`,
-          )}
-        </select>
+        <sl-select
+          required
+          name="profile"
+          autocomplete="off"
+          label="Profile"
+          size="small"
+          value="${ifDefined(this.#device?.profile)}"
+          ?disabled="${this.selectedPreset === undefined}"
+        >
+          ${map(this.profileNames, (profile) => html`<sl-option value="${profile}">${profile}</sl-option>`)}
+        </sl-select>
 
-        <button type="submit">Save</button>
+        <sl-button type="submit" variant="primary" size="small">Save</sl-button>
       </form>
     `;
   }

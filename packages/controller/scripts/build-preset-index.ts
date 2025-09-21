@@ -3,7 +3,7 @@
 /// <reference types="node" />
 
 import { readdir, readFile, writeFile } from 'node:fs/promises';
-import { parse, resolve } from 'node:path';
+import { basename, resolve } from 'node:path';
 import { cwd } from 'node:process';
 import { parseArgs } from 'node:util';
 
@@ -29,8 +29,9 @@ const presets = files.filter((file) => file.endsWith('.preset.json'));
 const index: Record<string, string> = {};
 for await (const preset of presets) {
   const data = await readFile(resolve(from, preset), { encoding: 'utf-8' });
+  const name = basename(preset, '.preset.json');
   const { label } = JSON.parse(data) satisfies Preset;
-  index[label] = parse(preset).name;
+  index[name] = label;
 }
 
 const contents = `${JSON.stringify(index, null, 2)}\n`;

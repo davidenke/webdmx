@@ -1,3 +1,9 @@
+// Import specific Shoelace components
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/option/option.js';
+import '@shoelace-style/shoelace/dist/components/select/select.js';
+
+import type { EventWithTarget } from '@enke.dev/lit-utils/lib/types/event.types.js';
 import type { AbstractDriver, DriverName } from '@webdmx/controller';
 import { DMX } from '@webdmx/controller';
 import type { TemplateResult } from 'lit';
@@ -65,19 +71,17 @@ export class Root extends LitElement {
   }
 
   @eventOptions({ passive: true })
-  private async handleUniverseChange(event: InputEvent) {
-    const { value } = event.target as HTMLInputElement;
-    this.selectedUniverseIndex = this.data.universes.findIndex(({ label }) => label === value);
+  private async handleUniverseChange({ target }: EventWithTarget<HTMLSelectElement>) {
+    this.selectedUniverseIndex = this.data.universes.findIndex(({ label }) => label === target.value);
   }
 
   @eventOptions({ passive: true })
-  private async handleDriverChange(event: InputEvent) {
-    const { value } = event.target as HTMLInputElement;
+  private async handleDriverChange({ target }: EventWithTarget<HTMLSelectElement>) {
     this.data = {
       ...this.data,
       universes: this.data.universes.map((universe, index) => {
         if (index !== this.selectedUniverseIndex) return universe;
-        return { ...universe, driver: value as DriverName };
+        return { ...universe, driver: target.value as DriverName };
       }),
     };
     await saveData(this.data);
@@ -196,27 +200,42 @@ export class Root extends LitElement {
           ${when(
             this.data.universes.length,
             () => html`
-              <select ?disabled="${this.connected}" @change="${this.handleUniverseChange}">
-                ${this.data.universes.map(({ label }) => html`<option .value="${label}">${label}</option>`)}
-              </select>
+              <sl-select
+                ?disabled="${this.connected}"
+                label="Universe"
+                size="small"
+                @sl-change="${this.handleUniverseChange}"
+              >
+                ${this.data.universes.map(({ label }) => html`<sl-option value="${label}">${label}</sl-option>`)}
+              </sl-select>
 
-              <select ?disabled="${this.connected}" @change="${this.handleDriverChange}">
+              <sl-select
+                ?disabled="${this.connected}"
+                label="Driver"
+                size="small"
+                @sl-change="${this.handleDriverChange}"
+              >
                 ${this.driverNames.map(
                   (driver) => html`
-                    <option
+                    <sl-option
                       ?selected="${driver === this.data.universes[this.selectedUniverseIndex]?.driver}"
-                      .value="${driver}"
+                      value="${driver}"
+                      >${driver}</sl-option
                     >
-                      ${driver}
-                    </option>
                   `,
                 )}
-              </select>
+              </sl-select>
 
               ${when(
                 !this.connected,
-                () => html`<button ?disabled="${!this.idle}" @click="${this.handleConnect}">Connect</button>`,
-                () => html`<button ?disabled="${!this.idle}" @click="${this.handleDisconnect}">Disconnect</button>`,
+                () => html`
+                  <sl-button size="small" ?disabled="${!this.idle}" @click="${this.handleConnect}">Connect</sl-button>
+                `,
+                () => html`
+                  <sl-button size="small" ?disabled="${!this.idle}" @click="${this.handleDisconnect}">
+                    Disconnect
+                  </sl-button>
+                `,
               )}
             `,
             () => html`<span>No universes configured</span>`,

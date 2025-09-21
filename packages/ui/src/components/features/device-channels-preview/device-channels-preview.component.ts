@@ -1,3 +1,6 @@
+// Import specific Shoelace components
+import '@shoelace-style/shoelace/dist/components/range/range.js';
+
 import type { Channels, Options, Slider } from '@webdmx/common';
 import type { TemplateResult } from 'lit';
 import { html, LitElement, unsafeCSS } from 'lit';
@@ -24,9 +27,6 @@ export class DeviceChannelsPreview extends LitElement {
   #devices: Partial<DeviceData>[] = [];
 
   @state()
-  private presets = presets;
-
-  @state()
   private uniqueControls: CombinedControls = new Map();
 
   @property({ type: Boolean, reflect: true })
@@ -42,15 +42,18 @@ export class DeviceChannelsPreview extends LitElement {
     this.#devices = devices ?? [];
     // update presets with detailed information
     const names = this.#devices.map(({ preset }) => preset) ?? [];
-    this.presets.load(...names).then(() => {
-      this.uniqueControls = getCombinedControls(this.#devices, this.presets);
+    presets.load(...names).then(() => {
+      this.uniqueControls = getCombinedControls(this.#devices, presets);
       this.requestUpdate('uniqueControls');
     });
   }
 
   @eventOptions({ passive: true })
-  private updateRangeInput(event: InputEvent) {
-    const { dataset, valueAsNumber } = event.target as HTMLInputElement;
+  private updateRangeInput(event: CustomEvent) {
+    const target = event.target as HTMLElement & { dataset: DOMStringMap; value: string };
+    const { dataset, value } = target;
+    const valueAsNumber = parseFloat(value);
+
     // pick corresponding device
     const channels =
       dataset.channels?.split(',').reduce((channels, channel) => {
@@ -73,16 +76,15 @@ export class DeviceChannelsPreview extends LitElement {
     return html`
       <label>
         ${control.label}
-        <input
-          type="range"
+        <sl-range
           min="${control.from}"
           max="${control.to}"
           step="${control.step}"
           data-channels="${channels.join(',')}"
           ?disabled="${!this.connected}"
-          .valueAsNumber="${value}"
-          @input="${this.updateRangeInput}"
-        />
+          value="${value}"
+          @sl-input="${this.updateRangeInput}"
+        ></sl-range>
       </label>
     `;
   }

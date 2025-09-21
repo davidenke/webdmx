@@ -1,3 +1,6 @@
+// Import specific Shoelace components
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+
 import type { TemplateResult } from 'lit';
 import { html, LitElement, unsafeCSS } from 'lit';
 import { customElement, eventOptions, property, state } from 'lit/decorators.js';
@@ -22,6 +25,8 @@ export class DeviceEditor extends LitElement {
   static override readonly styles = unsafeCSS(styles);
 
   #devices: Partial<DeviceData>[] = [];
+  #cachedDevice?: Partial<DeviceData>;
+  #cachedDeviceIndex?: number;
   #handleClickOutside = this.handleClickOutside.bind(this);
 
   @state()
@@ -43,6 +48,9 @@ export class DeviceEditor extends LitElement {
   set devices(devices: Partial<DeviceData>[] | undefined) {
     // update internal state
     this.#devices = devices ?? [];
+    // clear device cache when devices change
+    this.#cachedDevice = undefined;
+    this.#cachedDeviceIndex = undefined;
     // update position
     if (this.deviceIndex !== undefined) {
       const { position } = this.#devices[this.deviceIndex];
@@ -58,6 +66,22 @@ export class DeviceEditor extends LitElement {
       this.reservedAddresses = getReservedAddresses(this.#devices, this.presets, without);
       this.requestUpdate('reservedAddresses', reservedAddresses);
     });
+  }
+
+  /**
+   * Get the current device with memoization to prevent unnecessary re-renders
+   */
+  private getCurrentDevice(): Partial<DeviceData> | undefined {
+    // Return cached device if index hasn't changed
+    if (this.#cachedDeviceIndex === this.deviceIndex) {
+      return this.#cachedDevice;
+    }
+    
+    // Update cache
+    this.#cachedDeviceIndex = this.deviceIndex;
+    this.#cachedDevice = this.deviceIndex !== undefined ? this.#devices[this.deviceIndex] : undefined;
+    
+    return this.#cachedDevice;
   }
 
   @eventOptions({ passive: true })
@@ -119,19 +143,24 @@ export class DeviceEditor extends LitElement {
   }
 
   override render(): TemplateResult {
-    const device = this.deviceIndex !== undefined ? this.#devices[this.deviceIndex] : undefined;
+    const device = this.getCurrentDevice();
 
     return html`
       <nav>
-        <button aria-label="Edit device parameters" @click="${this.handleParametersClick}">
+        <sl-button size="small" aria-label="Edit device parameters" @click="${this.handleParametersClick}">
           <webdmx-icon name="options"></webdmx-icon>
-        </button>
-        <button aria-label="Duplicate device in universe" @click="${this.handleDuplicateClick}">
+        </sl-button>
+        <sl-button size="small" aria-label="Duplicate device in universe" @click="${this.handleDuplicateClick}">
           <webdmx-icon name="duplicate"></webdmx-icon>
-        </button>
-        <button aria-label="Remove device from universe" @click="${this.handleRemoveClick}">
+        </sl-button>
+        <sl-button
+          size="small"
+          variant="danger"
+          aria-label="Remove device from universe"
+          @click="${this.handleRemoveClick}"
+        >
           <webdmx-icon name="trash"></webdmx-icon>
-        </button>
+        </sl-button>
       </nav>
 
       <section>
