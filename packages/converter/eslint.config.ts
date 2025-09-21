@@ -1,7 +1,7 @@
 import config from '@enke.dev/lint';
-import type { Linter } from 'eslint';
+import { defineConfig } from 'eslint/config';
 
-export default [
+export default defineConfig([
   ...config,
   // ignore generated stuff
   { ignores: ['encoded', 'fixtures'] },
@@ -14,4 +14,4 @@ export default [
       },
     },
   },
-] satisfies Linter.Config[];
+]);
