@@ -30,7 +30,9 @@ export class DMX {
   }
 
   static async loadDriver(name: DriverName): Promise<(new () => AbstractDriver) | undefined> {
-    if (!DRIVER_NAMES.includes(name)) return;
+    if (!DRIVER_NAMES.includes(name)) {
+      return;
+    }
     const { default: driver } = await import(`./drivers/${name}.driver.ts`);
     return driver;
   }
@@ -39,7 +41,9 @@ export class DMX {
    * Load a preset by its name.
    */
   static async loadPreset(name: PresetName): Promise<Preset | undefined> {
-    if (!(name in this.#presets)) return;
+    if (!(name in this.#presets)) {
+      return;
+    }
     const path = this.#presets[name];
     const { default: preset } = await import(`../presets/${path}.json`);
     return preset;
@@ -86,6 +90,6 @@ export class DMX {
    * Closes all universes.
    */
   async close(): Promise<void> {
-    await Promise.all([...this.#universes.values()].map((universe) => universe.close()));
+    await Promise.all([...this.#universes.values()].map(universe => universe.close()));
   }
 }

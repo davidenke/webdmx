@@ -17,11 +17,15 @@ export type CombinedControls = Map<string, CombinedControl>;
 export function getReservedAddresses(
   devices: Partial<DeviceData>[],
   presets: Presets,
-  excludeDeviceIndices: number[] = [],
+  excludeDeviceIndices: number[] = []
 ): number[] {
   return devices.reduce((addresses, { address, preset, profile }, index) => {
-    if (excludeDeviceIndices.includes(index)) return addresses;
-    if (preset === undefined || profile === undefined) return addresses;
+    if (excludeDeviceIndices.includes(index)) {
+      return addresses;
+    }
+    if (preset === undefined || profile === undefined) {
+      return addresses;
+    }
     const { length } = presets.getChannels(preset, profile);
     return addresses.concat(Array.from({ length }, (_, i) => (address ?? 1) + i));
   }, [] as number[]);
@@ -31,16 +35,23 @@ export function getReservedAddresses(
  * Delivers a combined result of controls in all given devices by
  * combining controls with the same name and type.
  */
-export function getCombinedControls(devices: Partial<DeviceData>[], presets: Presets): CombinedControls {
+export function getCombinedControls(
+  devices: Partial<DeviceData>[],
+  presets: Presets
+): CombinedControls {
   const uniqueControls = devices.reduce((controls, { preset, profile, address }) => {
     // the device must have an address to derive the channels
-    if (address === undefined || preset === undefined || profile === undefined) return controls;
+    if (address === undefined || preset === undefined || profile === undefined) {
+      return controls;
+    }
 
     // loop all device channels and corresponding controls and set it with a unique key
     presets.getChannels(preset, profile).forEach((name, channel) => {
       // find the control for the channel
       const control = presets.getControl(preset, name);
-      if (control === undefined) return;
+      if (control === undefined) {
+        return;
+      }
 
       // add the control to the map with a unique key
       const key = `${control.type}-${name}`;

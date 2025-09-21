@@ -41,7 +41,8 @@ section {
 .address {
   display: inline-block;
   margin: calc(var(---webdmx-address-editor-item-gap) / 2);
-  padding: var(---webdmx-address-editor-item-spacing-vertical) var(---webdmx-address-editor-item-spacing-horizontal);
+  padding: var(---webdmx-address-editor-item-spacing-vertical)
+    var(---webdmx-address-editor-item-spacing-horizontal);
 
   background-color: #ddedf3;
   border-radius: var(---webdmx-address-editor-item-radius);
@@ -105,6 +106,8 @@ section {
   }
 
   &:not(.device-begin) span {
-    text-indent: calc(var(---webdmx-address-editor-device-offset) * var(---webdmx-address-editor-item-width));
+    text-indent: calc(
+      var(---webdmx-address-editor-device-offset) * var(---webdmx-address-editor-item-width)
+    );
   }
 }

@@ -9,7 +9,10 @@ import type { Data } from '../../utils/data.utils.js';
 import { loadData, saveData } from '../../utils/data.utils.js';
 import type { AddressEditorInteractiveEvent } from '../features/address-editor/address-editor.component.js';
 import type { DeviceChannelsPreviewUpdateEvent } from '../features/device-channels-preview/device-channels-preview.component.js';
-import type { EditorChangeEvent, EditorInteractiveEvent } from '../features/editor/editor.component.js';
+import type {
+  EditorChangeEvent,
+  EditorInteractiveEvent,
+} from '../features/editor/editor.component.js';
 import type { PreviewDeviceSelectedEvent } from '../features/preview/preview.component.js';
 
 import styles from './root.component.scss?inline';
@@ -51,7 +54,9 @@ export class Root extends LitElement {
     // right now, we need to differentiate at runtime
     // TODO: once the abstract driver enforces this to
     //  all drivers, we can remove this check
-    if (!(event instanceof CustomEvent)) return;
+    if (!(event instanceof CustomEvent)) {
+      return;
+    }
 
     // positive transferring events are set immediately, but
     // negative transferring events are delayed to prevent flickering
@@ -76,7 +81,9 @@ export class Root extends LitElement {
     this.data = {
       ...this.data,
       universes: this.data.universes.map((universe, index) => {
-        if (index !== this.selectedUniverseIndex) return universe;
+        if (index !== this.selectedUniverseIndex) {
+          return universe;
+        }
         return { ...universe, driver: value as DriverName };
       }),
     };
@@ -86,12 +93,16 @@ export class Root extends LitElement {
   @eventOptions({ passive: true })
   private async handleConnect() {
     // get selected universe
-    if (this.selectedUniverseIndex === undefined) return;
+    if (this.selectedUniverseIndex === undefined) {
+      return;
+    }
 
     // load universe driver
     const driverName = this.data.universes[this.selectedUniverseIndex]?.driver;
     const driver = await DMX.loadDriver(driverName);
-    if (!driver) throw new Error(`Driver "${driverName}" not found`);
+    if (!driver) {
+      throw new Error(`Driver "${driverName}" not found`);
+    }
     this.#driver = new driver();
 
     // create universe and connect
@@ -112,7 +123,7 @@ export class Root extends LitElement {
     this.#dmx.updateAll(universe, 0);
 
     // wait for last transferring event to be fired
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 500));
     this.#driver.removeEventListener('transferring', this.#handleTransferring);
 
     // show editor when disconnecting
@@ -125,7 +136,9 @@ export class Root extends LitElement {
   }
 
   @eventOptions({ passive: true })
-  async handleEditorInteractive({ detail: deviceIndex }: EditorInteractiveEvent | AddressEditorInteractiveEvent) {
+  async handleEditorInteractive({
+    detail: deviceIndex,
+  }: EditorInteractiveEvent | AddressEditorInteractiveEvent) {
     this.interactiveDevice = deviceIndex;
   }
 
@@ -135,7 +148,9 @@ export class Root extends LitElement {
     this.data = {
       ...this.data,
       universes: this.data.universes.map((universe, index) => {
-        if (index !== this.selectedUniverseIndex) return universe;
+        if (index !== this.selectedUniverseIndex) {
+          return universe;
+        }
         return { ...universe, devices };
       }),
     };
@@ -189,7 +204,9 @@ export class Root extends LitElement {
   }
 
   protected override render(): TemplateResult {
-    if (!this.loaded) return html`<webdmx-loader>Loading</webdmx-loader>`;
+    if (!this.loaded) {
+      return html`<webdmx-loader>Loading</webdmx-loader>`;
+    }
     return html`
       <webdmx-layout>
         <nav slot="header">
@@ -197,29 +214,38 @@ export class Root extends LitElement {
             this.data.universes.length,
             () => html`
               <select ?disabled="${this.connected}" @change="${this.handleUniverseChange}">
-                ${this.data.universes.map(({ label }) => html`<option .value="${label}">${label}</option>`)}
+                ${this.data.universes.map(
+                  ({ label }) => html`<option .value="${label}">${label}</option>`
+                )}
               </select>
 
               <select ?disabled="${this.connected}" @change="${this.handleDriverChange}">
                 ${this.driverNames.map(
-                  (driver) => html`
+                  driver => html`
                     <option
-                      ?selected="${driver === this.data.universes[this.selectedUniverseIndex]?.driver}"
+                      ?selected="${driver ===
+                      this.data.universes[this.selectedUniverseIndex]?.driver}"
                       .value="${driver}"
                     >
                       ${driver}
                     </option>
-                  `,
+                  `
                 )}
               </select>
 
               ${when(
                 !this.connected,
-                () => html`<button ?disabled="${!this.idle}" @click="${this.handleConnect}">Connect</button>`,
-                () => html`<button ?disabled="${!this.idle}" @click="${this.handleDisconnect}">Disconnect</button>`,
+                () =>
+                  html`<button ?disabled="${!this.idle}" @click="${this.handleConnect}">
+                    Connect
+                  </button>`,
+                () =>
+                  html`<button ?disabled="${!this.idle}" @click="${this.handleDisconnect}">
+                    Disconnect
+                  </button>`
               )}
             `,
-            () => html`<span>No universes configured</span>`,
+            () => html`<span>No universes configured</span>`
           )}
         </nav>
 
@@ -253,7 +279,7 @@ export class Root extends LitElement {
                     @webdmx-address-editor:interactive="${this.handleEditorInteractive}"
                     @webdmx-address-editor:change="${this.handleEditorChange}"
                   ></webdmx-address-editor>
-                `,
+                `
               )}
             `
           : html`
@@ -267,8 +293,8 @@ export class Root extends LitElement {
               <webdmx-device-channels-preview
                 slot="footer"
                 ?connected="${this.connected}"
-                .devices="${this.data.universes[this.selectedUniverseIndex]?.devices.filter((_, index) =>
-                  this.selectedDevices.includes(index),
+                .devices="${this.data.universes[this.selectedUniverseIndex]?.devices.filter(
+                  (_, index) => this.selectedDevices.includes(index)
                 )}"
                 @webdmx-device-channels-preview:update="${this.handleChannelsUpdate}"
               ></webdmx-device-channels-preview>

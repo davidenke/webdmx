@@ -66,7 +66,9 @@ export class DeviceParameterEditor extends LitElement {
 
     // check if the form is valid
     const form = event.target as HTMLFormElement;
-    if (!form.checkValidity()) return;
+    if (!form.checkValidity()) {
+      return;
+    }
 
     // read the form data
     const data = Object.fromEntries(new FormData(form)) as Partial<DeviceData>;
@@ -97,24 +99,33 @@ export class DeviceParameterEditor extends LitElement {
           max="512"
           value="${ifDefined(this.#device?.address)}"
           @input="${this.handleAddressInput}"
-        />
+        >
 
         <select required name="preset" autocomplete="off" @change="${this.handlePresetChange}">
           <option disabled value="" ?selected="${this.#device?.preset === undefined}"></option>
           ${map(
             PRESET_NAMES,
-            (preset) => html`
-              <option value="${preset}" ?selected="${preset === this.#device?.preset}">${preset}</option>
-            `,
+            preset => html`
+              <option value="${preset}" ?selected="${preset === this.#device?.preset}">
+                ${preset}
+              </option>
+            `
           )}
         </select>
 
-        <select required name="profile" autocomplete="off" ?disabled="${this.selectedPreset === undefined}">
+        <select
+          required
+          name="profile"
+          autocomplete="off"
+          ?disabled="${this.selectedPreset === undefined}"
+        >
           <option disabled value="" ?selected="${this.#device?.profile === undefined}"></option>
           ${map(
             this.presets.getProfileNames(this.selectedPreset),
-            (profile) =>
-              html`<option value="${profile}" ?selected="${profile === this.#device?.profile}">${profile}</option>`,
+            profile =>
+              html`<option value="${profile}" ?selected="${profile === this.#device?.profile}">
+                ${profile}
+              </option>`
           )}
         </select>
 

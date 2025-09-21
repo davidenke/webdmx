@@ -4,7 +4,10 @@ import { DMX, PRESET_NAMES } from '@webdmx/controller';
 
 export class Presets {
   // internal cache for loaded presets
-  #loaded = PRESET_NAMES.reduce((acc, name) => ({ ...acc, [name]: null }), {}) as Record<PresetName, Preset | null>;
+  #loaded = PRESET_NAMES.reduce((acc, name) => ({ ...acc, [name]: null }), {}) as Record<
+    PresetName,
+    Preset | null
+  >;
 
   /**
    * The presets that are currently loaded.
@@ -31,7 +34,10 @@ export class Presets {
   /**
    * Delivers the channels of the preset with the given name and profile.
    */
-  getChannels(presetName: string | PresetName, profileName: string): Preset['profiles'][string]['channels'] {
+  getChannels(
+    presetName: string | PresetName,
+    profileName: string
+  ): Preset['profiles'][string]['channels'] {
     return this.#loaded[presetName as PresetName]?.profiles?.[profileName]?.channels ?? [];
   }
 
@@ -45,7 +51,10 @@ export class Presets {
   /**
    * Returns a specific control of the preset with the given name.
    */
-  getControl<R extends Control>(presetName: string | PresetName, channelName: string): R | undefined {
+  getControl<R extends Control>(
+    presetName: string | PresetName,
+    channelName: string
+  ): R | undefined {
     return this.#loaded[presetName as PresetName]?.controls?.[channelName] as R | undefined;
   }
 
@@ -58,13 +67,13 @@ export class Presets {
         // remove duplicates and undefined values
         .filter((name, index) => name !== undefined && presetNames.indexOf(name) === index)
         // check whether preset is already loaded
-        .filter((name) => !this.#loaded[name as PresetName])
+        .filter(name => !this.#loaded[name as PresetName])
         // load preset and add it to the list
-        .map(async (name) => {
+        .map(async name => {
           const preset = await DMX.loadPreset(name as PresetName);
           this.#loaded = { ...this.#loaded, [name as PresetName]: preset ?? null };
           return preset;
-        }),
+        })
     );
   }
 }

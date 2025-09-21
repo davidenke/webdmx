@@ -6,7 +6,7 @@ export type GetUniqueSerial<R extends Element = HTMLElement> = (item: R) => stri
 
 export type GetDroppedElement<R extends Element = HTMLElement> = (
   serial: string,
-  root: HTMLElement | ShadowRoot,
+  root: HTMLElement | ShadowRoot
 ) => R | undefined;
 
 export const DRAG_PAYLOAD_SPLIT = ';';
@@ -24,7 +24,7 @@ export function prepareDrag<R extends HTMLElement = HTMLElement>(
   /**
    * A function to derive a unique serial from the element reference.
    */
-  uniqueSerial: GetUniqueSerial<R>,
+  uniqueSerial: GetUniqueSerial<R>
 ): R {
   // gather pointer offset
   const { clientX, clientY, target } = event;
@@ -66,7 +66,7 @@ export function processDrop<R extends HTMLElement = HTMLElement>(
   /**
    * Use relative position as percentage instead of absolute position in pixels.
    */
-  usePercentage = true,
+  usePercentage = true
 ): {
   /**
    * The element reference that was dragged.
@@ -80,13 +80,16 @@ export function processDrop<R extends HTMLElement = HTMLElement>(
 } {
   // gather information and element reference
   const { clientX, clientY, dataTransfer, target } = event;
-  const [serial, offsetX, offsetY] = dataTransfer?.getData('text/plain').split(DRAG_PAYLOAD_SPLIT) ?? [];
+  const [serial, offsetX, offsetY] =
+    dataTransfer?.getData('text/plain').split(DRAG_PAYLOAD_SPLIT) ?? [];
   const dropTarget = target as HTMLElement;
   const dropRoot = dropTarget.getRootNode() as HTMLElement | ShadowRoot;
 
   // retrieve the element reference
   const element = getElement(serial, dropRoot);
-  if (!element || dropTarget.isSameNode(element)) return { element, position: { x: 0, y: 0 } };
+  if (!element || dropTarget.isSameNode(element)) {
+    return { element, position: { x: 0, y: 0 } };
+  }
 
   // calculate new (relative) position (as percentage)
   const clientRect = dropTarget.getBoundingClientRect();

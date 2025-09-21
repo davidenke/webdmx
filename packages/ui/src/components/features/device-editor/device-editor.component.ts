@@ -88,14 +88,18 @@ export class DeviceEditor extends LitElement {
   @eventOptions({ passive: true })
   private handleClickOutside(event: MouseEvent) {
     // do nothing if the popup is closed
-    if (!this.parameterEditorVisible) return;
+    if (!this.parameterEditorVisible) {
+      return;
+    }
 
     // grab the source element of the target list
     const [target] = event.composedPath() as HTMLElement[];
     const isHost = isSameOrWithin([this], target);
 
     // close the popup if the click was outside
-    if (!isHost) this.parameterEditorVisible = false;
+    if (!isHost) {
+      this.parameterEditorVisible = false;
+    }
   }
 
   #emitRemoveEvent() {
@@ -104,7 +108,10 @@ export class DeviceEditor extends LitElement {
   }
 
   #emitDuplicateEvent() {
-    const event = new CustomEvent('webdmx-device-editor:duplicate', { bubbles: true, composed: true });
+    const event = new CustomEvent('webdmx-device-editor:duplicate', {
+      bubbles: true,
+      composed: true,
+    });
     this.dispatchEvent(event);
   }
 

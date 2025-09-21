@@ -44,7 +44,7 @@ export class SerialDriver<
 
   constructor(
     override options: DriverOptions,
-    readonly filters: SerialPortFilter[] = [],
+    readonly filters: SerialPortFilter[] = []
   ) {
     super();
   }
@@ -64,7 +64,7 @@ export class SerialDriver<
     listener: K extends keyof SerialDriverEventMap
       ? (this: SerialDriver, ev: SerialDriverEventMap[K]) => void
       : EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions,
+    options?: boolean | AddEventListenerOptions
   ) {
     super.addEventListener(type, listener as EventListener, options);
   }
@@ -73,7 +73,7 @@ export class SerialDriver<
     listener: K extends keyof SerialDriverEventMap
       ? (this: SerialDriver, ev: SerialDriverEventMap[K]) => void
       : EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions,
+    options?: boolean | AddEventListenerOptions
   ) {
     super.removeEventListener(type, listener as EventListener, options);
   }
@@ -100,7 +100,9 @@ export class SerialDriver<
 
   async start(): Promise<void> {
     const _send = async () => {
-      if (this.#serialPort === undefined) return;
+      if (this.#serialPort === undefined) {
+        return;
+      }
       this.send(this.#serialPort, this.universe);
     };
 

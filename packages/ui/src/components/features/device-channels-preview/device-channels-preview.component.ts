@@ -65,7 +65,10 @@ export class DeviceChannelsPreview extends LitElement {
   // }
 
   #emitUpdateEvent(channels: Channels) {
-    const event = new CustomEvent('webdmx-device-channels-preview:update', { detail: channels, bubbles: true });
+    const event = new CustomEvent('webdmx-device-channels-preview:update', {
+      detail: channels,
+      bubbles: true,
+    });
     this.dispatchEvent(event);
   }
 
@@ -82,7 +85,7 @@ export class DeviceChannelsPreview extends LitElement {
           ?disabled="${!this.connected}"
           .valueAsNumber="${value}"
           @input="${this.updateRangeInput}"
-        />
+        >
       </label>
     `;
   }
@@ -106,7 +109,7 @@ export class DeviceChannelsPreview extends LitElement {
             ['slider', () => this.#renderRange(control as Slider, channels, 0)],
             ['options', () => this.#renderOptions(control as Options, channels)],
           ])}
-        `,
+        `
       )}
     `;
   }

@@ -13,7 +13,9 @@ export abstract class AbstractDriver<DriverOptions = unknown> extends EventTarge
   abstract close(): Promise<void>;
 
   get(channel: number): number | undefined {
-    if (channel < 1 || channel > CHANNELS) return;
+    if (channel < 1 || channel > CHANNELS) {
+      return;
+    }
     return this.universe[channel];
   }
 
