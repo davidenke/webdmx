@@ -13,6 +13,7 @@
     "dist"
   ],
   "scripts": {
+    "check": "tsc --noEmit",
     "lint": "run-s -ln lint:*",
     "lint:eslint": "eslint -c eslint.config.ts",
     "lint:prettier": "prettier --check .",

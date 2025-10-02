@@ -17,6 +17,7 @@
   "scripts": {
     "prepare": "run-s build",
     "convert": "xfix --source '/Applications/Lightkey.app/Contents/Resources/Fixture Profiles' --target ./fixtures",
+    "check": "tsc --noEmit",
     "lint": "run-s -ln lint:*",
     "lint:eslint": "eslint -c eslint.config.ts",
     "lint:prettier": "prettier --check .",
