@@ -13,7 +13,7 @@ fnm install --lts --use
 node -v > .nvmrc
 
 echo "> Updating Node.js in all packages, too"
-pnpm -r --parallel --aggregate-output --no-reporter-hide-prefix --shell-mode exec 'node -v > .nvmrc'
+pnpm -r --parallel --aggregate-output --no-reporter-hide-prefix --shell-mode exec 'if [ -f .nvmrc ]; then node -v > .nvmrc; fi'
 
 # Update all dependencies to latest version in all packages
 echo "> Checking for latest versions of dependencies"
@@ -23,7 +23,7 @@ pnpm -r --parallel --aggregate-output --no-reporter-hide-prefix exec pnpx npm-ch
 echo "> Aligning @types/node to installed Node LTS version"
 NODE_VERSION=$(node -v) # → v.22.18.0
 NODE_MAJOR_VERSION=${NODE_VERSION:1:2} # → 22
-pnpm -r --parallel --aggregate-output --no-reporter-hide-prefix exec pnpm install --lockfile-only --save-dev --save-exact @types/node@${NODE_MAJOR_VERSION} # → 22.17.2
+pnpm -r --parallel --aggregate-output --no-reporter-hide-prefix exec pnpm update @types/node@${NODE_MAJOR_VERSION} # → 22.17.2
 
 # Install updated dependencies
 echo "> Installing updated dependencies"

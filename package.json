@@ -12,7 +12,7 @@
     "email": "david@enke.dev"
   },
   "license": "MIT",
-  "packageManager": "pnpm@10.15.1",
+  "packageManager": "pnpm@10.17.1",
   "scripts": {
     "preinstall": "npx -y only-allow pnpm",
     "lint": "pnpm -r --parallel --filter '@webdmx/*' lint",
