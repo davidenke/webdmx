@@ -33,10 +33,10 @@
   },
   "devDependencies": {
     "@enke.dev/lint": "0.11.2",
-    "@types/node": "22.18.6",
+    "@types/node": "24.7.0",
     "@types/w3c-web-serial": "1.0.8",
     "@webdmx/converter": "workspace:*",
-    "eslint": "9.36.0",
+    "eslint": "9.37.0",
     "npm-run-all2": "8.0.4",
     "prettier": "3.6.2",
     "shx": "0.4.0",
@@ -44,7 +44,7 @@
     "typescript": "5.9.3",
     "typescript-eslint": "8.45.0",
     "typescript-json-schema": "0.65.1",
-    "vite": "7.1.8",
+    "vite": "7.1.9",
     "vite-plugin-dts": "4.5.4"
   }
 }
