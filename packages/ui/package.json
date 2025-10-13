@@ -31,24 +31,24 @@
     "lit": "3.3.1"
   },
   "devDependencies": {
-    "@enke.dev/lint": "0.11.2",
-    "@types/node": "22.18.6",
+    "@enke.dev/lint": "0.11.3",
+    "@types/node": "24.7.2",
     "@types/w3c-web-serial": "1.0.8",
     "@types/w3c-web-usb": "1.0.13",
-    "eslint": "9.36.0",
+    "eslint": "9.37.0",
     "jiti": "2.6.1",
     "npm-run-all2": "8.0.4",
     "prettier": "3.6.2",
     "sass": "1.93.2",
     "shx": "0.4.0",
-    "stylelint": "16.24.0",
+    "stylelint": "16.25.0",
     "stylelint-config-rational-order": "0.1.2",
     "stylelint-config-standard-scss": "16.0.0",
     "stylelint-order": "7.0.0",
-    "typedoc": "0.28.13",
+    "typedoc": "0.28.14",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.45.0",
-    "vite": "7.1.8",
-    "vite-plugin-mkcert": "1.17.8"
+    "typescript-eslint": "8.46.0",
+    "vite": "7.1.9",
+    "vite-plugin-mkcert": "1.17.9"
   }
 }
