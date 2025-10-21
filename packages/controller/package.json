@@ -44,7 +44,7 @@
     "typescript": "5.9.3",
     "typescript-eslint": "8.45.0",
     "typescript-json-schema": "0.65.1",
-    "vite": "7.1.8",
+    "vite": "7.1.11",
     "vite-plugin-dts": "4.5.4"
   }
 }
