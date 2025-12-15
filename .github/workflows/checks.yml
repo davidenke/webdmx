@@ -48,7 +48,7 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: success() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
           name: latest
