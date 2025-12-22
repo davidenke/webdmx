@@ -32,19 +32,19 @@
     "@webdmx/common": "workspace:*"
   },
   "devDependencies": {
-    "@enke.dev/lint": "0.11.2",
-    "@types/node": "22.18.6",
+    "@enke.dev/lint": "0.11.14",
+    "@types/node": "25.0.3",
     "@types/w3c-web-serial": "1.0.8",
     "@webdmx/converter": "workspace:*",
-    "eslint": "9.36.0",
+    "eslint": "9.39.2",
     "npm-run-all2": "8.0.4",
-    "prettier": "3.6.2",
+    "prettier": "3.7.4",
     "shx": "0.4.0",
-    "tsx": "4.20.6",
+    "tsx": "4.21.0",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.45.0",
-    "typescript-json-schema": "0.65.1",
-    "vite": "7.1.8",
+    "typescript-eslint": "8.50.0",
+    "typescript-json-schema": "0.67.1",
+    "vite": "7.3.0",
     "vite-plugin-dts": "4.5.4"
   }
 }
