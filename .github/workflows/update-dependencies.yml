@@ -1,0 +1,33 @@
+name: update dependencies
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # every Monday at 06:00 UTC
+  workflow_dispatch: # also allow manual runs
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # push the update branch
+      pull-requests: write # open the PR
+    outputs:
+      updated: ${{ steps.bump.outputs.updated }}
+      branch: ${{ steps.bump.outputs.branch }}
+    steps:
+      - id: bump
+        uses: enke-dev/bumper@main
+        with:
+          skip: github-actions # GITHUB_TOKEN can't push .github/workflows/ changes
+          pr-labels: dependencies
+
+  # validate the bumped branch with the same checks a PR would get. The bot-opened
+  # PR won't trigger check.yml's pull_request event (GITHUB_TOKEN-authored PRs don't),
+  # so we call the reusable check here against the update branch — results attach to
+  # the branch head, which is the PR head commit.
+  check:
+    needs: update-dependencies
+    if: needs.update-dependencies.outputs.updated == 'true'
+    uses: ./.github/workflows/check.yml
+    with:
+      ref: ${{ needs.update-dependencies.outputs.branch }}

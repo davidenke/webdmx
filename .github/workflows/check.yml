@@ -1,0 +1,51 @@
+name: check
+
+on:
+  # reused by checks.yml (PR + trunk) and update-dependencies.yml (bumped branch)
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref to check out and test (defaults to the triggering ref)
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          # empty ref → checkout's default (the triggering ref); set by callers to test a branch
+          ref: ${{ inputs.ref }}
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check
+        run: pnpm check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - uses: actions/upload-artifact@v7
+        if: success() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        with:
+          name: latest
+          path: packages/ui/dist
