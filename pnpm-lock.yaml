@@ -4,9 +4,16 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  prettier: 3.6.2
+
 importers:
 
-  .: {}
+  .:
+    devDependencies:
+      prettier:
+        specifier: 3.6.2
+        version: 3.6.2
 
   packages/common:
     devDependencies:
@@ -233,7 +240,7 @@ packages:
   '@awmottaz/prettier-plugin-void-html@1.9.0':
     resolution: {integrity: sha512-NMwspO5GtUU9PESivdrx86z7XTm0lM5DDoMMVtYUp7nBQXak23j9/aB9tNR9XuVyoXYhdvxhEjXal9DfUqZnNg==}
     peerDependencies:
-      prettier: 3.0.0 - 3.6.x
+      prettier: 3.6.2
 
   '@babel/code-frame@7.27.1':
     resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==}
@@ -345,7 +352,7 @@ packages:
     resolution: {integrity: sha512-0mgiSjy0lP59xYHrGuswvARBGMABZczYgB6fUNoVBAj+goTLI2nCsYkVsZ97axDSCGk6kOkMaRq66Xc/uP3g2Q==}
     peerDependencies:
       eslint: ^9.35.0
-      prettier: ^3.6.2
+      prettier: 3.6.2
 
   '@enke.dev/lit-utils@0.2.6':
     resolution: {integrity: sha512-gPranWIXBNhtw1+JItOFZEKFPjZewNuzx10A/ktyWHXLd/4RKHSmXuUaXuRbyRuIPawrhqsLhnjVqNr6/KqhWg==}
@@ -1177,6 +1184,7 @@ packages:
   '@xmldom/xmldom@0.8.11':
     resolution: {integrity: sha512-cQzWCtO6C8TQiYl1ruKNn2U6Ao4o4WBBcbL61yJl84x+j5sOWWFU9X7DpND8XZG3daDppSsigMdfAIl2upQBRw==}
     engines: {node: '>=10.0.0'}
+    deprecated: this version has critical issues, please update to the latest version
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -1895,6 +1903,7 @@ packages:
   eslint-plugin-import-extensions@0.1.5:
     resolution: {integrity: sha512-0Q7gtSk9egNBPWCDBc3C5FWWYpBtATeLA/62VD+1mokNueuXdUMZyJLTB3vingtYKKfg18ChqUhQMOprbeWrVA==}
     engines: {node: '>=16'}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     peerDependencies:
       eslint: '*'
 
@@ -1933,7 +1942,7 @@ packages:
       '@types/eslint': '>=8.0.0'
       eslint: '>=8.0.0'
       eslint-config-prettier: '>= 7.0.0 <10.0.0 || >=10.1.0'
-      prettier: '>=3.0.0'
+      prettier: 3.6.2
     peerDependenciesMeta:
       '@types/eslint':
         optional: true
@@ -2235,7 +2244,7 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   global-modules@2.0.0:
     resolution: {integrity: sha512-NGbfmJBp9x8IxyJSd1P+otYK8vonoJactOogrVfFRIAEY1ukil8RSKDz2Yo7wh1oihl51l/r6W4epkeKJHqL8A==}
