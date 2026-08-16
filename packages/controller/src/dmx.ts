@@ -45,7 +45,7 @@ export class DMX {
       return;
     }
     const path = this.#presets[name];
-    const { default: preset } = await import(`../presets/${path}.json`);
+    const { default: preset } = await import(`../presets/${path}.preset.json`);
     return preset;
   }
 

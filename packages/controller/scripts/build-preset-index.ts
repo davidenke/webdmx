@@ -31,7 +31,9 @@ const index: Record<string, string> = {};
 for await (const preset of presets) {
   const data = await readFile(resolve(from, preset), { encoding: 'utf-8' });
   const { label } = JSON.parse(data) satisfies Preset;
-  index[label] = parse(preset).name;
+  // the `.preset` suffix is re-added when loading, so the dynamic import glob
+  // stays restricted to `*.preset.json`
+  index[label] = parse(preset).name.replace(/\.preset$/, '');
 }
 
 const contents = `${JSON.stringify(index, null, 2)}\n`;
