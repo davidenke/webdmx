@@ -223,8 +223,9 @@ export class Root extends LitElement {
                 ${this.driverNames.map(
                   driver => html`
                     <option
-                      ?selected="${driver ===
-                      this.data.universes[this.selectedUniverseIndex]?.driver}"
+                      ?selected="${
+                        driver === this.data.universes[this.selectedUniverseIndex]?.driver
+                      }"
                       .value="${driver}"
                     >
                       ${driver}
@@ -260,45 +261,47 @@ export class Root extends LitElement {
           </webdmx-switch>
         </nav>
 
-        ${this.data.activeView === 'editor'
-          ? html`
-              <webdmx-editor
-                .interactiveDevice="${this.interactiveDevice}"
-                .universe="${this.data.universes[this.selectedUniverseIndex]}"
-                @webdmx-editor:interactive="${this.handleEditorInteractive}"
-                @webdmx-editor:change="${this.handleEditorChange}"
-              ></webdmx-editor>
+        ${
+          this.data.activeView === 'editor'
+            ? html`
+                <webdmx-editor
+                  .interactiveDevice="${this.interactiveDevice}"
+                  .universe="${this.data.universes[this.selectedUniverseIndex]}"
+                  @webdmx-editor:interactive="${this.handleEditorInteractive}"
+                  @webdmx-editor:change="${this.handleEditorChange}"
+                ></webdmx-editor>
 
-              ${when(
-                this.isAddressEditorVisible || true,
-                () => html`
-                  <webdmx-address-editor
-                    slot="footer"
-                    .devices="${this.data.universes[this.selectedUniverseIndex]?.devices}"
-                    .interactiveDevice="${this.interactiveDevice}"
-                    @webdmx-address-editor:interactive="${this.handleEditorInteractive}"
-                    @webdmx-address-editor:change="${this.handleEditorChange}"
-                  ></webdmx-address-editor>
-                `
-              )}
-            `
-          : html`
-              <webdmx-preview
-                ?connected="${this.connected}"
-                .devices="${this.data.universes[this.selectedUniverseIndex]?.devices}"
-                .selectedDevices="${this.selectedDevices}"
-                @webdmx-preview:device-selected="${this.handlePreviewDeviceSelected}"
-              ></webdmx-preview>
+                ${when(
+                  this.isAddressEditorVisible || true,
+                  () => html`
+                    <webdmx-address-editor
+                      slot="footer"
+                      .devices="${this.data.universes[this.selectedUniverseIndex]?.devices}"
+                      .interactiveDevice="${this.interactiveDevice}"
+                      @webdmx-address-editor:interactive="${this.handleEditorInteractive}"
+                      @webdmx-address-editor:change="${this.handleEditorChange}"
+                    ></webdmx-address-editor>
+                  `
+                )}
+              `
+            : html`
+                <webdmx-preview
+                  ?connected="${this.connected}"
+                  .devices="${this.data.universes[this.selectedUniverseIndex]?.devices}"
+                  .selectedDevices="${this.selectedDevices}"
+                  @webdmx-preview:device-selected="${this.handlePreviewDeviceSelected}"
+                ></webdmx-preview>
 
-              <webdmx-device-channels-preview
-                slot="footer"
-                ?connected="${this.connected}"
-                .devices="${this.data.universes[this.selectedUniverseIndex]?.devices.filter(
-                  (_, index) => this.selectedDevices.includes(index)
-                )}"
-                @webdmx-device-channels-preview:update="${this.handleChannelsUpdate}"
-              ></webdmx-device-channels-preview>
-            `}
+                <webdmx-device-channels-preview
+                  slot="footer"
+                  ?connected="${this.connected}"
+                  .devices="${this.data.universes[this.selectedUniverseIndex]?.devices.filter(
+                    (_, index) => this.selectedDevices.includes(index)
+                  )}"
+                  @webdmx-device-channels-preview:update="${this.handleChannelsUpdate}"
+                ></webdmx-device-channels-preview>
+              `
+        }
       </webdmx-layout>
     `;
   }

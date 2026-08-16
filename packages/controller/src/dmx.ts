@@ -2,7 +2,7 @@ import type { Channels, Preset } from '@webdmx/common';
 
 // import the generated index file to retrieve a list of all presets,
 // to be loaded once necessary in the UI
-import PRESETS from '../presets/presets.json' assert { type: 'json' };
+import PRESETS from '../presets/presets.json' with { type: 'json' };
 import type { AbstractDriver } from './drivers/base/abstract.driver.js';
 
 export type DriverName = (typeof DRIVER_NAMES)[number];
@@ -45,7 +45,7 @@ export class DMX {
       return;
     }
     const path = this.#presets[name];
-    const { default: preset } = await import(`../presets/${path}.json`);
+    const { default: preset } = await import(`../presets/${path}.preset.json`);
     return preset;
   }
 

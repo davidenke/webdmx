@@ -7,7 +7,7 @@
     "forceConsistentCasingInFileNames": true,
     "lib": ["es2020", "dom", "dom.iterable"],
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
@@ -20,6 +20,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
+    "types": ["node", "w3c-web-serial", "w3c-web-usb"],
     "useDefineForClassFields": false,
     "verbatimModuleSyntax": true
   },

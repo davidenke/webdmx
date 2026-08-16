@@ -23,16 +23,17 @@
     "dev": "vite build --watch"
   },
   "devDependencies": {
-    "@enke.dev/lint": "0.11.2",
-    "@types/node": "22.18.6",
-    "eslint": "9.36.0",
-    "jiti": "2.6.1",
-    "npm-run-all2": "8.0.4",
-    "prettier": "3.6.2",
+    "@awmottaz/prettier-plugin-void-html": "2.2.1",
+    "@enke.dev/lint": "0.13.8",
+    "@types/node": "24.13.3",
+    "eslint": "10.8.1",
+    "jiti": "2.7.0",
+    "npm-run-all2": "9.0.3",
+    "prettier": "3.9.6",
     "shx": "0.4.0",
-    "typescript": "5.9.3",
-    "typescript-eslint": "8.45.0",
-    "vite": "7.1.8",
-    "vite-plugin-dts": "4.5.4"
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.67.0",
+    "vite": "8.2.1",
+    "vite-plugin-dts": "5.0.3"
   }
 }

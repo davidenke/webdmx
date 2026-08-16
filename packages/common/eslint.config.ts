@@ -1,15 +1,4 @@
-import config from '@enke.dev/lint';
-import { defineConfig } from 'eslint/config';
+import { nodeLibrary } from '@enke.dev/lint/eslint/presets/node-library';
+import { defineConfig, globalIgnores } from 'eslint/config';
 
-export default defineConfig([
-  ...config,
-  // configure root dir in monorepo
-  {
-    languageOptions: {
-      parserOptions: {
-        project: true,
-        tsconfigRootDir: __dirname,
-      },
-    },
-  },
-]);
+export default defineConfig([globalIgnores(['dist', 'coverage']), ...nodeLibrary]);

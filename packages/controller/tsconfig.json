@@ -6,7 +6,7 @@
     "inlineSourceMap": true,
     "lib": ["dom", "esnext"],
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noImplicitAny": true,
     "noImplicitOverride": true,
     "outDir": "dist",
@@ -16,6 +16,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
+    "types": ["node", "w3c-web-serial"],
     "verbatimModuleSyntax": true
   },
   "exclude": ["node_modules", "dist"]

@@ -111,7 +111,7 @@ export const EASING = {
     if ((t /= d / 2) < 1) {
       return (c / 2) * 2 ** (10 * (t - 1)) + b;
     }
-    return (c / 2) * (-(2 ** (-10 * --t)) + 2) + b;
+    return (c / 2) * (-(2 ** (-10 * (t - 1))) + 2) + b;
   },
   inCirc(t: number, b: number, c: number, d: number): number {
     return -c * (Math.sqrt(1 - (t /= d) * t) - 1) + b;
@@ -126,7 +126,7 @@ export const EASING = {
     return (c / 2) * (Math.sqrt(1 - (t -= 2) * t) + 1) + b;
   },
   inElastic(t: number, b: number, c: number, d: number): number {
-    let s = 1.70158;
+    let s: number;
     let p = 0;
     let a = c;
 
@@ -149,7 +149,7 @@ export const EASING = {
     return -(a * 2 ** (10 * (t -= 1)) * Math.sin(((t * d - s) * (2 * Math.PI)) / p)) + b;
   },
   outElastic(t: number, b: number, c: number, d: number): number {
-    let s = 1.70158;
+    let s: number;
     let p = 0;
     let a = c;
 
@@ -172,7 +172,7 @@ export const EASING = {
     return a * 2 ** (-10 * t) * Math.sin(((t * d - s) * (2 * Math.PI)) / p) + c + b;
   },
   inOutElastic(t: number, b: number, c: number, d: number): number {
-    let s = 1.70158;
+    let s: number;
     let p = 0;
     let a = c;
 
