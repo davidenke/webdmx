@@ -234,7 +234,7 @@ export class AddressEditor extends LitElement {
   #deriveAddresses() {
     // prepare address data for rendering
     const addressData: Addresses = new Map();
-    for (let address = this.first; address <= this.length; ) {
+    for (let address = this.first; address <= this.length;) {
       const deviceIndex = this.#devices.findIndex(device => device.address === address);
       const label = `${address}`.padStart(3, '0');
       // a regular address entry

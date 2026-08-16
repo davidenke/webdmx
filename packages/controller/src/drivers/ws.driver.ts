@@ -1,4 +1,4 @@
-import type { Channels } from '@webdmx/common';
+import type { Channels, Universe } from '@webdmx/common';
 
 import type { NetworkDriverOptions } from './base/network.driver.js';
 import { NetworkDriver } from './base/network.driver.js';
@@ -37,7 +37,7 @@ export default class WsDriver extends NetworkDriver<WsDriverOptions> {
     this.#send(this.universe);
   }
 
-  #send(universe: Uint8Array) {
+  #send(universe: Universe) {
     this.#socket?.send(universe);
   }
 }

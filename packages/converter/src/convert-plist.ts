@@ -1,6 +1,8 @@
 import type { Preset } from '@webdmx/common';
-import type { PlistObject } from 'plist';
-import plist from 'plist';
+import type { PlistValue } from 'plist';
+import { parse } from 'plist';
+
+type PlistObject = Record<string, PlistValue>;
 
 type PlistData = PlistObject & {
   $objects: readonly (PlistObject & {
@@ -20,9 +22,7 @@ type PlistData = PlistObject & {
 };
 
 export function convertPlistToPreset(plistData: string): Preset {
-  // as a commonjs module, we need to import the default export
-
-  const parsedData = plist.parse(plistData) as PlistData;
+  const parsedData = parse(plistData) as PlistData;
   const preset: Preset = {
     label: `${parsedData.$name}`,
     profiles: {},

@@ -20,19 +20,47 @@
   </head>
   <body>
     <card class="card">
-      <input type="range" min="0" max="1" step="0.01" id="alpha" value="0.5" /><label for="alpha">Alpha</label>
-      <input type="range" min="0" max="1" step="0.01" id="red" value="0.5" /><label for="red">Red</label>
-      <input type="range" min="0" max="1" step="0.01" id="green" value="0.5" /><label for="green">Green</label>
-      <input type="range" min="0" max="1" step="0.01" id="blue" value="0.5" /><label for="blue">Blue</label>
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        id="alpha"
+        value="0.5"
+      /><label for="alpha">Alpha</label>
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        id="red"
+        value="0.5"
+      /><label for="red">Red</label>
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        id="green"
+        value="0.5"
+      /><label for="green">Green</label>
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        id="blue"
+        value="0.5"
+      /><label for="blue">Blue</label>
     </card>
   </body>
   <script>
-    const alpha = document.getElementById('alpha');
-    const red = document.getElementById('red');
-    const green = document.getElementById('green');
-    const blue = document.getElementById('blue');
+    const alpha = document.getElementById("alpha");
+    const red = document.getElementById("red");
+    const green = document.getElementById("green");
+    const blue = document.getElementById("blue");
 
-    const socket = new WebSocket('ws://localhost:8080');
+    const socket = new WebSocket("ws://localhost:8080");
 
     const dmx_data = new Uint8Array(512);
 
@@ -44,28 +72,28 @@
       socket.send(dmx_data);
     };
 
-    socket.addEventListener('error', function (event) {
-      console.log('Error: ', event);
+    socket.addEventListener("error", function (event) {
+      console.log("Error: ", event);
     });
 
-    socket.addEventListener('close', function (event) {
-      console.log('Close: ', event);
+    socket.addEventListener("close", function (event) {
+      console.log("Close: ", event);
     });
 
-    socket.addEventListener('open', function (event) {
-      console.log('Open: ', event);
+    socket.addEventListener("open", function (event) {
+      console.log("Open: ", event);
     });
 
-    socket.addEventListener('open', function (event) {
-      socket.send('Hello Server!');
+    socket.addEventListener("open", function (event) {
+      socket.send("Hello Server!");
     });
 
-    socket.addEventListener('message', function (event) {
-      console.log('Message from server ', event.data);
+    socket.addEventListener("message", function (event) {
+      console.log("Message from server ", event.data);
     });
 
     alpha.addEventListener(
-      'input',
+      "input",
       function (event) {
         update();
       },
@@ -73,7 +101,7 @@
     );
 
     red.addEventListener(
-      'input',
+      "input",
       function (event) {
         update();
       },
@@ -81,7 +109,7 @@
     );
 
     green.addEventListener(
-      'input',
+      "input",
       function (event) {
         update();
       },
@@ -89,7 +117,7 @@
     );
 
     blue.addEventListener(
-      'input',
+      "input",
       function (event) {
         update();
       },

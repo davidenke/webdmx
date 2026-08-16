@@ -12,7 +12,7 @@
     "email": "david@enke.dev"
   },
   "license": "MIT",
-  "packageManager": "pnpm@10.17.1",
+  "packageManager": "pnpm@11.22.0",
   "scripts": {
     "preinstall": "npx -y only-allow pnpm",
     "check": "pnpm -r --parallel --filter '@webdmx/*' check",
@@ -22,6 +22,6 @@
     "build": "pnpm -r --filter @webdmx/ui... build"
   },
   "devDependencies": {
-    "prettier": "3.6.2"
+    "prettier": "3.9.6"
   }
 }

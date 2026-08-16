@@ -1,17 +1,8 @@
-import config from '@enke.dev/lint';
-import { defineConfig } from 'eslint/config';
+import { frontend } from '@enke.dev/lint/eslint/presets/frontend';
+import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
-  ...config,
   // ignore generated stuff
-  { ignores: ['src/components/layout/legacy'] },
-  // configure root dir in monorepo
-  {
-    languageOptions: {
-      parserOptions: {
-        project: true,
-        tsconfigRootDir: __dirname,
-      },
-    },
-  },
+  globalIgnores(['dist', 'reports', '.ssl', 'src/components/layout/legacy']),
+  ...frontend,
 ]);
