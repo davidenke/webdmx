@@ -20,8 +20,5 @@
     "test": "pnpm -r --parallel --filter '@webdmx/*' --if-present test",
     "dev": "pnpm -r --parallel --filter-prod @webdmx/ui... dev",
     "build": "pnpm -r --filter @webdmx/ui... build"
-  },
-  "devDependencies": {
-    "prettier": "3.9.6"
   }
 }

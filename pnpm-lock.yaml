@@ -4,16 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  prettier: 3.9.6
-
 importers:
 
-  .:
-    devDependencies:
-      prettier:
-        specifier: 3.9.6
-        version: 3.9.6
+  .: {}
 
   packages/common:
     devDependencies:
@@ -252,7 +245,7 @@ packages:
     resolution: {integrity: sha512-GWoadatDXCyboNPE5AeM7Mv9CuSi1kr/Yty/MHfKKrAhsDAL7Ip+qs+8qNZCnWZmIINoIqky6z/6p8F/H0/Png==}
     engines: {node: 22 || 24 || 26}
     peerDependencies:
-      prettier: 3.9.6
+      prettier: 3.0.0 - 3.9.x
 
   '@babel/code-frame@7.29.7':
     resolution: {integrity: sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==}
@@ -387,7 +380,7 @@ packages:
     peerDependencies:
       '@awmottaz/prettier-plugin-void-html': ^2.2.1
       eslint: ^10.8.1
-      prettier: 3.9.6
+      prettier: ^3.9.6
       typescript: 6.0.3
     peerDependenciesMeta:
       typescript:
@@ -1967,7 +1960,7 @@ packages:
       '@types/eslint': '>=8.0.0'
       eslint: '>=8.0.0'
       eslint-config-prettier: '>= 7.0.0 <10.0.0 || >=10.1.0'
-      prettier: 3.9.6
+      prettier: '>=3.0.0'
     peerDependenciesMeta:
       '@types/eslint':
         optional: true
