@@ -32,15 +32,15 @@
   },
   "devDependencies": {
     "@awmottaz/prettier-plugin-void-html": "2.3.0",
-    "@enke.dev/lint": "0.13.17",
+    "@enke.dev/lint": "0.13.18",
     "@types/node": "24.19.2",
     "@types/w3c-web-serial": "1.0.8",
     "@types/w3c-web-usb": "1.0.14",
-    "eslint": "10.12.0",
+    "eslint": "10.13.0",
     "jiti": "2.7.0",
     "npm-run-all2": "9.0.3",
     "prettier": "3.9.10",
-    "sass": "1.105.1",
+    "sass": "1.105.2",
     "shx": "0.4.0",
     "stylelint": "17.16.0",
     "stylelint-config-rational-order": "0.1.2",
@@ -48,7 +48,7 @@
     "stylelint-order": "8.1.2",
     "typedoc": "0.28.20",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.71.1",
+    "typescript-eslint": "8.71.2",
     "vite": "8.3.4",
     "vite-plugin-mkcert": "2.1.0"
   }
