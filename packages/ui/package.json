@@ -24,7 +24,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@enke.dev/lit-utils": "0.6.2",
+    "@enke.dev/lit-utils": "0.7.0",
     "@webdmx/common": "workspace:*",
     "@webdmx/controller": "workspace:*",
     "css.gg": "2.1.4",
@@ -32,15 +32,15 @@
   },
   "devDependencies": {
     "@awmottaz/prettier-plugin-void-html": "2.3.0",
-    "@enke.dev/lint": "0.13.19",
-    "@types/node": "24.19.2",
+    "@enke.dev/lint": "0.13.20",
+    "@types/node": "26.6.6",
     "@types/w3c-web-serial": "1.0.9",
     "@types/w3c-web-usb": "1.0.14",
-    "eslint": "10.13.0",
+    "eslint": "10.14.0",
     "jiti": "2.7.0",
     "npm-run-all2": "9.0.4",
     "prettier": "3.9.10",
-    "sass": "1.106.1",
+    "sass": "1.107.1",
     "shx": "0.4.0",
     "stylelint": "17.16.0",
     "stylelint-config-rational-order": "0.1.2",
@@ -48,7 +48,7 @@
     "stylelint-order": "8.1.2",
     "typedoc": "0.28.20",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.72.0",
+    "typescript-eslint": "8.72.1",
     "vite": "8.3.5",
     "vite-plugin-mkcert": "2.1.0"
   }
