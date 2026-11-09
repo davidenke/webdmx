@@ -30,11 +30,11 @@
   "dependencies": {
     "@webdmx/common": "workspace:*",
     "cli-progress": "3.12.0",
-    "plist": "5.0.0"
+    "plist": "5.1.0"
   },
   "devDependencies": {
     "@awmottaz/prettier-plugin-void-html": "2.3.0",
-    "@enke.dev/lint": "0.13.20",
+    "@enke.dev/lint": "0.13.21",
     "@types/cli-progress": "3.11.6",
     "@types/node": "26.6.6",
     "@types/plist": "3.0.5",
@@ -46,6 +46,6 @@
     "tsx": "4.23.15",
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.1",
-    "vite": "8.3.5"
+    "vite": "8.3.6"
   }
 }

@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@awmottaz/prettier-plugin-void-html": "2.3.0",
-    "@enke.dev/lint": "0.13.20",
+    "@enke.dev/lint": "0.13.21",
     "@types/node": "26.6.6",
     "eslint": "10.14.0",
     "jiti": "2.7.0",
@@ -33,7 +33,7 @@
     "shx": "0.4.0",
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.1",
-    "vite": "8.3.5",
+    "vite": "8.3.6",
     "vite-plugin-dts": "5.1.2"
   }
 }
