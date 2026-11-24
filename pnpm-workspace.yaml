@@ -3,6 +3,7 @@ packages:
 
 minimumReleaseAgeExclude:
   - tsx@4.23.12
+  - '@types/node@26.6.7'
 
 allowBuilds:
   '@parcel/watcher': true
